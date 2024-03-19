@@ -6,6 +6,7 @@ import {
   get_category_detail,
   get_products,
 } from "../../../apis/get";
+import { useRouter } from "next/router";
 
 const SideBar = () => {
   const closeNav = () => {
@@ -76,6 +77,7 @@ const SideBar = () => {
     }
   };
 
+  const router = useRouter();
   const [dataCategory, setDataCategory] = useState([]);
   const [dataCategoryDetail, setDataCategoryDetail] = useState([]);
 
@@ -92,6 +94,13 @@ const SideBar = () => {
     getData();
   }, []);
 
+  const handleClick = (id, type, category, detail) => {
+    router.push({
+      pathname: "/show-filter",
+      query: { type, id, category, detail },
+    });
+  };
+
   return (
     <Fragment>
       <div id="mySidenav" className="sidenav">
@@ -107,8 +116,13 @@ const SideBar = () => {
               ? (dataCategory || []).map((r, index) => {
                   if (r?.status) {
                     return (
-                      <li>
-                        <a href="#">
+                      <li key={`${r?.id}-${index}`}>
+                        <a
+                          href="#"
+                          onClick={() => {
+                            handleClick(r?.id, "category", r?.name);
+                          }}
+                        >
                           {r?.name}
                           {r?.detail.length > 0 ? (
                             <span className="sub-arrow"></span>
@@ -118,13 +132,25 @@ const SideBar = () => {
                         r?.detail.length > 0 &&
                         dataCategoryDetail.length > 0 ? (
                           <ul>
-                            {(r?.detail || [])?.map((r) => {
+                            {(r?.detail || [])?.map((detail, indexDetail) => {
                               const find = (dataCategoryDetail || []).find(
-                                (data) => data?.id === r?.id
+                                (data) => data?.id === detail?.id
                               ).name;
                               return (
-                                <li>
-                                  <a href="#">{find}</a>
+                                <li key={`${detail?.id}-${indexDetail}`}>
+                                  <a
+                                    href="#"
+                                    onClick={() =>
+                                      handleClick(
+                                        detail?.id,
+                                        "category_detail",
+                                        r?.name,
+                                        find
+                                      )
+                                    }
+                                  >
+                                    {find}
+                                  </a>
                                 </li>
                               );
                             })}

@@ -1,50 +1,14 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
-import ProductItem from "../product-box/ProductBox1";
-import CartContext from "../../../helpers/cart/index";
-import { Container, Row, Col, Media } from "reactstrap";
-import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
-import PostLoader from "../PostLoader";
+import React, { useContext, useEffect, useState } from "react";
+import { TabPanel, Tabs } from "react-tabs";
+import { Col, Container, Media, Row } from "reactstrap";
+import { get_products } from "../../../apis/get";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
+import CartContext from "../../../helpers/cart/index";
+import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import emptySearch from "../../../public/assets/images/empty-search.jpg";
-import productsData from "../../../data/DataMock/products";
-import { get_products } from "../../../apis/get";
-
-const GET_PRODUCTS = gql`
-  query products($type: _CategoryType!, $indexFrom: Int!, $limit: Int!) {
-    products(type: $type, indexFrom: $indexFrom, limit: $limit) {
-      items {
-        id
-        title
-        description
-        type
-        brand
-        category
-        price
-        new
-        stock
-        sale
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
-      }
-    }
-  }
-`;
+import PostLoader from "../PostLoader";
+import ProductItem from "../product-box/ProductBox1";
 
 const TabContent = ({
   data,
@@ -63,15 +27,8 @@ const TabContent = ({
 
   return (
     <Row className="no-slider">
-      {!data ||
-      !data.products ||
-      !data.products.items ||
-      data.products.items.length === 0 ||
-      loading ? (
-        data &&
-        data.products &&
-        data.products.items &&
-        data.products.items.length === 0 ? (
+      {!data || data.length === 0 || loading ? (
+        data && data.length === 0 ? (
           <Col xs="12">
             <div>
               <div className="col-sm-12 empty-cart-cls text-center">
@@ -105,7 +62,7 @@ const TabContent = ({
         )
       ) : (
         data &&
-        data.products.items
+        data
           .slice(startIndex, endIndex)
           .map((product, i) => (
             <ProductItem
@@ -136,8 +93,8 @@ const SpecialProducts = ({
   line,
   hrClass,
   backImage,
+  filter,
 }) => {
-  const [activeTab, setActiveTab] = useState(type);
   const context = useContext(CartContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -148,30 +105,27 @@ const SpecialProducts = ({
   const currency = curContext.state;
   const quantity = context.quantity;
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   const getData = (productsData || []).filter((r) => r?.type === activeTab);
-  //   setData({ products: { items: getData } });
-  //   setLoading(false);
-  // }, [activeTab]);
-
   const getData = async () => {
     const productsAPI = await get_products();
-    setData({ products: { items: productsAPI } });
-    console.log(productsAPI, "data");
+    if (type === "product") {
+      setData(productsAPI);
+    } else if (type === "filter") {
+      const { type, id } = filter;
+      if (type === "search") {
+      } else {
+        const getFilter = (productsAPI || []).filter(
+          (r) => r?.[`${type}_id`] === id
+        );
+        setData(getFilter || []);
+      }
+    }
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [type, filter]);
 
-  // var { loading, data } = useQuery(GET_PRODUCTS, {
-  //   variables: {
-  //     type: activeTab,
-  //     indexFrom: 0,
-  //     limit: 20,
-  //   },
-  // });
+  // console.log(filter, "filter");
 
   return (
     <div>
@@ -194,27 +148,6 @@ const SpecialProducts = ({
           )}
 
           <Tabs className="theme-tab">
-            {/* <TabList className="tabs tab-title">
-              <Tab
-                className={activeTab == type ? "active" : ""}
-                onClick={() => setActiveTab(type)}
-              >
-                NEW ARRIVAL
-              </Tab>
-              <Tab
-                className={activeTab == "furniture" ? "active" : ""}
-                onClick={() => setActiveTab("furniture")}
-              >
-                FEATURED{" "}
-              </Tab>
-              <Tab
-                className={activeTab == "furniture" ? "active" : ""}
-                onClick={() => setActiveTab("furniture")}
-              >
-                SPECIAL
-              </Tab>
-            </TabList> */}
-
             <TabPanel>
               <TabContent
                 data={data}

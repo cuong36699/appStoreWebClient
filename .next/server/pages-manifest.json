@@ -2,6 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/layouts/Furniture": "pages/layouts/Furniture.js",
-  "/layouts/Electronic/Electronic-1": "pages/layouts/Electronic/Electronic-1.js"
+  "/": "pages/index.js",
+  "/404": "pages/404.js"
 }

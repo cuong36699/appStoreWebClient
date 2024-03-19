@@ -13,6 +13,8 @@ import Currency from "./common/currency";
 import { useRouter } from "next/router";
 import SearchOverlay from "./common/search-overlay";
 
+let timer = null;
+
 const HeaderOne = ({
   logoName,
   headerClass,
@@ -21,6 +23,8 @@ const HeaderOne = ({
   direction,
 }) => {
   const router = useRouter();
+  const [value, setValue] = useState("");
+  const [open, setOpen] = useState(false);
 
   /*=====================
      Pre loader
@@ -57,8 +61,17 @@ const HeaderOne = ({
       openmyslide.classList.add("open-side");
     }
   };
+  // const openSearch = () => {
+  //   document.getElementById("search-overlay").style.display = "block";
+  // };
+
   const openSearch = () => {
-    document.getElementById("search-overlay").style.display = "block";
+    if (value !== "") {
+      router.push({
+        pathname: "/show-filter",
+        query: { type: "search", value: value },
+      });
+    }
   };
 
   // eslint-disable-next-line
@@ -68,6 +81,13 @@ const HeaderOne = ({
       // deal with data fetched
       setIsLoading(false);
     });
+  };
+
+  const onChangeValue = (value) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      setValue(value);
+    }, 150);
   };
 
   return (
@@ -102,23 +122,57 @@ const HeaderOne = ({
                 </div>
                 <div className="menu-right pull-right">
                   {/*Top Navigation Bar Component*/}
-                  <NavBar />
-
+                  {/* <NavBar /> */}
+                  {/*  */}
                   <div>
                     <div className="icon-nav">
-                      <ul>
+                      <ul style={{ display: "flex", alignItems: "center" }}>
                         <li className="onhover-div mobile-search">
-                          <div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 20,
+                            }}
+                          >
+                            <div
+                              style={{
+                                backgroundColor: "#f8f8f8",
+                                width: 400,
+                                height: 40,
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                borderRadius: 16,
+                              }}
+                            >
+                              <input
+                                style={{
+                                  border: 0,
+                                  outline: 0,
+                                  width: "90%",
+                                  height: "100%",
+                                  backgroundColor: "#f8f8f8",
+                                  borderRadius: 16,
+                                }}
+                                onBlur={() => {
+                                  setOpen(false);
+                                }}
+                                onFocus={() => {
+                                  setOpen(true);
+                                }}
+                                onChange={(e) => {
+                                  onChangeValue(e.target.value);
+                                }}
+                              />
+                            </div>
+
                             <Media
                               src={search.src}
                               onClick={openSearch}
                               className="img-fluid"
                               alt=""
                             />
-                            <i
-                              className="fa fa-search"
-                              onClick={openSearch}
-                            ></i>
                           </div>
                         </li>
                         <Currency icon={settings.src} />

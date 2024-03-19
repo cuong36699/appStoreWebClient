@@ -38,7 +38,7 @@ const Fashion = () => {
       <TopCollection
         noTitle="null"
         backImage={true}
-        type="fashion"
+        type="product"
         title="top collection"
         subtitle="special offer"
         productSlider={Product4}
@@ -48,7 +48,7 @@ const Fashion = () => {
       />
       <Parallax />
       <SpecialProducts
-        type="fashion"
+        type="product"
         backImage={true}
         productSlider={Product4}
         line={true}
