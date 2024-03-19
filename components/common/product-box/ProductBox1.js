@@ -34,48 +34,62 @@ const ProductItem = ({
   const toggle = () => setModal(!modal);
   const uniqueTags = [];
 
-  const onClickHandle = (img) => {
-    setImage(img);
-  };
-
   const changeQty = (e) => {
     setQuantity(parseInt(e.target.value));
   };
 
   const clickProductDetail = () => {
     const nameProps = product?.name?.split(" ").join("");
-    router.push(`/product-details/${product.id}` + "-" + `${nameProps}`);
+    router.push(`/product-details/${product?.id}` + "-" + `${nameProps}`);
   };
 
-  const variantChangeByColor = (imgId, product_images) => {
-    product_images.map((data) => {
-      if (data.image_id == imgId) {
-        setImage(data.src);
-      }
-    });
+  const changeByType = (url) => {
+    setImage(url);
   };
 
   return (
     <div className="product-box product-wrap">
       <div className="img-wrapper">
         <div className="lable-block">
-          {product.new === true ? <span className="lable3">new</span> : ""}
-          {product.sale === true ? <span className="lable4">on sale</span> : ""}
+          {/* {product.new === true ? <span className="lable3">new</span> : ""} */}
+          {product?.sale ? <span className="lable4">on sale</span> : ""}
         </div>
-        <div className="front" onClick={clickProductDetail}>
+        {/* image */}
+        <div
+          className="front"
+          onClick={clickProductDetail}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyItems: "center",
+            alignItems: "flex-end",
+            height: 300,
+          }}
+        >
           <Media
-            src={`${image ? image : product.images[0].src}`}
-            className="img-fluid"
+            src={`${image ? image : product.images[0].url}`}
+            className="img-fluid m-auto"
             alt=""
           />
         </div>
+        {/*  */}
         {backImage ? (
           product.images[1] === "undefined" ? (
             "false"
           ) : (
-            <div className="back" onClick={clickProductDetail}>
+            <div
+              className="back"
+              onClick={clickProductDetail}
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyItems: "center",
+                alignItems: "flex-end",
+                height: 300,
+              }}
+            >
               <Media
-                src={`${image ? image : product.images[1].src}`}
+                src={`${image ? image : product?.images?.[0]?.url}`}
                 className="img-fluid m-auto"
                 alt=""
               />
@@ -141,29 +155,8 @@ const ProductItem = ({
             </ModalBody>
           </Modal>
         </div>
-        {/* {product.images ? (
-          <ul className="product-thumb-list">
-            {product.images.map((img, i) => (
-              <li
-                className={`grid_thumb_img ${
-                  img.src === image ? "active" : ""
-                }`}
-                key={i}
-              >
-                <a href={null} title="Add to Wishlist">
-                  <Media
-                    src={`${img.src}`}
-                    alt="wishlist"
-                    onClick={() => onClickHandle(img.src)}
-                  />
-                </a>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          ""
-        )} */}
       </div>
+      {/*  */}
       <MasterProductDetail
         product={product}
         productDetail={productDetail}
@@ -171,8 +164,9 @@ const ProductItem = ({
         uniqueTags={uniqueTags}
         title={title}
         des={des}
-        variantChangeByColor={variantChangeByColor}
+        changeByType={changeByType}
       />
+      {/*  */}
       <Modal
         isOpen={modal}
         toggle={toggle}
@@ -185,7 +179,7 @@ const ProductItem = ({
               <div className="quick-view-img">
                 <Media
                   src={`${
-                    product.variants && image ? image : product.images[0].src
+                    product?.type && image ? image : product.images[0].url
                   }`}
                   alt=""
                   className="img-fluid"
@@ -194,7 +188,7 @@ const ProductItem = ({
             </Col>
             <Col lg="6" className="rtl-text">
               <div className="product-right">
-                <h2> {product.title} </h2>
+                <h2> {product?.name} </h2>
                 <h3>
                   {currency.symbol}
                   {(product.price * currency.value).toFixed(2)}

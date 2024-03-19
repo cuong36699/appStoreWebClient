@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { Media } from "reactstrap";
 
 const MasterProductDetail = ({
   product,
@@ -8,13 +9,26 @@ const MasterProductDetail = ({
   detailClass,
   title,
   des,
-  variantChangeByColor,
+  changeByType,
 }) => {
   let RatingStars = [];
   let rating = 5;
   for (var i = 0; i < rating; i++) {
     RatingStars.push(<i className="fa fa-star" key={i}></i>);
   }
+  const [active, setActive] = useState(0);
+
+  const valuePrice = () => {
+    if (product?.sale) {
+      return (
+        (product?.type?.[active]?.price -
+          (product?.type?.[active]?.price * (product?.sale || 0)) / 100) *
+        product?.type?.[active]?.price
+      );
+    } else {
+      return product?.type?.[active]?.price;
+    }
+  };
 
   return (
     <div className={`product-detail ${productDetail} ${detailClass}`}>
@@ -27,55 +41,54 @@ const MasterProductDetail = ({
         <h6>{product.name}</h6>
         {des ? <p>{product.description}</p> : ""}
         <h4>
-          {currency.symbol}
-          {(
-            (product.price - (product.price * product.discount) / 100) *
-            currency.value
-          ).toFixed(2)}
-          <del>
-            <span className="money">
-              {currency.symbol}
-              {(product.price * currency.value).toFixed(2)}
-            </span>
-          </del>
+          {valuePrice()}
+          {currency?.symbol}
+          {product?.sale ? (
+            <del>
+              <span className="money">
+                {product?.type?.[active]?.price}
+                {currency?.symbol}
+              </span>
+            </del>
+          ) : null}
         </h4>
-
-        {(product?.variants || [])?.map((vari) => {
-          var findItem = uniqueTags.find((x) => x.color === vari.color);
-          if (!findItem) uniqueTags.push(vari);
-        })}
-
-        {product.type === "jewellery" ||
-        product.type === "nursery" ||
-        product.type === "beauty" ||
-        product.type === "electronics" ||
-        product.type === "goggles" ||
-        product.type === "watch" ||
-        product.type === "pets" ? (
-          ""
-        ) : (
-          <>
-            {title !== "Product style 4" && uniqueTags?.[0]?.color ? (
-              <ul className="color-variant">
-                {uniqueTags.map((vari, i) => {
-                  return (
-                    // select color
-                    <li
-                      className={vari.color}
-                      key={i}
-                      title={vari.color}
-                      onClick={() =>
-                        variantChangeByColor(vari.image_id, product.images)
-                      }
-                    ></li>
-                  );
-                })}
-              </ul>
-            ) : (
-              ""
-            )}
-          </>
-        )}
+        <>
+          {/* select type */}
+          {title !== "Product style 4" && product?.type?.[0]?.name ? (
+            <ul
+              // className="color-variant"
+              style={{ display: "flex", gap: 10, marginTop: 12 }}
+            >
+              {product?.type ? (
+                <ul style={{ display: "flex", gap: 5 }}>
+                  {(product?.type || [])?.map((item, i) => (
+                    <li key={i}>
+                      <Media
+                        src={`${item?.image?.url}`}
+                        alt="wishlist"
+                        onClick={() => {
+                          setActive(i);
+                          if (item?.image?.url) {
+                            changeByType(item?.image?.url);
+                          }
+                        }}
+                        style={{
+                          maxWidth: 40,
+                          objectFit: "cover",
+                          minHeight: 40,
+                          maxHeight: 80,
+                          opacity: active === i ? 1 : 0.5,
+                        }}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </ul>
+          ) : (
+            ""
+          )}
+        </>
       </div>
     </div>
   );

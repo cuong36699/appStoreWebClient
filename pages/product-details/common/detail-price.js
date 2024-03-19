@@ -9,6 +9,8 @@ import MasterSocial from "./master_social";
 
 const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
   const [modal, setModal] = useState(false);
+  const [active, setActive] = useState(0);
+
   const CurContect = useContext(CurrencyContext);
   const symbol = CurContect.state.symbol;
   const toggle = () => setModal(!modal);
@@ -25,27 +27,39 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
     setQuantity(parseInt(e.target.value));
   };
 
+  const valuePrice = () => {
+    if (product?.sale) {
+      return (
+        (product?.type?.[active]?.price -
+          (product?.type?.[active]?.price * (product?.sale || 0)) / 100) *
+        product?.type?.[active]?.price
+      );
+    } else {
+      return product?.type?.[active]?.price;
+    }
+  };
+
   return (
     <>
       <div className={`product-right ${stickyClass}`}>
         <h2> {product.title} </h2>
         <h4>
           <del>
+            {valuePrice()}
             {symbol}
-            {product.price}
           </del>
           <span>{product.discount}% off</span>
         </h4>
         <h3>
+          {valuePrice()}
           {symbol}
-          {product.price - (product.price * product.discount) / 100}
         </h3>
-        {product.variants.map((vari) => {
+        {/* {product.variants.map((vari) => {
           var findItem = uniqueColor.find((x) => x.color === vari.color);
           if (!findItem) uniqueColor.push(vari);
           var findItemSize = uniqueSize.find((x) => x === vari.size);
           if (!findItemSize) uniqueSize.push(vari.size);
-        })}
+        })} */}
         {changeColorVar === undefined ? (
           <>
             {uniqueColor ? (
@@ -83,19 +97,6 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
         <div className="product-description border-product">
           {product.variants ? (
             <div>
-              <h6 className="product-title size-text">
-                select size
-                <span>
-                  <a
-                    href={null}
-                    data-toggle="modal"
-                    data-target="#sizemodal"
-                    onClick={toggle}
-                  >
-                    size chart
-                  </a>
-                </span>
-              </h6>
               <Modal isOpen={modal} toggle={toggle} centered>
                 <ModalHeader toggle={toggle}>Sheer Straight Kurta</ModalHeader>
                 <ModalBody>

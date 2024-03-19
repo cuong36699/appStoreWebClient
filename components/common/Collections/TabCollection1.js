@@ -148,16 +148,17 @@ const SpecialProducts = ({
   const currency = curContext.state;
   const quantity = context.quantity;
 
-  useEffect(() => {
-    setLoading(true);
-    const getData = (productsData || []).filter((r) => r?.type === activeTab);
-    setData({ products: { items: getData } });
-    setLoading(false);
-  }, [activeTab]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   const getData = (productsData || []).filter((r) => r?.type === activeTab);
+  //   setData({ products: { items: getData } });
+  //   setLoading(false);
+  // }, [activeTab]);
 
   const getData = async () => {
-    const asd = await get_products();
-    console.log(asd, "data");
+    const productsAPI = await get_products();
+    setData({ products: { items: productsAPI } });
+    console.log(productsAPI, "data");
   };
 
   useEffect(() => {
@@ -193,7 +194,7 @@ const SpecialProducts = ({
           )}
 
           <Tabs className="theme-tab">
-            <TabList className="tabs tab-title">
+            {/* <TabList className="tabs tab-title">
               <Tab
                 className={activeTab == type ? "active" : ""}
                 onClick={() => setActiveTab(type)}
@@ -212,7 +213,7 @@ const SpecialProducts = ({
               >
                 SPECIAL
               </Tab>
-            </TabList>
+            </TabList> */}
 
             <TabPanel>
               <TabContent

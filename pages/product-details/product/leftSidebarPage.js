@@ -6,60 +6,39 @@ import Slider from "react-slick";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import ImageZoom from "../common/image-zoom";
-import DetailsWithPrice from "../common/detail-price";
+// import DetailsWithPrice from "../common/detail-price";
 import Filter from "../common/filter";
 import { Container, Row, Col, Media } from "reactstrap";
 import productsData from "../../../data/DataMock/products";
-
-const GET_SINGLE_PRODUCTS = gql`
-  query product($id: Int!) {
-    product(id: $id) {
-      id
-      title
-      description
-      type
-      brand
-      category
-      price
-      new
-      sale
-      discount
-      stock
-      variants {
-        id
-        sku
-        size
-        color
-        image_id
-      }
-      images {
-        alt
-        src
-      }
-    }
-  }
-`;
+import { get_products } from "../../../apis/get";
+import DetailsWithPrice from "../common/detail-price";
 
 const LeftSidebarPage = ({ pathId }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // var { loading, data } = useQuery(GET_SINGLE_PRODUCTS, {
-  //   variables: {
-  //     id: parseInt(pathId),
-  //   },
-  // });
-
-  useEffect(() => {
-    const getData = (productsData || []).find(
-      (r) => r?.id === parseInt(pathId)
-    );
-    setData({ product: getData });
-  }, []);
-
   const [state, setState] = useState({ nav1: null, nav2: null });
   const slider1 = useRef();
   const slider2 = useRef();
+
+  console.log(data, "1111111111111");
+
+  const getData = async () => {
+    setLoading(true);
+    const productsAPI = await get_products();
+    if (productsAPI) {
+      const getData = (productsAPI || []).find((r) => {
+        const nameProps = r?.name?.split(" ").join("");
+        const check = `${r?.id}` + "-" + `${nameProps}`;
+        return check === pathId;
+      });
+      setData({ product: getData });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   var products = {
     slidesToShow: 1,
@@ -68,12 +47,15 @@ const LeftSidebarPage = ({ pathId }) => {
     arrows: true,
     fade: true,
   };
+
   var productsnav = {
-    slidesToShow: 3,
-    swipeToSlide: true,
-    arrows: false,
     dots: false,
+    infinite: data?.product?.type?.length > 3,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
     focusOnSelect: true,
+    arrows: true,
   };
 
   useEffect(() => {
@@ -131,8 +113,8 @@ const LeftSidebarPage = ({ pathId }) => {
                         ref={(slider) => (slider1.current = slider)}
                         className="product-slick"
                       >
-                        {data.product.images.map((vari, index) => (
-                          <div key={index}>
+                        {data?.product?.images?.map((vari, index) => (
+                          <div key={`${vari?.id}-${index}`}>
                             <ImageZoom image={vari} />
                           </div>
                         ))}
@@ -143,18 +125,23 @@ const LeftSidebarPage = ({ pathId }) => {
                         asNavFor={nav1}
                         ref={(slider) => (slider2.current = slider)}
                       >
-                        {data.product.variants
+                        {data?.product?.images
                           ? data.product.images.map((vari, index) => (
-                              <div key={index}>
+                              <div key={`${vari?.id}-${index}`}>
                                 <Media
-                                  src={`${vari.src}`}
-                                  key={index}
+                                  src={`${vari.url}`}
+                                  key={`${vari?.id}-${index}`}
                                   alt={vari.alt}
                                   className="img-fluid"
+                                  style={{
+                                    maxWidth: 80,
+                                    minHeight: 100,
+                                    objectFit: "cover",
+                                  }}
                                 />
                               </div>
                             ))
-                          : ""}
+                          : null}
                       </Slider>
                     </Col>
                     <Col lg="6" className="rtl-text">
@@ -166,7 +153,7 @@ const LeftSidebarPage = ({ pathId }) => {
                   </Row>
                 )}
               </Container>
-              <ProductTab />
+              {/* <ProductTab /> */}
             </Col>
           </Row>
         </Container>

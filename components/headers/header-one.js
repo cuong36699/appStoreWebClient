@@ -76,13 +76,14 @@ const HeaderOne = ({
         <div className="mobile-fix-option"></div>
         {/*Top Header Component*/}
         {noTopBar ? "" : <TopBarDark topClass={topClass} />}
-
+        {/*  */}
         <Container>
           <Row>
             <Col>
               <div className="main-menu">
                 <div className="menu-left">
                   <div className="navbar">
+                    {/* drawer */}
                     <a href={null} onClick={openNav}>
                       <div className="bar-style">
                         <i
@@ -94,6 +95,7 @@ const HeaderOne = ({
                     {/*SideBar Navigation Component*/}
                     <SideBar />
                   </div>
+                  {/* logo */}
                   <div className="brand-logo">
                     <LogoImage logo={logoName} />
                   </div>
