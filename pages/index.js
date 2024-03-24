@@ -1,19 +1,15 @@
 import React from "react";
-import Banner from "./layouts/Fashion/Components/Banner";
-import CollectionBanner from "./layouts/Fashion/Components/Collection-Banner";
+import Helmet from "react-helmet";
 import TopCollection from "../components/common/Collections/Collection3";
-import Parallax from "./layouts/Fashion/Components/Parallax";
 import SpecialProducts from "../components/common/Collections/TabCollection1";
+import Paragraph from "../components/common/Paragraph";
 import ServiceLayout from "../components/common/Service/service1";
-import Blog from "../components/common/Blog/blog1";
-import Instagram from "../components/common/instagram/instagram1";
-import LogoBlock from "../components/common/logo-block";
+import MasterFooter from "../components/footers/common/MasterFooter";
 import HeaderOne from "../components/headers/header-one";
 import { Product4 } from "../services/script";
-import Paragraph from "../components/common/Paragraph";
-import ModalComponent from "../components/common/Modal";
-import Helmet from "react-helmet";
-import MasterFooter from "../components/footers/common/MasterFooter";
+import Banner from "./layouts/Fashion/Components/Banner";
+import CollectionBanner from "./layouts/Fashion/Components/Collection-Banner";
+import Parallax from "./layouts/Fashion/Components/Parallax";
 
 const Fashion = () => {
   return (
