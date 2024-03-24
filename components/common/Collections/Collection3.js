@@ -10,39 +10,7 @@ import PostLoader from "../PostLoader";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import search from "../../../public/assets/images/empty-search.jpg";
 import productsData from "../../../data/DataMock/products";
-
-const GET_PRODUCTS = gql`
-  query products($type: _CategoryType!, $indexFrom: Int!, $limit: Int!) {
-    products(type: $type, indexFrom: $indexFrom, limit: $limit) {
-      items {
-        id
-        title
-        description
-        type
-        brand
-        category
-        price
-        new
-        stock
-        sale
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
-      }
-    }
-  }
-`;
+import { get_products } from "../../../apis/get";
 
 const TopCollection = ({
   type,
@@ -66,20 +34,16 @@ const TopCollection = ({
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // var { loading, data } = useQuery(GET_PRODUCTS, {
-  //   variables: {
-  //     type: type,
-  //     indexFrom: 0,
-  //     limit: 8,
-  //   },
-  // });
+  const getData = async () => {
+    setLoading(true);
+    const productsAPI = await get_products();
+    setData(productsAPI);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    setLoading(true);
-    const getData = (productsData || []).filter((r) => r?.type === type);
-    setData({ products: { items: getData } });
-    setLoading(false);
-  }, [type]);
+    getData();
+  }, []);
 
   useEffect(() => {
     if (data === undefined) {
@@ -133,7 +97,7 @@ const TopCollection = ({
                 ) : (
                   <Slider {...productSlider} className="product-m no-arrow">
                     {data &&
-                      data.products.items.map((product, i) => (
+                      data.map((product, i) => (
                         <div key={i}>
                           <ProductItems
                             product={product}
@@ -166,11 +130,7 @@ const TopCollection = ({
             )}
             <Container>
               <Row className="margin-default">
-                {!data ||
-                !data.products ||
-                !data.products.items ||
-                !data.products.items.length === 0 ||
-                loading ? (
+                {!data || !data?.length === 0 || loading ? (
                   <div className="row margin-default">
                     <div className="col-xl-3 col-lg-4 col-6">
                       <PostLoader />
@@ -187,7 +147,7 @@ const TopCollection = ({
                   </div>
                 ) : (
                   data &&
-                  data.products.items.slice(0, 8).map((product, index) => (
+                  data?.slice(0, 8).map((product, index) => (
                     <Col xl="3" sm="6" key={index}>
                       <div>
                         <ProductItems

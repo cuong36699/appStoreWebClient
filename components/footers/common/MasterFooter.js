@@ -12,6 +12,8 @@ import {
 } from "reactstrap";
 import LogoImage from "../../headers/common/logo";
 import CopyRight from "./copyright";
+import { get_about } from "../../../apis/get";
+import { useRouter } from "next/router";
 
 const MasterFooter = ({
   containerFluid,
@@ -25,9 +27,14 @@ const MasterFooter = ({
   CopyRightFluid,
   newLatter,
 }) => {
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState();
   const [collapse, setCollapse] = useState(0);
+  const [data, setData] = useState([]);
+
   const width = window.innerWidth < 750;
+
   useEffect(() => {
     const changeCollapse = () => {
       if (window.innerWidth < 750) {
@@ -39,10 +46,29 @@ const MasterFooter = ({
     window.addEventListener("resize", changeCollapse);
 
     return () => {
-      window.removeEventListener('resize', changeCollapse)
-    }
-
+      window.removeEventListener("resize", changeCollapse);
+    };
   }, []);
+
+  const getData = async () => {
+    const aboutAPI = await get_about();
+    setData(aboutAPI[0]);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const handleClick = (data) => {
+    const dataString = JSON.stringify(data);
+    router.push({
+      pathname: "/about",
+      query: { data: dataString },
+    });
+  };
+
+  console.log(data, "about");
+
   return (
     <div>
       <footer className={footerClass}>
@@ -50,119 +76,67 @@ const MasterFooter = ({
           <div className={footerLayOut}>
             <Container fluid={containerFluid ? containerFluid : ""}>
               <section className={footerSection}>
-                <Row>
-                  <Col lg="6">
-                    <div className="subscribe">
-                      <div>
-                        <h4>KNOW IT ALL FIRST!</h4>
-                        <p>
-                          Never Miss Anything From Multikart By Signing Up To
-                          Our Newsletter.
-                        </p>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col lg="6">
-                    <Form className="form-inline subscribe-form">
-                      <div className="mx-sm-3">
-                        <Input
-                          type="text"
-                          className="form-control"
-                          id="exampleFormControlInput1"
-                          placeholder="Enter your email"
-                        />
-                      </div>
-                      <Button type="submit" className="btn btn-solid">
-                        subscribe
-                      </Button>
-                    </Form>
-                  </Col>
-                </Row>
+                <div className="brand-logo">
+                  <LogoImage logo={"logo.png"} />
+                </div>
               </section>
             </Container>
           </div>
-        ) : (
-          ""
-        )}
+        ) : null}
 
         <section className={belowSection}>
           <Container fluid={belowContainerFluid ? belowContainerFluid : ""}>
             <Row className="footer-theme partition-f">
-              <Col lg="4" md="6">
-                <div
-                  className={`footer-title ${isOpen && collapse == 1 ? "active" : ""
-                    } footer-mobile-title`}
-                >
-                  <h4
-                    onClick={() => {
-                      setCollapse(1);
-                      setIsOpen(!isOpen);
-                    }}
-                  >
-                    about
-                    <span className="according-menu"></span>
-                  </h4>
-                </div>
-                <Collapse
-                  isOpen={width ? (collapse === 1 ? isOpen : false) : true}
-                >
-                  <div className="footer-contant">
-                    <div className="footer-logo">
-                      <LogoImage logo={logoName} />
-                    </div>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam,
-                    </p>
-                    <div className="footer-social">
-                      <ul>
-                        <li>
-                          <a href="https://www.facebook.com" target="_blank">
-                            <i
-                              className="fa fa-facebook"
-                              aria-hidden="true"
-                            ></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="https://plus.google.com" target="_blank">
-                            <i
-                              className="fa fa-google-plus"
-                              aria-hidden="true"
-                            ></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="https://twitter.com" target="_blank">
-                            <i className="fa fa-twitter" aria-hidden="true"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="https://www.instagram.com" target="_blank">
-                            <i
-                              className="fa fa-instagram"
-                              aria-hidden="true"
-                            ></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a href="https://rss.com" target="_blank">
-                            <i className="fa fa-rss" aria-hidden="true"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </Collapse>
-              </Col>
-              <Col className="offset-xl-1">
+              {/* intro */}
+              <Col>
                 <div className="sub-title">
                   <div
-                    className={`footer-title ${isOpen && collapse == 2 ? "active" : ""
-                      } `}
+                    className={`footer-title ${
+                      isOpen && collapse == 1 ? "active" : ""
+                    } `}
+                    style={{ marginTop: width ? 20 : "" }}
                   >
-                    <h4
+                    <span
+                      style={{ fontWeight: "600", fontSize: 14 }}
+                      onClick={() => {
+                        if (width) {
+                          setIsOpen(!isOpen);
+                          setCollapse(1);
+                        } else setIsOpen(true);
+                      }}
+                    >
+                      {data?.introduce?.name
+                        ? data?.introduce?.name.toUpperCase()
+                        : null}
+                    </span>
+                    <p>{data?.introduce?.description || ""}</p>
+                    <span className="according-menu"></span>
+                  </div>
+                  <Collapse
+                    isOpen={width ? (collapse === 1 ? isOpen : false) : true}
+                  >
+                    <div className="footer-contant">
+                      <ul>
+                        {(data?.introduce?.data || []).map((r, i) => (
+                          <li key={i}>
+                            <a style={{ cursor: "pointer" }}>{r?.name}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </Collapse>
+                </div>
+              </Col>
+              {/* policy */}
+              <Col>
+                <div className="sub-title">
+                  <div
+                    className={`footer-title ${
+                      isOpen && collapse == 2 ? "active" : ""
+                    } `}
+                  >
+                    <span
+                      style={{ fontWeight: "600", fontSize: 14 }}
                       onClick={() => {
                         if (width) {
                           setIsOpen(!isOpen);
@@ -170,47 +144,42 @@ const MasterFooter = ({
                         } else setIsOpen(true);
                       }}
                     >
-                      my account
-                      <span className="according-menu"></span>
-                    </h4>
+                      {data?.policy?.name
+                        ? data?.policy?.name.toUpperCase()
+                        : null}
+                    </span>
+                    <span className="according-menu"></span>
                   </div>
                   <Collapse
                     isOpen={width ? (collapse === 2 ? isOpen : false) : true}
                   >
                     <div className="footer-contant">
                       <ul>
-                        <li>
-                          <Link href={`/shop/left_sidebar`}>
-                            <a>womens</a>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href={`/shop/left_sidebar`}>
-                            <a> clothing </a>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href={`/shop/left_sidebar`}>
-                            <a>accessories</a>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link href={`/shop/left_sidebar`}>
-                            <a> featured </a>
-                          </Link>
-                        </li>
+                        {(data?.policy?.data || []).map((r, i) => (
+                          <li key={i}>
+                            <a
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleClick(r)}
+                            >
+                              {r?.name}
+                            </a>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   </Collapse>
                 </div>
               </Col>
+              {/* about us */}
               <Col>
                 <div className="sub-title">
                   <div
-                    className={`footer-title ${isOpen && collapse == 3 ? "active" : ""
-                      } `}
+                    className={`footer-title ${
+                      isOpen && collapse == 3 ? "active" : ""
+                    } `}
                   >
-                    <h4
+                    <span
+                      style={{ fontWeight: "600", fontSize: 14 }}
                       onClick={() => {
                         if (width) {
                           setIsOpen(!isOpen);
@@ -218,42 +187,42 @@ const MasterFooter = ({
                         } else setIsOpen(true);
                       }}
                     >
-                      why we choose
-                      <span className="according-menu"></span>
-                    </h4>
+                      {data?.about?.name
+                        ? data?.about?.name.toUpperCase()
+                        : null}
+                    </span>
+                    <span className="according-menu"></span>
                   </div>
                   <Collapse
                     isOpen={width ? (collapse === 3 ? isOpen : false) : true}
                   >
                     <div className="footer-contant">
                       <ul>
-                        <li>
-                          <a href="#">shipping & return</a>
-                        </li>
-                        <li>
-                          <a href="#">secure shopping</a>
-                        </li>
-                        <li>
-                          <a href="#">gallary</a>
-                        </li>
-                        <li>
-                          <a href="#">affiliates</a>
-                        </li>
-                        <li>
-                          <a href="#">contacts</a>
-                        </li>
+                        {(data?.about?.data || []).map((r, i) => (
+                          <li key={i}>
+                            <a
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleClick(r)}
+                            >
+                              {r?.name}
+                            </a>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   </Collapse>
                 </div>
               </Col>
+              {/*  */}
               <Col>
                 <div className="sub-title">
                   <div
-                    className={`footer-title ${isOpen && collapse == 4 ? "active" : ""
-                      } `}
+                    className={`footer-title ${
+                      isOpen && collapse == 4 ? "active" : ""
+                    } `}
                   >
-                    <h4
+                    <span
+                      style={{ fontWeight: "600", fontSize: 14 }}
                       onClick={() => {
                         if (width) {
                           setIsOpen(!isOpen);
@@ -261,30 +230,133 @@ const MasterFooter = ({
                         } else setIsOpen(true);
                       }}
                     >
-                      store information
-                      <span className="according-menu"></span>
-                    </h4>
+                      {data?.social?.name
+                        ? data?.social?.name.toUpperCase()
+                        : "LIÊN HỆ"}
+                    </span>
+                    <span className="according-menu"></span>
                   </div>
                   <Collapse
                     isOpen={width ? (collapse === 4 ? isOpen : false) : true}
                   >
-                    <div className="footer-contant">
-                      <ul className="contact-list">
-                        <li>
-                          <i className="fa fa-map-marker"></i>Multikart Demo
-                          Store, Demo store India 345-659
-                        </li>
-                        <li>
-                          <i className="fa fa-phone"></i>Call Us: 123-456-7898
-                        </li>
-                        <li>
-                          <i className="fa fa-envelope-o"></i>Email Us:{" "}
-                          <a href="#">Support@Fiot.com</a>
-                        </li>
-                        <li>
-                          <i className="fa fa-fax"></i>Fax: 123456
-                        </li>
-                      </ul>
+                    <div className="footer-contant" style={{ paddingTop: 10 }}>
+                      <div style={{ display: "flex", gap: 20 }}>
+                        {(data?.social?.data || []).map((r, i) => (
+                          <img
+                            onClick={() => {
+                              window.open(r?.link);
+                            }}
+                            key={i}
+                            className="image-content"
+                            alt={r?.image?.url}
+                            src={r?.image?.url || "https://placehold.co/200"}
+                            style={{ cursor: "pointer", width: 40, height: 40 }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </Collapse>
+                  {/*  */}
+                  <div className="sub-title"></div>
+                  <div
+                    className={`footer-title ${
+                      isOpen && collapse == 5 ? "active" : ""
+                    } `}
+                    style={{ marginTop: width ? "" : 20 }}
+                  >
+                    <span
+                      style={{ fontWeight: "600", fontSize: 14 }}
+                      onClick={() => {
+                        if (width) {
+                          setIsOpen(!isOpen);
+                          setCollapse(5);
+                        } else setIsOpen(true);
+                      }}
+                    >
+                      {data?.payment?.name
+                        ? data?.payment?.name.toUpperCase()
+                        : "PHƯƠNG THỨC THANH TOÁN"}
+                    </span>
+                    <span className="according-menu"></span>
+                  </div>
+                  <Collapse
+                    isOpen={width ? (collapse === 5 ? isOpen : false) : true}
+                  >
+                    <div className="footer-contant" style={{ paddingTop: 10 }}>
+                      <div style={{ display: "flex", gap: 20 }}>
+                        {(data?.payment?.data || []).map((r, i) => (
+                          <img
+                            key={i}
+                            className="image-content"
+                            alt={r?.image?.url}
+                            src={r?.image?.url || "https://placehold.co/200"}
+                            style={{ cursor: "pointer", width: 40, height: 40 }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </Collapse>
+                </div>
+              </Col>
+              {/*  */}
+              <Col>
+                <div className="sub-title">
+                  <div
+                    className={`footer-title ${
+                      isOpen && collapse == 6 ? "active" : ""
+                    } `}
+                  >
+                    <span
+                      style={{ fontWeight: "600", fontSize: 14 }}
+                      onClick={() => {
+                        if (width) {
+                          setIsOpen(!isOpen);
+                          setCollapse(6);
+                        } else setIsOpen(true);
+                      }}
+                    >
+                      {data?.location?.name
+                        ? data?.location?.name.toUpperCase()
+                        : "VỊ TRÍ"}
+                    </span>
+                    <span className="according-menu"></span>
+                  </div>
+                  <Collapse
+                    isOpen={width ? (collapse === 6 ? isOpen : false) : true}
+                  >
+                    <div
+                      className="footer-contant"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      {data?.location?.link ? (
+                        <img
+                          onClick={() => {
+                            window.open(data?.location?.link);
+                          }}
+                          alt={data?.location?.link}
+                          src={
+                            data?.location?.image?.url || PickImages.Location
+                          }
+                          style={{
+                            width: 300,
+                            height: 200,
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : null}
+                      {!width ? (
+                        <span style={{ marginTop: 5 }}>
+                          {data?.location?.address}
+                        </span>
+                      ) : (
+                        <p style={{ marginTop: 5 }}>
+                          {data?.location?.address}
+                        </p>
+                      )}
                     </div>
                   </Collapse>
                 </div>
@@ -293,10 +365,46 @@ const MasterFooter = ({
           </Container>
         </section>
 
-        <CopyRight
+        {/* <CopyRight
           layout={layoutClass}
           fluid={CopyRightFluid ? CopyRightFluid : ""}
-        />
+        /> */}
+        <div
+          style={{
+            width: "100%",
+            minHeight: 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: "80%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {data?.footer?.description.split("\n").map((r, index) => (
+              <p style={{ margin: 0 }} key={index}>
+                {r}
+              </p>
+            ))}
+          </div>
+          <div style={{ position: "absolute", top: 10, right: 24 }}>
+            <img
+              className="footer-images"
+              alt={data?.footer?.logo?.url}
+              src={
+                data?.footer?.logo?.url ||
+                "http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png"
+              }
+              style={{ maxHeight: 80 }}
+            />
+          </div>
+        </div>
       </footer>
     </div>
   );

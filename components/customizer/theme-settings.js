@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
 import Link from "next/link";
 import { ToastContainer } from "react-toastify";
-import { Media, Col, Row, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, } from "reactstrap";
+import {
+  Media,
+  Col,
+  Row,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Collapse,
+} from "reactstrap";
 import SettingContext from "../../helpers/theme-setting/SettingContext";
 import config from "./config.json";
 
@@ -9,7 +18,7 @@ const ThemeSettings = () => {
   const [isOpen, setIsOpen] = useState();
   const [collapse, setCollapse] = useState(0);
   const context = useContext(SettingContext);
-  const [themeLayout, setThemeLayout] = useState(false);
+  const [themeLayout, setThemeLayout] = useState(true);
   const layoutType = context.layoutFun;
   const layoutColorFunc = context.layoutColorFun;
   const layoutState = context.state;
@@ -21,7 +30,7 @@ const ThemeSettings = () => {
      ==========================*/
   useEffect(() => {
     if (config.config.layout_version && config.config.layout_type) {
-      const bodyClass = document.body.classList
+      const bodyClass = document.body.classList;
       document.body.className = `${bodyClass} ${config.config.layout_version}  ${config.config.layout_type}`;
     }
 
@@ -266,14 +275,16 @@ const ThemeSettings = () => {
 
   return (
     <div>
-      <a href={null} onClick={() => openSetting()}>
+      {/* ----------------------------------- setting icon -------------------------------------- */}
+      {/* <a href={null} onClick={() => openSetting()}>
         <div className="setting-sidebar" id="setting-icon">
           <div>
             <i className="fa fa-cog" aria-hidden="true"></i>
           </div>
         </div>
-      </a>
-      <div id="setting_box" className="setting-box">
+      </a> */}
+      {/* ----------------------------------- setting content -------------------------------------- */}
+      {/* <div id="setting_box" className="setting-box">
         <a href="# " className="overlay" onClick={() => closeSetting()}></a>
         <div className="setting_box_body">
           <div onClick={() => closeSetting()}>
@@ -283,8 +294,9 @@ const ThemeSettings = () => {
           </div>
           <div className="setting-body">
             <div
-              className={`setting-title ${isOpen && collapse == 1 ? "active" : ""
-                }`}
+              className={`setting-title ${
+                isOpen && collapse == 1 ? "active" : ""
+              }`}
             >
               <h4
                 onClick={() => {
@@ -315,8 +327,9 @@ const ThemeSettings = () => {
               </div>
             </Collapse>
             <div
-              className={`setting-title ${isOpen && collapse == 2 ? "active" : ""
-                }`}
+              className={`setting-title ${
+                isOpen && collapse == 2 ? "active" : ""
+              }`}
             >
               <h4
                 onClick={() => {
@@ -347,8 +360,9 @@ const ThemeSettings = () => {
               </div>
             </Collapse>
             <div
-              className={`setting-title ${isOpen && collapse == 3 ? "active" : ""
-                }`}
+              className={`setting-title ${
+                isOpen && collapse == 3 ? "active" : ""
+              }`}
             >
               <h4
                 onClick={() => {
@@ -379,8 +393,9 @@ const ThemeSettings = () => {
               </div>
             </Collapse>
             <div
-              className={`setting-title ${isOpen && collapse == 4 ? "active" : ""
-                }`}
+              className={`setting-title ${
+                isOpen && collapse == 4 ? "active" : ""
+              }`}
             >
               <h4
                 onClick={() => {
@@ -409,8 +424,9 @@ const ThemeSettings = () => {
               </div>
             </Collapse>
             <div
-              className={`setting-title ${isOpen && collapse == 5 ? "active" : ""
-                }`}
+              className={`setting-title ${
+                isOpen && collapse == 5 ? "active" : ""
+              }`}
             >
               <h4
                 onClick={() => {
@@ -477,8 +493,9 @@ const ThemeSettings = () => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="sidebar-btn dark-light-btn">
+      </div> */}
+      {/* ------------------------------------ change theme ------------------------------------- */}
+      {/* <div className="sidebar-btn dark-light-btn">
         <div className="dark-light">
           <div
             className="theme-layout-version"
@@ -487,7 +504,8 @@ const ThemeSettings = () => {
             {themeLayout ? "Light" : "Dark"}
           </div>
         </div>
-      </div>
+      </div> */}
+      {/* ------------------------------------- doc --------------------------------------------- */}
       <div className="addcart_btm_popup" id="fixed_cart_icon">
         <a href={null} className="fixed_cart">
           <i
@@ -498,6 +516,7 @@ const ThemeSettings = () => {
           ></i>
         </a>
       </div>
+
       <Modal centered={true} isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Config</ModalHeader>
         <ModalBody className="p-3">

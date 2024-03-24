@@ -1,25 +1,12 @@
+import Link from "next/link";
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
-import Link from "next/link";
-import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client";
-import { Slider3 } from "../../../services/script";
-import { Media, Container, Row, Col } from "reactstrap";
+import { Col, Container, Media, Row } from "reactstrap";
 import BlogData from "../../../data/DataMock/blog";
-
-const GET_PRODUCTS = gql`
-  query blog($type: String!) {
-    blog(type: $type) {
-      img
-      link
-      title
-      desc
-      date
-    }
-  }
-`;
+import { Slider3 } from "../../../services/script";
 
 const BlogSection = ({ type, sectionClass, title, inner, hrClass }) => {
+  // 1000 x 591
   const [data, setData] = useState({});
 
   // var { data } = useQuery(GET_PRODUCTS, {

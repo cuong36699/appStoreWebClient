@@ -6,6 +6,7 @@ const MasterServiceContent = ({
   service,
   marijuana,
   lastChild,
+  url,
 }) => {
   return (
     <div
@@ -13,7 +14,13 @@ const MasterServiceContent = ({
         lastChild ? "border-0 m-0" : ""
       }`}
     >
-      <div dangerouslySetInnerHTML={{ __html: link }} />
+      {link ? (
+        <div dangerouslySetInnerHTML={{ __html: link }} />
+      ) : (
+        <div>
+          <img src={url} style={{ width: 80 }} />
+        </div>
+      )}
       <div className="media-body">
         <h4>{title}</h4>
         <p>{service}</p>
