@@ -35,15 +35,16 @@ const MasterBanner = ({
             <Col>
               <div className="slider-contain">
                 <div>
-                  {/* <h4>{title}</h4>
-                  <h1>{desc}</h1> */}
-
-                  <a
-                    className={`btn ${btnClass ? btnClass : "btn-solid"}`}
-                    onClick={handleClick}
-                  >
-                    {btn ? btn : "Shop Now"}{" "}
-                  </a>
+                  <h4>{title}</h4>
+                  <h1>{desc}</h1>
+                  {link ? (
+                    <a
+                      className={`btn ${btnClass ? btnClass : "btn-solid"}`}
+                      onClick={handleClick}
+                    >
+                      {btn ? btn : "Shop Now"}{" "}
+                    </a>
+                  ) : null}
                 </div>
               </div>
             </Col>

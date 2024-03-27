@@ -10,32 +10,8 @@ import { Product4 } from "../services/script";
 import Banner from "./layouts/Fashion/Components/Banner";
 import CollectionBanner from "./layouts/Fashion/Components/Collection-Banner";
 import Parallax from "./layouts/Fashion/Components/Parallax";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAbout,
-  fetchBanner,
-  fetchCampaign,
-  fetchCategory,
-  fetchCategoryDetail,
-  fetchProduct,
-  fetchServices,
-  fetchVoucher,
-} from "../redux/reducers";
 
 const Fashion = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchProduct());
-    dispatch(fetchCategory());
-    dispatch(fetchCategoryDetail());
-    dispatch(fetchCampaign());
-    dispatch(fetchVoucher());
-    dispatch(fetchServices());
-    dispatch(fetchAbout());
-    dispatch(fetchBanner());
-  }, []);
-
   return (
     <>
       <Helmet>
@@ -49,9 +25,16 @@ const Fashion = () => {
       {/* <ModalComponent /> */}
       <HeaderOne logoName={"logo.png"} topClass="top-header" />
       <Banner />
+      <Paragraph
+        title={"Voucher"}
+        className="title1 section-t-space"
+        inner="title-inner1"
+        hrClass={false}
+      />
       <CollectionBanner />
       <Paragraph
-        title="title1 section-t-space"
+        title={"sản phẩm bán chạy"}
+        className="title1 section-t-space"
         inner="title-inner1"
         hrClass={false}
       />

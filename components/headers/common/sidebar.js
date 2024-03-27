@@ -20,10 +20,10 @@ const SideBar = () => {
     setDataCategoryDetail(detailAPI);
   }, [categoryAPI, detailAPI]);
 
-  const handleClick = (id, type, category, detail) => {
+  const handleClick = (id, type, categoryName, detailName, activeTab) => {
     router.push({
       pathname: "/show-filter",
-      query: { type, id, category, detail },
+      query: { type, id, categoryName, detailName, activeTab },
     });
   };
 
@@ -46,7 +46,14 @@ const SideBar = () => {
                         <a
                           href="#"
                           onClick={() => {
-                            handleClick(r?.id, "category", r?.name);
+                            closeNav();
+                            handleClick(
+                              r?.id,
+                              "category",
+                              r?.name,
+                              null,
+                              index
+                            );
                           }}
                         >
                           {r?.name}
@@ -66,14 +73,16 @@ const SideBar = () => {
                                 <li key={`${detail?.id}-${indexDetail}`}>
                                   <a
                                     href="#"
-                                    onClick={() =>
+                                    onClick={() => {
+                                      closeNav();
                                       handleClick(
                                         detail?.id,
                                         "category_detail",
                                         r?.name,
-                                        find
-                                      )
-                                    }
+                                        find,
+                                        index
+                                      );
+                                    }}
                                   >
                                     {find}
                                   </a>

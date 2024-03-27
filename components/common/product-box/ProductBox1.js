@@ -5,6 +5,8 @@ import { Row, Col, Media, Modal, ModalBody } from "reactstrap";
 import CartContext from "../../../helpers/cart";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import MasterProductDetail from "./MasterProductDetail";
+import { useSelector, useDispatch } from "react-redux";
+import { saveProduct } from "../../../redux/reducers/common";
 
 const ProductItem = ({
   product,
@@ -19,6 +21,7 @@ const ProductItem = ({
 }) => {
   // eslint-disable-next-line
   // 400 x 296
+  const dispatch = useDispatch();
   const router = useRouter();
   const cartContext = useContext(CartContext);
   const curContext = useContext(CurrencyContext);
@@ -40,8 +43,8 @@ const ProductItem = ({
   };
 
   const clickProductDetail = () => {
-    const nameProps = product?.name?.split(" ").join("");
-    router.push(`/product-details/${product?.id}` + "-" + `${nameProps}`);
+    router.push(`/product-details/product`);
+    dispatch(saveProduct(product));
   };
 
   const changeByType = (url) => {

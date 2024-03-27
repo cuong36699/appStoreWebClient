@@ -74,18 +74,6 @@ const HeaderOne = ({
       openmyslide.classList.add("open-side");
     }
   };
-  // const openSearch = () => {
-  //   document.getElementById("search-overlay").style.display = "block";
-  // };
-
-  const openSearch = () => {
-    if (value !== "") {
-      router.push({
-        pathname: "/show-filter",
-        query: { type: "search", value: value, category: "Tìm kiếm" },
-      });
-    }
-  };
 
   // eslint-disable-next-line
   const load = () => {
@@ -160,26 +148,8 @@ const HeaderOne = ({
                               gap: 20,
                             }}
                           >
-                            <div
-                              style={{
-                                backgroundColor: "#f8f8f8",
-                                width: 400,
-                                height: 40,
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                borderRadius: 16,
-                              }}
-                            >
+                            <div className="header-search-custom">
                               <input
-                                style={{
-                                  border: 0,
-                                  outline: 0,
-                                  width: "90%",
-                                  height: "100%",
-                                  backgroundColor: "#f8f8f8",
-                                  borderRadius: 16,
-                                }}
                                 onBlur={() => {
                                   setTimeout(() => {
                                     setOpen(false);
@@ -192,28 +162,23 @@ const HeaderOne = ({
                                   onChangeValue(e.target.value);
                                 }}
                                 placeholder="Bạn cần tìm gì?"
-                                onKeyPress={(event) => {
-                                  if (event.key === "Enter") {
-                                    openSearch();
-                                  }
-                                }}
                               />
                             </div>
-
                             <Media
                               src={search.src}
-                              onClick={openSearch}
                               className="img-fluid"
                               alt=""
                             />
+                            <i className="fa fa-search"></i>
                           </div>
                         </li>
                         {/* setting */}
                         {/* <Currency icon={settings.src} /> */}
                         {/*Header Cart Component */}
                         {direction === undefined ? (
-                          // <></>
-                          <CartContainer layout={direction} icon={cart.src} />
+                          <div style={{ minWidth: 50 }}>
+                            <CartContainer layout={direction} icon={cart.src} />
+                          </div>
                         ) : (
                           <Cart layout={direction} icon={cart.src} />
                         )}

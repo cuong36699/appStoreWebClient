@@ -15,6 +15,7 @@ import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../helpers/apollo";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
+import FetchAPI from "../components/fetchAPI";
 
 export default function MyApp({ Component, pageProps }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -65,6 +66,7 @@ export default function MyApp({ Component, pageProps }) {
             </Helmet>
             <div>
               <Provider store={store}>
+                <FetchAPI />
                 <SettingProvider>
                   <CompareContextProvider>
                     <CurrencyContextProvider>

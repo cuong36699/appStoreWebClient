@@ -55,8 +55,6 @@ const MasterFooter = ({
     });
   };
 
-  console.log(data, "about");
-
   return (
     <div>
       <footer className={footerClass}>

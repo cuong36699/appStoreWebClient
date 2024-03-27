@@ -29,11 +29,10 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
 
   const valuePrice = () => {
     if (product?.sale) {
-      return (
-        (product?.type?.[active]?.price -
-          (product?.type?.[active]?.price * (product?.sale || 0)) / 100) *
-        product?.type?.[active]?.price
-      );
+      const price = product?.type?.[active]?.price.replaceAll(",", "");
+      const priceOff = price - (price * (product?.sale || 0)) / 100;
+      const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return valuePrice;
     } else {
       return product?.type?.[active]?.price;
     }
@@ -42,58 +41,20 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
   return (
     <>
       <div className={`product-right ${stickyClass}`}>
-        <h2> {product.title} </h2>
-        <h4>
-          <del>
-            {valuePrice()}
-            {symbol}
-          </del>
-          <span>{product.discount}% off</span>
-        </h4>
+        <h2> {product.name} </h2>
+        {product.sale ? (
+          <h4>
+            <del>
+              {product?.type?.[active]?.price}
+              {symbol}
+            </del>
+            <span>{product.sale}% off</span>
+          </h4>
+        ) : null}
         <h3>
           {valuePrice()}
           {symbol}
         </h3>
-        {/* {product.variants.map((vari) => {
-          var findItem = uniqueColor.find((x) => x.color === vari.color);
-          if (!findItem) uniqueColor.push(vari);
-          var findItemSize = uniqueSize.find((x) => x === vari.size);
-          if (!findItemSize) uniqueSize.push(vari.size);
-        })} */}
-        {changeColorVar === undefined ? (
-          <>
-            {uniqueColor ? (
-              <ul className="color-variant">
-                {uniqueColor.map((vari, i) => {
-                  return (
-                    <li className={vari.color} key={i} title={vari.color}></li>
-                  );
-                })}
-              </ul>
-            ) : (
-              ""
-            )}
-          </>
-        ) : (
-          <>
-            {uniqueColor ? (
-              <ul className="color-variant">
-                {uniqueColor.map((vari, i) => {
-                  return (
-                    <li
-                      className={vari.color}
-                      key={i}
-                      title={vari.color}
-                      onClick={() => changeColorVar(i)}
-                    ></li>
-                  );
-                })}
-              </ul>
-            ) : (
-              ""
-            )}
-          </>
-        )}
         <div className="product-description border-product">
           {product.variants ? (
             <div>

@@ -35,8 +35,12 @@ export default function Category() {
       >
         <div style={{ width: "72%", fontWeight: "500" }}>
           <a> {"Home >"}</a>
-          {router.query?.category ? <a> {router.query?.category}</a> : null}
-          {router.query?.detail ? <a>{`> ${router.query?.detail}`}</a> : null}
+          {router.query?.categoryName ? (
+            <a> {router.query?.categoryName}</a>
+          ) : null}
+          {router.query?.detailName ? (
+            <a>{`> ${router.query?.detailName}`}</a>
+          ) : null}
         </div>
       </div>
       {/*  */}

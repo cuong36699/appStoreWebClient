@@ -1,26 +1,130 @@
-.scrollbar {
-  overflow-x: scroll;
-}
+// .scrollbar {
+//   overflow-x: scroll;
+// }
 
-.scrollbar::-webkit-scrollbar {
-  height: 5px;
-}
+// .scrollbar::-webkit-scrollbar {
+//   height: 5px;
+// }
 
-.scrollbar::-webkit-scrollbar-track {
-  background: #fff;
-}
+// .scrollbar::-webkit-scrollbar-track {
+//   background: #fff;
+// }
 
-.scrollbar::-webkit-scrollbar-thumb {
-  background: var(--theme-deafult);
-  border-radius: 4px;
-}
+// .scrollbar::-webkit-scrollbar-thumb {
+//   background: var(--theme-deafult);
+//   border-radius: 4px;
+// }
 
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #ff4c3b80;
-}
+// .scrollbar::-webkit-scrollbar-thumb:hover {
+//   background: #ff4c3b80;
+// }
 
 .tab-product {
   @media (max-width: 425px) {
     min-width: 100px;
+  }
+}
+
+.icon-nav {
+  .header-search-custom {
+    background-color: #f8f8f8;
+    width: 400px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+
+    input {
+      border: 0;
+      outline: 0;
+      width: 90%;
+      height: 100%;
+      background-color: #f8f8f8;
+      border-radius: 16px;
+    }
+  }
+}
+
+.voucher-custom {
+  .voucher-background {
+    max-width: 672px;
+    height: 310px;
+    box-shadow: 0px 0.5px 5px gray;
+    padding: 12px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-weight: 400;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .voucher-desc {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+
+    .p1 {
+      font-size: 66px;
+      font-weight: 800;
+    }
+
+    .p2 {
+      font-size: 32px;
+      font-weight: 600;
+    }
+  }
+
+  .sale-off {
+    color: #ff4c3b;
+    font-weight: 800;
+    font-size: 24px;
+    height: 80px;
+    text-align: right;
+    width: 100%;
+
+    span {
+      color: #ff4c3b;
+      font-weight: 800;
+      font-size: 64px;
+    }
+  }
+}
+
+@media (max-width: 577px) {
+  .icon-nav {
+    .header-search-custom {
+      display: none;
+    }
+  }
+
+  .voucher-custom {
+    .voucher-background {
+      height: 200px;
+    }
+
+    .voucher-desc {
+      height: 110px;
+
+      .p1 {
+        font-size: 38px;
+      }
+
+      .p2 {
+        font-size: 24px;
+      }
+    }
+
+    .sale-off {
+      font-size: 24px;
+
+      span {
+        font-size: 44px;
+      }
+    }
   }
 }

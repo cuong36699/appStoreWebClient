@@ -2,13 +2,20 @@ import React from "react";
 import { Container, Row, Col } from "reactstrap";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 const TopBarDark = ({ topClass, fluid }) => {
   const router = useRouter();
   const firebaseLogout = () => {
-    localStorage.setItem('user', false)
+    localStorage.setItem("user", false);
     router.push("/page/account/login-auth");
   };
+
+  const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
+  const phoneNumber = (aboutAPI?.social?.data || []).find(
+    (r) => r?.name === "Phone" || r?.name === "phone"
+  )?.link;
+
   return (
     <div className={topClass}>
       <Container fluid={fluid}>
@@ -16,10 +23,12 @@ const TopBarDark = ({ topClass, fluid }) => {
           <Col lg="6">
             <div className="header-contact">
               <ul>
-                <li>Welcome to Our store Multikart</li>
+                <li>Chào mừng bạn đến với store của chúng tôi</li>
                 <li>
-                  <i className="fa fa-phone text-white" aria-hidden="true"></i>Call Us: 123
-                  - 456 - 7890
+                  <i className="fa fa-phone text-white" aria-hidden="true"></i>
+                  <a href={phoneNumber}>
+                    Điện thoại: {`${phoneNumber?.replace("tel:", "")}`}
+                  </a>
                 </li>
               </ul>
             </div>
@@ -34,21 +43,21 @@ const TopBarDark = ({ topClass, fluid }) => {
                 </Link>
               </li>
               <li className="onhover-dropdown mobile-account">
-                <i className="fa fa-user" aria-hidden="true"></i> My Account
+                <i className="fa fa-user" aria-hidden="true"></i> Tài khoản
                 <ul className="onhover-show-div">
                   <li>
                     <Link href={`/page/account/login`}>
-                      <a>Login</a>
+                      <a>Đăng nhập</a>
                     </Link>
                   </li>
                   <li>
                     <Link href={`/page/account/register`}>
-                      <a>Register</a>
+                      <a>Đăng ký</a>
                     </Link>
                   </li>
-                  <li onClick={() => firebaseLogout()}>
+                  {/* <li onClick={() => firebaseLogout()}>
                     <a>Logout</a>
-                  </li>
+                  </li> */}
                 </ul>
               </li>
             </ul>

@@ -1,12 +1,12 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
 
-const Paragraph = ({ title, inner, line, hrClass }) => {
+const Paragraph = ({ title, inner, line, hrClass, className }) => {
   return (
     <>
-      <div className={title}>
+      <div className={className}>
         {/* <h4>special offer</h4> */}
-        <h2 className={inner}>sản phẩm bán chạy</h2>
+        <h2 className={inner}>{title}</h2>
         {line ? (
           <div className="line"></div>
         ) : hrClass ? (

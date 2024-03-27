@@ -11,7 +11,7 @@ const LeftSidebar = () => {
 
   return (
     <CommonLayout parent="Home" title="Product">
-      <LeftSidebarPage pathId={id} />
+      <LeftSidebarPage />
       <ProductSection />
     </CommonLayout>
   );

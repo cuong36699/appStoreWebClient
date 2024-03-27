@@ -16,18 +16,11 @@ const LeftSidebarPage = ({ pathId }) => {
   const slider1 = useRef();
   const slider2 = useRef();
 
-  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+  const product = useSelector((state) => state?.common?.product);
+  console.log(product, "xxxxxxxxxx");
 
   const getData = async () => {
     setLoading(true);
-    if (productsAPI) {
-      const getData = (productsAPI || []).find((r) => {
-        const nameProps = r?.name?.split(" ").join("");
-        const check = `${r?.id}` + "-" + `${nameProps}`;
-        return check === pathId;
-      });
-      setData(getData);
-    }
     setLoading(false);
   };
 
@@ -44,21 +37,30 @@ const LeftSidebarPage = ({ pathId }) => {
   };
 
   var productsnav = {
-    dots: false,
-    infinite: data?.type?.length > 3,
-    speed: 500,
     slidesToShow: 3,
-    slidesToScroll: 3,
+    infinite: product?.type?.length > 3,
+    swipeToSlide: true,
+    arrows: false,
+    dots: false,
     focusOnSelect: true,
-    arrows: true,
   };
+
+  // var productsnav = {
+  //   dots: false,
+  //   infinite: data?.type?.length > 3,
+  //   speed: 500,
+  //   slidesToShow: 3,
+  //   slidesToScroll: 3,
+  //   focusOnSelect: true,
+  //   arrows: true,
+  // };
 
   useEffect(() => {
     setState({
       nav1: slider1.current,
       nav2: slider2.current,
     });
-  }, [data]);
+  }, [product]);
 
   const { nav1, nav2 } = state;
 
@@ -94,7 +96,7 @@ const LeftSidebarPage = ({ pathId }) => {
                     </div>
                   </Col>
                 </Row>
-                {!data || data.length === 0 || loading ? (
+                {!product || product.length === 0 || loading ? (
                   "loading"
                 ) : (
                   <Row>
@@ -105,7 +107,7 @@ const LeftSidebarPage = ({ pathId }) => {
                         ref={(slider) => (slider1.current = slider)}
                         className="product-slick"
                       >
-                        {data?.images?.map((vari, index) => (
+                        {product?.images?.map((vari, index) => (
                           <div key={`${vari?.id}-${index}`}>
                             <ImageZoom image={vari} />
                           </div>
@@ -117,19 +119,19 @@ const LeftSidebarPage = ({ pathId }) => {
                         asNavFor={nav1}
                         ref={(slider) => (slider2.current = slider)}
                       >
-                        {data?.images
-                          ? data.images.map((vari, index) => (
+                        {product?.images
+                          ? product.images.map((vari, index) => (
                               <div key={`${vari?.id}-${index}`}>
                                 <Media
                                   src={`${vari.url}`}
                                   key={`${vari?.id}-${index}`}
                                   alt={vari.alt}
                                   className="img-fluid"
-                                  style={{
-                                    maxWidth: 80,
-                                    minHeight: 100,
-                                    objectFit: "cover",
-                                  }}
+                                  // style={{
+                                  //   maxWidth: 80,
+                                  //   minHeight: 100,
+                                  //   objectFit: "cover",
+                                  // }}
                                 />
                               </div>
                             ))
@@ -138,7 +140,7 @@ const LeftSidebarPage = ({ pathId }) => {
                     </Col>
                     <Col lg="6" className="rtl-text">
                       <DetailsWithPrice
-                        item={data}
+                        item={product}
                         changeColorVar={changeColorVar}
                       />
                     </Col>
