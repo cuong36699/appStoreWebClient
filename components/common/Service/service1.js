@@ -1,44 +1,18 @@
 import React, { useEffect, useState } from "react";
-import {
-  svgFreeShipping,
-  svgservice,
-  svgoffer,
-} from "../../../services/script";
-import { Container, Row, Col } from "reactstrap";
+import { Col, Container, Row } from "reactstrap";
 import MasterServiceContent from "./MasterServiceConternt";
-import { get_services } from "../../../apis/get";
-
-const Data = [
-  {
-    link: svgFreeShipping,
-    name: "free shipping",
-    description: "free shipping world wide",
-  },
-  {
-    link: svgservice,
-    name: "24 X 7 service",
-    description: "online service for 24 x 7",
-  },
-  {
-    link: svgoffer,
-    name: "festival offer",
-    description: "new online special festival offer",
-  },
-];
+import { useSelector } from "react-redux";
 
 const ServiceLayout = ({ sectionClass }) => {
   const [data, setData] = useState([]);
 
-  const getData = async () => {
-    const serviceAPI = await get_services();
-    setData(serviceAPI);
-  };
+  const servicesAPI = useSelector((state) => state?.api?.servicesAPI);
 
   useEffect(() => {
-    getData();
-  }, []);
-
-  console.log(data, "bbbvvvvvvvvvvvvvv");
+    if (servicesAPI) {
+      setData(servicesAPI);
+    }
+  }, [servicesAPI]);
 
   return (
     <Container>

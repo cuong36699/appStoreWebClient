@@ -1,75 +1,108 @@
-import Link from "next/link";
+import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
-import { Col, Container, Media, Row } from "reactstrap";
-import { get_voucher } from "../../../../apis/get";
+import { useSelector } from "react-redux";
+import { Col, Container, Row } from "reactstrap";
 
-const Data = [
-  {
-    img: "https://firebasestorage.googleapis.com/v0/b/web-store-project-e9a0f.appspot.com/o/banner%2F58b5d8aa-844d-4c13-8abc-b607a13e8941?alt=media&token=54dbd542-9183-40e4-8990-b217090930d2",
-    about: "OnePlus Nord 3",
-    offer: "10% off",
-    link: "/left-sidebar/collection",
-  },
-  {
-    img: "https://firebasestorage.googleapis.com/v0/b/web-store-project-e9a0f.appspot.com/o/banner%2F53263267-f7ab-45f4-bbc4-5e368e074c30?alt=media&token=d841b724-74d4-4770-992a-0d9062a7da6f",
-    offer: "10% off",
-    link: "/left-sidebar/collection",
-  },
-];
-
-const MasterCollectionBanner = ({ img, about, offer, link, classes }) => {
-  return (
-    <Col md="6">
-      <Link href={link}>
-        <a>
-          <div className={`collection-banner ${classes}`}>
-            <img
-              src={img}
-              className="img-fluid"
-              alt=""
-              style={{ maxHeight: 310, maxWidth: 672 }}
-            />
-            <div className="contain-banner">
-              <div>
-                <h4>{offer}</h4>
-                <h2>{about}</h2>
-              </div>
-            </div>
-          </div>
-        </a>
-      </Link>
-    </Col>
-  );
-};
+const background = "/assets/images/voucher-coupon.jpg";
 
 const CollectionBanner = () => {
   const [data, setData] = useState([]);
 
-  const getData = async () => {
-    const voucherAPI = await get_voucher();
-    setData(voucherAPI);
-  };
+  const voucherAPI = useSelector((state) => state?.api?.voucherAPI);
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (voucherAPI) {
+      const voucherActive = (voucherAPI || []).filter((v) => {
+        const isStart = moment().isAfter(
+          moment(`${v?.start_day} ${v?.start_hour}`, "DD/MM/YYYY hh:mm")
+        );
+        const isEnd = moment().isAfter(
+          moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
+        );
+        return v.status && isStart && !isEnd;
+      });
+      setData(voucherActive);
+    }
+  }, [voucherAPI]);
+
+  console.log(data, "zxccccccccccccc");
 
   return (
     <Fragment>
       {/*collection banner*/}
       <section className="pb-0">
         <Container>
-          <Row className="partition2">
-            {Data.map((data, i) => {
+          <Row
+            className="partition2"
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            {(data || []).map((data, i) => {
               return (
-                <MasterCollectionBanner
-                  key={i}
-                  img={data.img}
-                  about={data.about}
-                  link={data.link}
-                  offer={data.offer}
-                  classes={data.class}
-                />
+                <Col md="6">
+                  <div
+                    style={{
+                      maxWidth: 672,
+                      height: 310,
+                      boxShadow: "0px 0.5px 5px gray",
+                      padding: 12,
+                      display: "flex",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      fontWeight: 400,
+                      backgroundImage: `url(${background})`,
+                      backgroundRepeat: "no-repeat",
+                      backgroundSize: "cover",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          height: 200,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "flex-end",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <div>{`Cho đơn hàng sử dùng mã giảm giá này`}</div>
+                        {data?.max_sale ? (
+                          <div>{`Giảm tối đa đến ${data?.max_sale}Đ`}</div>
+                        ) : null}
+                        {data?.min_price ? (
+                          <div>{`Áp dụng cho đơn hàng từ ${data?.min_price}Đ trở lên`}</div>
+                        ) : null}
+                      </div>
+                      <div
+                        style={{
+                          color: "#ff4c3b",
+                          fontWeight: 800,
+                          fontSize: 24,
+                          height: 80,
+                          textAlign: "right",
+                          width: "100%",
+                        }}
+                      >
+                        {`Giảm`}
+                        <span
+                          style={{
+                            color: "#ff4c3b",
+                            fontWeight: 800,
+                            fontSize: 54,
+                          }}
+                        >{` ${data?.sale}%`}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
               );
             })}
           </Row>

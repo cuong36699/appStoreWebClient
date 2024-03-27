@@ -1,16 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import Slider from "react-slick";
-import { useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
-import ProductItems from "../product-box/ProductBox1";
-import { Row, Col, Container, Media } from "reactstrap";
+import { Col, Container, Row } from "reactstrap";
 import CartContext from "../../../helpers/cart";
+import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import PostLoader from "../PostLoader";
-import { CompareContext } from "../../../helpers/Compare/CompareContext";
-import search from "../../../public/assets/images/empty-search.jpg";
-import productsData from "../../../data/DataMock/products";
-import { get_products } from "../../../apis/get";
+import ProductItems from "../product-box/ProductBox1";
+import { useSelector } from "react-redux";
 
 const TopCollection = ({
   type,
@@ -30,20 +26,25 @@ const TopCollection = ({
   const contextWishlist = useContext(WishlistContext);
   const comapreList = useContext(CompareContext);
   const quantity = context.quantity;
+
   const [delayProduct, setDelayProduct] = useState(true);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const getData = async () => {
-    setLoading(true);
-    const productsAPI = await get_products();
-    setData(productsAPI);
-    setLoading(false);
-  };
+  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+  const statusAPI = useSelector((state) => state?.api?.status);
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (statusAPI === "loading") {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [statusAPI]);
+
+  useEffect(() => {
+    setData(productsAPI);
+  }, [productsAPI]);
 
   useEffect(() => {
     if (data === undefined) {

@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
-import NavBar from "./common/navbar";
-import SideBar from "./common/sidebar";
-import Cart from "../containers/Cart";
-import CartContainer from "../containers/CartContainer";
-import TopBarDark from "./common/topbar-dark";
-import { Media, Container, Row, Col } from "reactstrap";
-import LogoImage from "./common/logo";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { Col, Container, Media, Row } from "reactstrap";
+import cart from "../../public/assets/images/icon/cart.png";
 import search from "../../public/assets/images/icon/search.png";
 import settings from "../../public/assets/images/icon/setting.png";
-import cart from "../../public/assets/images/icon/cart.png";
+import Cart from "../containers/Cart";
+import CartContainer from "../containers/CartContainer";
 import Currency from "./common/currency";
-import { useRouter } from "next/router";
-import SearchOverlay from "./common/search-overlay";
-import { get_products } from "../../apis/get";
+import LogoImage from "./common/logo";
+import SideBar from "./common/sidebar";
+import TopBarDark from "./common/topbar-dark";
+import { useSelector } from "react-redux";
 
 let timer = null;
 
@@ -29,18 +27,18 @@ const HeaderOne = ({
   const [data, setData] = useState([]);
   const [dataSearch, setDataSearch] = useState([]);
 
+  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+
   /*=====================
      Pre loader
      ==========================*/
 
-  const getData = async () => {
-    const productsAPI = await get_products();
-    setData(productsAPI || []);
-  };
-
   useEffect(() => {
-    getData();
-  }, []);
+    if (productsAPI) {
+      const productsActive = (productsAPI || []).filter((r) => r?.status);
+      setData(productsActive || []);
+    }
+  }, [productsAPI]);
 
   useEffect(() => {
     setTimeout(function () {
@@ -210,7 +208,8 @@ const HeaderOne = ({
                             />
                           </div>
                         </li>
-                        <Currency icon={settings.src} />
+                        {/* setting */}
+                        {/* <Currency icon={settings.src} /> */}
                         {/*Header Cart Component */}
                         {direction === undefined ? (
                           // <></>
@@ -226,7 +225,7 @@ const HeaderOne = ({
             </Col>
           </Row>
         </Container>
-        {open ? (
+        {open && value ? (
           <div
             style={{
               position: "fixed",
@@ -239,38 +238,48 @@ const HeaderOne = ({
               boxShadow: "0px 2px 3px gray",
             }}
           >
-            {value && dataSearch && dataSearch.length > 0
-              ? dataSearch.map((item, index) => (
-                  <div
-                    key={`${item?.id}-${index}`}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      height: 80,
-                      paddingInline: 16,
-                      cursor: "pointer",
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleClickItem(item?.name, item?.id);
-                    }}
-                  >
-                    <div>
-                      <img
-                        src={item?.images?.[0]?.url}
-                        width={50}
-                        height={70}
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                    <span style={{ marginLeft: 10 }}>{item?.name}</span>
+            {value && dataSearch && dataSearch.length > 0 ? (
+              dataSearch.map((item, index) => (
+                <div
+                  key={`${item?.id}-${index}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    height: 80,
+                    paddingInline: 16,
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleClickItem(item?.name, item?.id);
+                  }}
+                >
+                  <div>
+                    <img
+                      src={item?.images?.[0]?.url}
+                      width={50}
+                      height={70}
+                      style={{ objectFit: "cover" }}
+                    />
                   </div>
-                ))
-              : null}
+                  <span style={{ marginLeft: 10 }}>{item?.name}</span>
+                </div>
+              ))
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: 100,
+                }}
+              >
+                <span>Không tìm thấy nội dung</span>
+              </div>
+            )}
           </div>
         ) : null}
       </header>
-      {/* <SearchOverlay /> */}
     </div>
   );
 };

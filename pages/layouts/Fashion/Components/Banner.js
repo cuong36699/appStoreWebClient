@@ -1,20 +1,19 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Slider from "react-slick";
-import { get_banners } from "../../../../apis/get";
 import MasterBanner from "./MasterBanner";
+import { useSelector } from "react-redux";
 
 const Banner = () => {
   const [data, setData] = useState([]);
 
-  const getData = async () => {
-    const bannerAPI = await get_banners();
-    console.log(bannerAPI, "bannerAPI");
-    setData(bannerAPI);
-  };
+  const bannerAPI = useSelector((state) => state?.api?.bannerAPI);
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (bannerAPI) {
+      const bannerActive = (bannerAPI || []).filter((r) => r?.status);
+      setData(bannerActive);
+    }
+  }, [bannerAPI]);
 
   return (
     <Fragment>

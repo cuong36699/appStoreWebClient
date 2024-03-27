@@ -18,7 +18,7 @@ const ThemeSettings = () => {
   const [isOpen, setIsOpen] = useState();
   const [collapse, setCollapse] = useState(0);
   const context = useContext(SettingContext);
-  const [themeLayout, setThemeLayout] = useState(true);
+  const [themeLayout, setThemeLayout] = useState(false);
   const layoutType = context.layoutFun;
   const layoutColorFunc = context.layoutColorFun;
   const layoutState = context.state;
@@ -495,16 +495,16 @@ const ThemeSettings = () => {
         </div>
       </div> */}
       {/* ------------------------------------ change theme ------------------------------------- */}
-      {/* <div className="sidebar-btn dark-light-btn">
-        <div className="dark-light">
+      <div className="sidebar-btn dark-light-btn">
+        <div className="dark-light" style={{ height: 50 }}>
           <div
             className="theme-layout-version"
             onClick={() => changeThemeLayout()}
           >
-            {themeLayout ? "Light" : "Dark"}
+            {themeLayout ? "Light mode" : "Dark mode"}
           </div>
         </div>
-      </div> */}
+      </div>
       {/* ------------------------------------- doc --------------------------------------------- */}
       <div className="addcart_btm_popup" id="fixed_cart_icon">
         <a href={null} className="fixed_cart">

@@ -1,12 +1,11 @@
+"use client";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { useSelector } from "react-redux";
 import { Col, Container, Media, Row } from "reactstrap";
-import {
-  get_campaign,
-  get_category,
-  get_category_detail,
-  get_products,
-} from "../../../apis/get";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart/index";
@@ -14,8 +13,6 @@ import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import emptySearch from "../../../public/assets/images/empty-search.jpg";
 import PostLoader from "../PostLoader";
 import ProductItem from "../product-box/ProductBox1";
-import Slider from "react-slick";
-import moment from "moment";
 
 const TabContent = ({
   data,
@@ -103,10 +100,11 @@ const SpecialProducts = ({
   filter,
 }) => {
   const context = useContext(CartContext);
-  const [activeTab, setActiveTab] = useState("all");
-  const [data, setData] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
   const [dataCategory, setDataCategory] = useState([]);
+  const [dataRaw, setDataRaw] = useState([]);
 
   const wishListContext = useContext(WishlistContext);
   const compareContext = useContext(CompareContext);
@@ -114,97 +112,184 @@ const SpecialProducts = ({
   const currency = curContext.state;
   const quantity = context.quantity;
 
-  const getData = async () => {
-    const productsAPI = await get_products();
-    const checkProductsStatus = (productsAPI || []).filter((r) => r?.status);
-    //
-    const categoryAPI = await get_category();
-    const checkCategoryStatus = (categoryAPI || []).filter((r) => r?.status);
-    setDataCategory(checkCategoryStatus);
-    //
-    const detailAPI = await get_category_detail();
-    //
-    const campaignAPI = await get_campaign();
-    const mixDataCampaign = (campaignAPI || []).filter((v) => {
-      const checkExp = moment().isAfter(
-        moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
-      );
-      return v.status && !checkExp;
-    });
-    //
-    const mixDataProducts = (checkProductsStatus || []).map((item, index) => {
-      let findProductCampaign = null;
-      let findDetailCampaign = null;
-      let findCategoryCampaign = null;
+  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+  const categoryAPI = useSelector((state) => state?.api?.categoryAPI);
+  const detailAPI = useSelector((state) => state?.api?.detailAPI);
+  const campaignAPI = useSelector((state) => state?.api?.campaignAPI);
+  const statusAPI = useSelector((state) => state?.api?.status);
 
-      if (item?.campaign_id) {
-        findProductCampaign = (mixDataCampaign || [])?.find(
-          (r) => r?.id === item?.campaign_id
-        )?.sale;
-      } else if (!findProductCampaign) {
-        findDetailCampaign = (mixDataCampaign || [])?.find(
-          (r) => r?.category_detail_id === item?.category_detail_id
-        )?.sale;
-      } else if (!findDetailCampaign) {
-        console.log("first");
-        findCategoryCampaign = (mixDataCampaign || [])?.find(
-          (e) => !e?.category_detail_id && e?.category_id === item?.category_id
-        )?.sale;
-      }
-
-      if (findProductCampaign && findProductCampaign > 0) {
-        return {
-          ...item,
-          sale: findProductCampaign,
-        };
-      } else if (findDetailCampaign && findDetailCampaign > 0) {
-        return {
-          ...item,
-          sale: findDetailCampaign,
-        };
-      } else if (findCategoryCampaign && findCategoryCampaign > 0) {
-        return {
-          ...item,
-          sale: findCategoryCampaign,
-        };
-      } else {
-        return item;
-      }
-    });
-
-    // show data theo yeu cau
-    if (type === "product") {
-      if (activeTab === "all") {
-        setData(mixDataProducts || []);
-      } else {
-        const dataActive = (mixDataProducts || [])?.filter(
-          (r) => r?.category_id === activeTab && r?.status
-        );
-        setData(dataActive || []);
-      }
-    } else if (type === "filter") {
-      const { type, id, value } = filter;
-      if (type === "search" && value !== "") {
-        const getFilterSearch = (productsAPI || []).filter(
-          (r) =>
-            r?.name && (r?.name).toLowerCase().includes(value.toLowerCase())
-        );
-        setData(getFilterSearch);
-      } else {
-        const getFilter = (productsAPI || []).filter(
-          (r) => r?.[`${type}_id`] === id
-        );
-        setData(getFilter || []);
-      }
+  useEffect(() => {
+    if (statusAPI === "loading") {
+      setLoading(true);
+    } else {
+      setLoading(false);
     }
+  }, [statusAPI]);
+
+  const handleClickTab = (id) => {
+    if (!id) {
+      setData(dataRaw || []);
+    } else {
+      const dataNew = (dataRaw || [])?.filter((r) => r?.category_id === id);
+      setData(dataNew || []);
+    }
+    //  else if (type === "filter") {
+    //   const { type, id, value } = filter;
+    //   if (type === "search" && value !== "") {
+    //     const getFilterSearch = (productsAPI || []).filter(
+    //       (r) =>
+    //         r?.name && (r?.name).toLowerCase().includes(value.toLowerCase())
+    //     );
+    //     setData(getFilterSearch);
+    //   } else {
+    //     const getFilter = (productsAPI || []).filter(
+    //       (r) => r?.[`${type}_id`] === id
+    //     );
+    //     setData(getFilter || []);
+    //   }
+    // }
   };
 
   useEffect(() => {
-    getData();
-  }, [activeTab, type, filter]);
+    if (productsAPI) {
+      const productsActive = (productsAPI || []).filter((r) => r?.status);
+      const campaignActive = (campaignAPI || []).filter((v) => {
+        const isStart = moment().isAfter(
+          moment(`${v?.start_day} ${v?.start_hour}`, "DD/MM/YYYY hh:mm")
+        );
+        const isEnd = moment().isAfter(
+          moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
+        );
+        return v.status && isStart && !isEnd;
+      });
+      const mixData = (productsActive || []).map((item) => {
+        let saleProduct = null;
+        let saleDetail = null;
+        let saleCategory = null;
 
-  // console.log(filter, "filter");
-  console.log(data, "data");
+        if (item?.campaign_id) {
+          saleProduct = (campaignActive || [])?.find(
+            (r) => r?.id === item?.campaign_id
+          )?.sale;
+        } else if (!saleProduct) {
+          saleDetail = (campaignActive || [])?.find(
+            (r) => r?.category_detail_id === item?.category_detail_id
+          )?.sale;
+        } else if (!saleDetail) {
+          saleCategory = (campaignActive || [])?.find(
+            (e) =>
+              !e?.category_detail_id && e?.category_id === item?.category_id
+          )?.sale;
+        }
+
+        if (saleProduct && saleProduct > 0) {
+          return {
+            ...item,
+            sale: saleProduct,
+          };
+        } else if (saleDetail && saleDetail > 0) {
+          return {
+            ...item,
+            sale: saleDetail,
+          };
+        } else if (saleCategory && saleCategory > 0) {
+          return {
+            ...item,
+            sale: saleCategory,
+          };
+        } else {
+          return item;
+        }
+      });
+      setDataRaw(mixData);
+      setData(mixData);
+    }
+    if (categoryAPI) {
+      const categoryActive = (categoryAPI || []).filter((r) => r?.status);
+      setDataCategory(categoryActive);
+    }
+  }, [productsAPI, campaignAPI, categoryAPI, detailAPI]);
+
+  // const getData = async (id = "all", type) => {
+
+  //   //
+  //   const detailAPI = await get_category_detail();
+  //   //
+  //   const campaignAPI = await get_campaign();
+  //   const mixDataCampaign = (campaignAPI || []).filter((v) => {
+  //     const checkExp = moment().isAfter(
+  //       moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
+  //     );
+  //     return v.status && !checkExp;
+  //   });
+  //   //
+  //   const mixDataProducts = (checkProductsStatus || []).map((item, index) => {
+  //     let findProductCampaign = null;
+  //     let findDetailCampaign = null;
+  //     let findCategoryCampaign = null;
+
+  //     if (item?.campaign_id) {
+  //       findProductCampaign = (mixDataCampaign || [])?.find(
+  //         (r) => r?.id === item?.campaign_id
+  //       )?.sale;
+  //     } else if (!findProductCampaign) {
+  //       findDetailCampaign = (mixDataCampaign || [])?.find(
+  //         (r) => r?.category_detail_id === item?.category_detail_id
+  //       )?.sale;
+  //     } else if (!findDetailCampaign) {
+  //       console.log("first");
+  //       findCategoryCampaign = (mixDataCampaign || [])?.find(
+  //         (e) => !e?.category_detail_id && e?.category_id === item?.category_id
+  //       )?.sale;
+  //     }
+
+  //     if (findProductCampaign && findProductCampaign > 0) {
+  //       return {
+  //         ...item,
+  //         sale: findProductCampaign,
+  //       };
+  //     } else if (findDetailCampaign && findDetailCampaign > 0) {
+  //       return {
+  //         ...item,
+  //         sale: findDetailCampaign,
+  //       };
+  //     } else if (findCategoryCampaign && findCategoryCampaign > 0) {
+  //       return {
+  //         ...item,
+  //         sale: findCategoryCampaign,
+  //       };
+  //     } else {
+  //       return item;
+  //     }
+  //   });
+
+  //   // show data theo yeu cau
+  //   if (type === "product") {
+  //     if (id === "all") {
+  //       setData(mixDataProducts || []);
+  //     } else {
+  //       const dataActive = (mixDataProducts || [])?.filter(
+  //         (r) => r?.category_id === id && r?.status
+  //       );
+  //       setData(dataActive || []);
+  //     }
+  //   } else if (type === "filter") {
+  //     const { type, id, value } = filter;
+  //     if (type === "search" && value !== "") {
+  //       const getFilterSearch = (productsAPI || []).filter(
+  //         (r) =>
+  //           r?.name && (r?.name).toLowerCase().includes(value.toLowerCase())
+  //       );
+  //       setData(getFilterSearch);
+  //     } else {
+  //       const getFilter = (productsAPI || []).filter(
+  //         (r) => r?.[`${type}_id`] === id
+  //       );
+  //       setData(getFilter || []);
+  //     }
+  //   }
+  // };
+
   return (
     <div>
       <section className={designClass}>
@@ -224,49 +309,63 @@ const SpecialProducts = ({
               )}
             </div>
           )}
-
-          <Tabs className="theme-tab">
-            <TabList className="tabs tab-title">
-              <Tab
-                className={activeTab == type ? "active" : ""}
-                onClick={() => setActiveTab("all")}
+          {/*  */}
+          <div
+            style={{
+              display: "flex",
+              justifyItems: "center",
+              width: "100%",
+              height: "auto",
+            }}
+          >
+            <Box
+              sx={{
+                width: "95%",
+                maxWidth: { xs: 320, sm: 1200 },
+                bgcolor: "background.paper",
+                flexGrow: 1,
+                marginBottom: 2,
+              }}
+            >
+              <Tabs
+                value={activeTab}
+                onChange={(_, index) => {
+                  setActiveTab(index);
+                }}
+                variant="scrollable"
+                scrollButtons="auto"
+                aria-label="scrollable auto tabs example"
               >
-                All
-              </Tab>
-              {(dataCategory || []).map((category, index) => (
                 <Tab
-                  key={`${category?.id}-${index}`}
-                  className={activeTab == type ? "active" : ""}
-                  onClick={() => setActiveTab(category?.id)}
-                >
-                  {category?.name}
-                </Tab>
-              ))}
-            </TabList>
-
-            <TabPanel>
-              <TabContent
-                data={data}
-                loading={loading}
-                startIndex={0}
-                endIndex={8}
-                cartClass={cartClass}
-                backImage={backImage}
-              />
-            </TabPanel>
-            {(dataCategory || []).map((category, index) => (
-              <TabPanel key={index}>
-                <TabContent
-                  data={data}
-                  loading={loading}
-                  startIndex={0}
-                  endIndex={8}
-                  cartClass={cartClass}
-                  backImage={backImage}
+                  label="All"
+                  onClick={() => {
+                    handleClickTab();
+                  }}
+                  style={{ fontSize: 16, fontWeight: 600 }}
                 />
-              </TabPanel>
-            ))}
-          </Tabs>
+                {(dataCategory || []).map((r, index) => (
+                  <Tab
+                    key={`${r?.id}`}
+                    label={r?.name}
+                    onClick={() => {
+                      handleClickTab(r?.id);
+                    }}
+                    style={{ fontSize: 16, fontWeight: 600 }}
+                  />
+                ))}
+              </Tabs>
+            </Box>
+          </div>
+
+          {/*  */}
+          <TabContent
+            data={data}
+            loading={loading}
+            startIndex={0}
+            endIndex={8}
+            cartClass={cartClass}
+            backImage={backImage}
+          />
         </Container>
       </section>
     </div>

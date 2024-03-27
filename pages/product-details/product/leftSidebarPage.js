@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import ProductTab from "../common/product-tab";
-import Service from "../common/service";
-import NewProduct from "../../shop/common/newProduct";
+import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
-import { useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
+import NewProduct from "../../shop/common/newProduct";
 import ImageZoom from "../common/image-zoom";
+import Service from "../common/service";
 // import DetailsWithPrice from "../common/detail-price";
-import Filter from "../common/filter";
-import { Container, Row, Col, Media } from "reactstrap";
-import productsData from "../../../data/DataMock/products";
-import { get_products } from "../../../apis/get";
+import { useSelector } from "react-redux";
+import { Col, Container, Media, Row } from "reactstrap";
 import DetailsWithPrice from "../common/detail-price";
+import Filter from "../common/filter";
 
 const LeftSidebarPage = ({ pathId }) => {
   const [data, setData] = useState([]);
@@ -20,16 +16,17 @@ const LeftSidebarPage = ({ pathId }) => {
   const slider1 = useRef();
   const slider2 = useRef();
 
+  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+
   const getData = async () => {
     setLoading(true);
-    const productsAPI = await get_products();
     if (productsAPI) {
       const getData = (productsAPI || []).find((r) => {
         const nameProps = r?.name?.split(" ").join("");
         const check = `${r?.id}` + "-" + `${nameProps}`;
         return check === pathId;
       });
-      setData({ product: getData });
+      setData(getData);
     }
     setLoading(false);
   };
@@ -48,7 +45,7 @@ const LeftSidebarPage = ({ pathId }) => {
 
   var productsnav = {
     dots: false,
-    infinite: data?.product?.type?.length > 3,
+    infinite: data?.type?.length > 3,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 3,
@@ -97,10 +94,7 @@ const LeftSidebarPage = ({ pathId }) => {
                     </div>
                   </Col>
                 </Row>
-                {!data ||
-                !data.product ||
-                data.product.length === 0 ||
-                loading ? (
+                {!data || data.length === 0 || loading ? (
                   "loading"
                 ) : (
                   <Row>
@@ -111,7 +105,7 @@ const LeftSidebarPage = ({ pathId }) => {
                         ref={(slider) => (slider1.current = slider)}
                         className="product-slick"
                       >
-                        {data?.product?.images?.map((vari, index) => (
+                        {data?.images?.map((vari, index) => (
                           <div key={`${vari?.id}-${index}`}>
                             <ImageZoom image={vari} />
                           </div>
@@ -123,8 +117,8 @@ const LeftSidebarPage = ({ pathId }) => {
                         asNavFor={nav1}
                         ref={(slider) => (slider2.current = slider)}
                       >
-                        {data?.product?.images
-                          ? data.product.images.map((vari, index) => (
+                        {data?.images
+                          ? data.images.map((vari, index) => (
                               <div key={`${vari?.id}-${index}`}>
                                 <Media
                                   src={`${vari.url}`}
@@ -144,7 +138,7 @@ const LeftSidebarPage = ({ pathId }) => {
                     </Col>
                     <Col lg="6" className="rtl-text">
                       <DetailsWithPrice
-                        item={data.product}
+                        item={data}
                         changeColorVar={changeColorVar}
                       />
                     </Col>

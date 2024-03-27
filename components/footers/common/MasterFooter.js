@@ -1,19 +1,8 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Button,
-  Collapse,
-} from "reactstrap";
-import LogoImage from "../../headers/common/logo";
-import CopyRight from "./copyright";
-import { get_about } from "../../../apis/get";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { Col, Collapse, Container, Row } from "reactstrap";
+import LogoImage from "../../headers/common/logo";
+import { useSelector } from "react-redux";
 
 const MasterFooter = ({
   containerFluid,
@@ -33,6 +22,8 @@ const MasterFooter = ({
   const [collapse, setCollapse] = useState(0);
   const [data, setData] = useState([]);
 
+  const aboutAPI = useSelector((state) => state?.api?.aboutAPI);
+
   const width = window.innerWidth < 750;
 
   useEffect(() => {
@@ -50,14 +41,11 @@ const MasterFooter = ({
     };
   }, []);
 
-  const getData = async () => {
-    const aboutAPI = await get_about();
-    setData(aboutAPI[0]);
-  };
-
   useEffect(() => {
-    getData();
-  }, []);
+    if (aboutAPI) {
+      setData(aboutAPI[0]);
+    }
+  }, [aboutAPI]);
 
   const handleClick = (data) => {
     const dataString = JSON.stringify(data);

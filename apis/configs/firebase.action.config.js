@@ -1,0 +1,23 @@
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { firestore } from "../../pages/firebase-config";
+
+export const getFirebase = (key) => {
+  const collectionRef = query(
+    collection(firestore, key),
+    orderBy("create_at", "desc")
+  );
+  return getDocs(collectionRef)
+    .then((result) => {
+      return result?.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    })
+    .catch((error) => {
+      // useDispatch(
+      //   setGlobalToaster({
+      //     active: true,
+      //     mess: `${error}` || "error api! get",
+      //     status: "error",
+      //   })
+      // );
+      return null;
+    });
+};

@@ -13,6 +13,8 @@ import { CurrencyContextProvider } from "../helpers/Currency/CurrencyContext";
 import Helmet from "react-helmet";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../helpers/apollo";
+import { Provider } from "react-redux";
+import { store } from "../redux/store";
 
 export default function MyApp({ Component, pageProps }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -62,22 +64,24 @@ export default function MyApp({ Component, pageProps }) {
               </title>
             </Helmet>
             <div>
-              <SettingProvider>
-                <CompareContextProvider>
-                  <CurrencyContextProvider>
-                    <CartContextProvider>
-                      <WishlistContextProvider>
-                        <FilterProvider>
-                          <Component {...pageProps} />
-                        </FilterProvider>
-                      </WishlistContextProvider>
-                    </CartContextProvider>
-                  </CurrencyContextProvider>
-                  <ThemeSettings />
-                </CompareContextProvider>
-              </SettingProvider>
-              <ToastContainer />
-              <TapTop />
+              <Provider store={store}>
+                <SettingProvider>
+                  <CompareContextProvider>
+                    <CurrencyContextProvider>
+                      <CartContextProvider>
+                        <WishlistContextProvider>
+                          <FilterProvider>
+                            <Component {...pageProps} />
+                          </FilterProvider>
+                        </WishlistContextProvider>
+                      </CartContextProvider>
+                    </CurrencyContextProvider>
+                    <ThemeSettings />
+                  </CompareContextProvider>
+                </SettingProvider>
+                <ToastContainer />
+                <TapTop />
+              </Provider>
             </div>
           </>
         )}

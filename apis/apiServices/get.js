@@ -1,36 +1,4 @@
-import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  addDoc,
-  deleteDoc,
-  query,
-  orderBy,
-  setDoc,
-} from "firebase/firestore";
-import { firestore } from "../pages/firebase-config";
-
-export const getFirebase = (key) => {
-  const collectionRef = query(
-    collection(firestore, key),
-    orderBy("create_at", "desc")
-  );
-  return getDocs(collectionRef)
-    .then((result) => {
-      return result?.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    })
-    .catch((error) => {
-      // useDispatch(
-      //   setGlobalToaster({
-      //     active: true,
-      //     mess: `${error}` || "error api! get",
-      //     status: "error",
-      //   })
-      // );
-      return null;
-    });
-};
+import { getFirebase } from "../configs/firebase.action.config";
 
 export const get_category = () => {
   const key = "category";

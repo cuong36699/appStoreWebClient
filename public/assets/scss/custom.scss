@@ -1,0 +1,26 @@
+.scrollbar {
+  overflow-x: scroll;
+}
+
+.scrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: var(--theme-deafult);
+  border-radius: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ff4c3b80;
+}
+
+.tab-product {
+  @media (max-width: 425px) {
+    min-width: 100px;
+  }
+}

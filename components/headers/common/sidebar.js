@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { Fragment, useEffect, useState } from "react";
-import { get_category, get_category_detail } from "../../../apis/get";
+import { useSelector } from "react-redux";
 
 const SideBar = () => {
   const closeNav = () => {
@@ -12,18 +12,13 @@ const SideBar = () => {
   const [dataCategory, setDataCategory] = useState([]);
   const [dataCategoryDetail, setDataCategoryDetail] = useState([]);
 
-  const getData = async () => {
-    const categoryAPI = await get_category();
-    const categoryDetailAPI = await get_category_detail();
-    setDataCategory(categoryAPI);
-    setDataCategoryDetail(categoryDetailAPI);
-  };
-
-  console.log(dataCategory, "dataCategory");
+  const categoryAPI = useSelector((state) => state?.api?.categoryAPI);
+  const detailAPI = useSelector((state) => state?.api?.detailAPI);
 
   useEffect(() => {
-    getData();
-  }, []);
+    setDataCategory(categoryAPI);
+    setDataCategoryDetail(detailAPI);
+  }, [categoryAPI, detailAPI]);
 
   const handleClick = (id, type, category, detail) => {
     router.push({
