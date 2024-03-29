@@ -5,7 +5,6 @@ import { Media } from "reactstrap";
 import { CurrencyContext } from "../../helpers/Currency/CurrencyContext";
 
 const CartComponent = ({ icon, layout }) => {
-  
   const context = useContext(CartContext);
   const currContext = useContext(CurrencyContext);
   const symbol = currContext.state.symbol;

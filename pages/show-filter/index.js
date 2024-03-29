@@ -9,6 +9,7 @@ import MasterFooter from "../../components/footers/common/MasterFooter";
 
 export default function Category() {
   const router = useRouter();
+  const { activeTab } = router?.query;
 
   return (
     <div>
@@ -35,12 +36,12 @@ export default function Category() {
       >
         <div style={{ width: "72%", fontWeight: "500" }}>
           <a> {"Home >"}</a>
-          {router.query?.categoryName ? (
+          {/* {router.query?.categoryName ? (
             <a> {router.query?.categoryName}</a>
           ) : null}
           {router.query?.detailName ? (
             <a>{`> ${router.query?.detailName}`}</a>
-          ) : null}
+          ) : null} */}
         </div>
       </div>
       {/*  */}
@@ -56,7 +57,7 @@ export default function Category() {
             noSlider="true"
             cartClass="cart-info cart-wrap"
             noTitle="true"
-            filter={router.query}
+            changeTab={activeTab}
           />
         </div>
       </div>

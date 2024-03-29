@@ -13,21 +13,29 @@ import {
 } from "reactstrap";
 import SettingContext from "../../helpers/theme-setting/SettingContext";
 import config from "./config.json";
+import { getLocal, setLocal } from "../../helpers/Local";
+import { useDispatch, useSelector } from "react-redux";
+import { changeTheme } from "../../redux/reducers/common";
 
 const ThemeSettings = () => {
+  const dispatch = useDispatch();
+
   const [isOpen, setIsOpen] = useState();
   const [collapse, setCollapse] = useState(0);
   const context = useContext(SettingContext);
-  const [themeLayout, setThemeLayout] = useState(false);
+  // const [themeLayout, setThemeLayout] = useState(false);
   const layoutType = context.layoutFun;
   const layoutColorFunc = context.layoutColorFun;
   const layoutState = context.state;
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
 
+  const themeLayout = useSelector((state) => state?.common?.theme);
+
   /*=====================
      Tap on Top
      ==========================*/
+
   useEffect(() => {
     if (config.config.layout_version && config.config.layout_type) {
       const bodyClass = document.body.classList;
@@ -72,7 +80,8 @@ const ThemeSettings = () => {
   };
 
   const changeThemeLayout = () => {
-    setThemeLayout(!themeLayout);
+    setLocal("theme", !themeLayout);
+    dispatch(changeTheme(!themeLayout));
   };
 
   if (themeLayout) {
@@ -496,12 +505,48 @@ const ThemeSettings = () => {
       </div> */}
       {/* ------------------------------------ change theme ------------------------------------- */}
       <div className="sidebar-btn dark-light-btn">
-        <div className="dark-light" style={{ height: 50 }}>
+        <div
+          className="dark-light"
+          style={{ backgroundColor: themeLayout ? "black" : "white" }}
+        >
           <div
             className="theme-layout-version"
+            style={{ transform: "scale(0.8)" }}
             onClick={() => changeThemeLayout()}
           >
-            {themeLayout ? "Light mode" : "Dark mode"}
+            <div
+              style={{
+                backgroundColor: !themeLayout ? "black" : "white",
+                width: 30,
+                height: 30,
+                borderRadius: 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: themeLayout ? "black" : "white",
+                  width: 26,
+                  height: 26,
+                  borderRadius: 100,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: !themeLayout ? "black" : "white",
+                    width: 16,
+                    height: 16,
+                    borderRadius: 100,
+                  }}
+                ></div>
+              </div>
+            </div>
+            {/* {themeLayout ? "Light mode" : "Dark mode"} */}
           </div>
         </div>
       </div>

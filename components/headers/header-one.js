@@ -28,6 +28,7 @@ const HeaderOne = ({
   const [dataSearch, setDataSearch] = useState([]);
 
   const productsAPI = useSelector((state) => state?.api?.productsAPI);
+  const theme = useSelector((state) => state?.common?.theme);
 
   /*=====================
      Pre loader
@@ -105,7 +106,11 @@ const HeaderOne = ({
 
   return (
     <div>
-      <header id="sticky" className={`sticky ${headerClass}`}>
+      <header
+        id="sticky"
+        className={`sticky ${headerClass}`}
+        style={{ position: "relative" }}
+      >
         <div className="mobile-fix-option"></div>
         {/*Top Header Component*/}
         {noTopBar ? "" : <TopBarDark topClass={topClass} />}
@@ -148,8 +153,15 @@ const HeaderOne = ({
                               gap: 20,
                             }}
                           >
-                            <div className="header-search-custom">
+                            <div
+                              className={`header-search-custom ${
+                                theme ? "is-theme" : ""
+                              }`}
+                            >
                               <input
+                                className={`input-search ${
+                                  theme ? "is-theme" : ""
+                                }`}
                                 onBlur={() => {
                                   setTimeout(() => {
                                     setOpen(false);
@@ -173,7 +185,7 @@ const HeaderOne = ({
                           </div>
                         </li>
                         {/* setting */}
-                        {/* <Currency icon={settings.src} /> */}
+                        <Currency icon={settings.src} />
                         {/*Header Cart Component */}
                         {direction === undefined ? (
                           <div style={{ minWidth: 50 }}>

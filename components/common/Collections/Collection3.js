@@ -7,6 +7,7 @@ import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import PostLoader from "../PostLoader";
 import ProductItems from "../product-box/ProductBox1";
 import { useSelector } from "react-redux";
+import Paragraph from "../Paragraph";
 
 const TopCollection = ({
   type,
@@ -31,7 +32,7 @@ const TopCollection = ({
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+  const products = useSelector((state) => state?.common?.products);
   const statusAPI = useSelector((state) => state?.api?.status);
 
   useEffect(() => {
@@ -43,8 +44,11 @@ const TopCollection = ({
   }, [statusAPI]);
 
   useEffect(() => {
-    setData(productsAPI);
-  }, [productsAPI]);
+    if (products) {
+      const newData = (products || []).filter((r) => r?.isHot);
+      setData(newData || []);
+    }
+  }, [products]);
 
   useEffect(() => {
     if (data === undefined) {
@@ -57,9 +61,22 @@ const TopCollection = ({
     }, 1);
   }, [delayProduct]);
 
+  const productSliderCustom = {
+    ...productSlider,
+    infinite: data.length > 4,
+  };
+
   return (
     <>
       <section className={designClass}>
+        {data && data.length > 0 ? (
+          <Paragraph
+            title={"sản phẩm bán chạy"}
+            className="title1 section-t-space"
+            inner="title-inner1"
+            hrClass={false}
+          />
+        ) : null}
         {noSlider ? (
           <Container>
             <Row>
@@ -96,7 +113,10 @@ const TopCollection = ({
                     </div>
                   </div>
                 ) : (
-                  <Slider {...productSlider} className="product-m no-arrow">
+                  <Slider
+                    {...productSliderCustom}
+                    className="product-m no-arrow"
+                  >
                     {data &&
                       data.map((product, i) => (
                         <div key={i}>

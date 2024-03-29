@@ -25,25 +25,13 @@ const Fashion = () => {
       {/* <ModalComponent /> */}
       <HeaderOne logoName={"logo.png"} topClass="top-header" />
       <Banner />
-      <Paragraph
-        title={"Voucher"}
-        className="title1 section-t-space"
-        inner="title-inner1"
-        hrClass={false}
-      />
       <CollectionBanner />
-      <Paragraph
-        title={"sản phẩm bán chạy"}
-        className="title1 section-t-space"
-        inner="title-inner1"
-        hrClass={false}
-      />
       <TopCollection
         noTitle="null"
         backImage={true}
         type="product"
-        // title="Sẩn phẩm bán chạy"
-        // subtitle="special offer"
+        title="Sẩn phẩm bán chạy"
+        subtitle="special offer"
         productSlider={Product4}
         designClass="section-b-space p-t-0 ratio_asos px-2"
         noSlider="false"

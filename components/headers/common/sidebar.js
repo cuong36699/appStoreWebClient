@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { setLocal } from "../../../helpers/Local";
 
 const SideBar = () => {
   const closeNav = () => {
@@ -9,22 +10,22 @@ const SideBar = () => {
   };
 
   const router = useRouter();
-  const [dataCategory, setDataCategory] = useState([]);
-  const [dataCategoryDetail, setDataCategoryDetail] = useState([]);
 
-  const categoryAPI = useSelector((state) => state?.api?.categoryAPI);
-  const detailAPI = useSelector((state) => state?.api?.detailAPI);
+  const category = useSelector((state) => state?.common?.category);
+  const categoryDetail = useSelector((state) => state?.api?.detailAPI);
 
-  useEffect(() => {
-    setDataCategory(categoryAPI);
-    setDataCategoryDetail(detailAPI);
-  }, [categoryAPI, detailAPI]);
-
-  const handleClick = (id, type, categoryName, detailName, activeTab) => {
+  const handleClick = (id, type, tab) => {
+    console.log("first");
+    setLocal("filter", { id: id, type: type, tab: tab + 1 });
     router.push({
       pathname: "/show-filter",
-      query: { type, id, categoryName, detailName, activeTab },
+      query: { activeTab: tab },
     });
+  };
+
+  const getDetail = (id) => {
+    const find = (categoryDetail || []).find((data) => data?.id === id).name;
+    return find;
   };
 
   return (
@@ -34,12 +35,12 @@ const SideBar = () => {
         <nav>
           <a href={null} onClick={closeNav}>
             <div className="sidebar-back text-start">
-              <i className="fa fa-angle-left pe-2" aria-hidden="true"></i> Back
+              <i className="fa fa-angle-left pe-2" aria-hidden="true"></i>
             </div>
           </a>
           <ul id="sub-menu" className="sidebar-menu">
-            {dataCategory && dataCategory.length > 0
-              ? (dataCategory || []).map((r, index) => {
+            {category && category?.length > 0
+              ? (category || []).map((r, index) => {
                   if (r?.status) {
                     return (
                       <li key={`${r?.id}-${index}`}>
@@ -47,13 +48,7 @@ const SideBar = () => {
                           href="#"
                           onClick={() => {
                             closeNav();
-                            handleClick(
-                              r?.id,
-                              "category",
-                              r?.name,
-                              null,
-                              index
-                            );
+                            handleClick(r?.id, "category", index);
                           }}
                         >
                           {r?.name}
@@ -63,12 +58,9 @@ const SideBar = () => {
                         </a>
                         {r?.detail &&
                         r?.detail.length > 0 &&
-                        dataCategoryDetail.length > 0 ? (
+                        categoryDetail?.length > 0 ? (
                           <ul>
                             {(r?.detail || [])?.map((detail, indexDetail) => {
-                              const find = (dataCategoryDetail || []).find(
-                                (data) => data?.id === detail?.id
-                              ).name;
                               return (
                                 <li key={`${detail?.id}-${indexDetail}`}>
                                   <a
@@ -78,13 +70,11 @@ const SideBar = () => {
                                       handleClick(
                                         detail?.id,
                                         "category_detail",
-                                        r?.name,
-                                        find,
                                         index
                                       );
                                     }}
                                   >
-                                    {find}
+                                    {getDetail(detail?.id)}
                                   </a>
                                 </li>
                               );

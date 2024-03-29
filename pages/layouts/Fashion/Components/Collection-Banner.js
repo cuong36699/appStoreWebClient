@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Col, Container, Row } from "reactstrap";
+import Paragraph from "../../../../components/common/Paragraph";
 
 const background = "/assets/images/voucher-coupon.jpg";
 
@@ -27,6 +28,12 @@ const CollectionBanner = () => {
 
   return (
     <Fragment>
+      <Paragraph
+        title={"Voucher"}
+        className="title1 section-t-space"
+        inner="title-inner1"
+        hrClass={false}
+      />
       {/*collection banner*/}
       <section className="pb-0 voucher-custom" style={{ padding: 0 }}>
         <Container>

@@ -20,7 +20,7 @@ const MasterProductDetail = ({
 
   const valuePrice = () => {
     if (product?.sale) {
-      const price = product?.type?.[active]?.price.replaceAll(",", "");
+      const price = (product?.type?.[active]?.price || 0).replaceAll(",", "");
       const priceOff = price - (price * (product?.sale || 0)) / 100;
       const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       return valuePrice;
@@ -39,17 +39,19 @@ const MasterProductDetail = ({
         )}
         <h6>{product.name}</h6>
         {des ? <p>{product.description}</p> : ""}
-        <h4>
-          {valuePrice()}
-          {currency?.symbol}
-          {product?.sale ? (
+        {product?.sale ? (
+          <h4 style={{ marginBottom: 5 }}>
             <del>
               <span className="money">
-                {product?.type?.[active]?.price}
+                {product?.type?.[active]?.price || 0}
                 {currency?.symbol}
               </span>
             </del>
-          ) : null}
+          </h4>
+        ) : null}
+        <h4>
+          {valuePrice() || 0}
+          {currency?.symbol}
         </h4>
         <>
           {/* select type */}
@@ -68,7 +70,7 @@ const MasterProductDetail = ({
                         onClick={() => {
                           setActive(i);
                           if (item?.image?.url) {
-                            changeByType(item?.image?.url);
+                            changeByType(item);
                           }
                         }}
                         style={{

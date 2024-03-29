@@ -52,7 +52,7 @@ const CartContainer = ({ icon }) => {
             </div>
           ) : (
             <li>
-              <h5>Your cart is currently empty.</h5>
+              <h5>Không có sản phẩm trong giỏ hàng.</h5>
             </li>
           )}
         </ul>

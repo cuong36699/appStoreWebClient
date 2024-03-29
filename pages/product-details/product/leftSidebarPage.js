@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { Col, Container, Media, Row } from "reactstrap";
 import DetailsWithPrice from "../common/detail-price";
 import Filter from "../common/filter";
+import { getLocal } from "../../../helpers/Local";
 
 const LeftSidebarPage = ({ pathId }) => {
   const [data, setData] = useState([]);
@@ -15,12 +16,14 @@ const LeftSidebarPage = ({ pathId }) => {
   const [state, setState] = useState({ nav1: null, nav2: null });
   const slider1 = useRef();
   const slider2 = useRef();
+  const productSelect = getLocal("product");
 
-  const product = useSelector((state) => state?.common?.product);
-  console.log(product, "xxxxxxxxxx");
+  const product = useSelector((state) => state?.common?.products);
 
   const getData = async () => {
     setLoading(true);
+    const newData = (product || []).find((r) => r?.id === productSelect?.id);
+    setData(newData);
     setLoading(false);
   };
 
@@ -96,7 +99,7 @@ const LeftSidebarPage = ({ pathId }) => {
                     </div>
                   </Col>
                 </Row>
-                {!product || product.length === 0 || loading ? (
+                {!data || data.length === 0 || loading ? (
                   "loading"
                 ) : (
                   <Row>
@@ -107,7 +110,7 @@ const LeftSidebarPage = ({ pathId }) => {
                         ref={(slider) => (slider1.current = slider)}
                         className="product-slick"
                       >
-                        {product?.images?.map((vari, index) => (
+                        {data?.images?.map((vari, index) => (
                           <div key={`${vari?.id}-${index}`}>
                             <ImageZoom image={vari} />
                           </div>
@@ -119,8 +122,8 @@ const LeftSidebarPage = ({ pathId }) => {
                         asNavFor={nav1}
                         ref={(slider) => (slider2.current = slider)}
                       >
-                        {product?.images
-                          ? product.images.map((vari, index) => (
+                        {data?.images
+                          ? data.images.map((vari, index) => (
                               <div key={`${vari?.id}-${index}`}>
                                 <Media
                                   src={`${vari.url}`}
@@ -140,7 +143,7 @@ const LeftSidebarPage = ({ pathId }) => {
                     </Col>
                     <Col lg="6" className="rtl-text">
                       <DetailsWithPrice
-                        item={product}
+                        item={data}
                         changeColorVar={changeColorVar}
                       />
                     </Col>

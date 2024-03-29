@@ -34,14 +34,22 @@
     justify-content: center;
     align-items: center;
     border-radius: 16px;
+    &.is-theme {
+      background-color: #f8f8f890;
+    }
 
-    input {
+    .input-search {
       border: 0;
       outline: 0;
       width: 90%;
       height: 100%;
       background-color: #f8f8f8;
       border-radius: 16px;
+
+      &.is-theme {
+        background-color: #f8f8f805;
+        color: black;
+      }
     }
   }
 }
@@ -124,6 +132,29 @@
 
       span {
         font-size: 44px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1400px) and (min-width: 768px) {
+  .wishlist-section {
+    .cart-table {
+      thead {
+        th {
+          &:nth-last-child(-n + 1) {
+            display: none;
+          }
+        }
+      }
+    }
+    tbody {
+      tr {
+        td {
+          &:nth-last-child(-n + 1) {
+            display: none;
+          }
+        }
       }
     }
   }

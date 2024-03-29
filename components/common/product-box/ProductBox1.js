@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Row, Col, Media, Modal, ModalBody } from "reactstrap";
+import React, { useContext, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Col, Media, Modal, ModalBody, Row } from "reactstrap";
 import CartContext from "../../../helpers/cart";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import MasterProductDetail from "./MasterProductDetail";
-import { useSelector, useDispatch } from "react-redux";
-import { saveProduct } from "../../../redux/reducers/common";
+import { setLocal } from "../../../helpers/Local";
 
 const ProductItem = ({
   product,
@@ -34,6 +34,8 @@ const ProductItem = ({
   const [image, setImage] = useState("");
   const [modal, setModal] = useState(false);
   const [modalCompare, setModalCompare] = useState(false);
+  const [typeSelect, setTypeSelect] = useState(product?.type?.[0]?.id);
+
   const toggleCompare = () => setModalCompare(!modalCompare);
   const toggle = () => setModal(!modal);
   const uniqueTags = [];
@@ -43,12 +45,13 @@ const ProductItem = ({
   };
 
   const clickProductDetail = () => {
+    setLocal("product", { id: product?.id, type: typeSelect });
     router.push(`/product-details/product`);
-    dispatch(saveProduct(product));
   };
 
-  const changeByType = (url) => {
-    setImage(url);
+  const changeByType = (item) => {
+    setTypeSelect(item?.id);
+    setImage(item?.image?.url);
   };
 
   return (
@@ -56,7 +59,13 @@ const ProductItem = ({
       <div className="img-wrapper">
         <div className="lable-block">
           {/* {product.new === true ? <span className="lable3">new</span> : ""} */}
-          {product?.sale ? <span className="lable4">on sale</span> : ""}
+          {product?.sale ? (
+            <span className="lable4" style={{ color: "#ff4c3b" }}>
+              on sale
+            </span>
+          ) : (
+            ""
+          )}
         </div>
         {/* image */}
         <div
@@ -67,11 +76,10 @@ const ProductItem = ({
             display: "flex",
             justifyItems: "center",
             alignItems: "flex-end",
-            height: 300,
           }}
         >
           <Media
-            src={`${image ? image : product.images[0].url}`}
+            src={`${image ? image : product?.type?.[0]?.image?.url}`}
             className="img-fluid m-auto"
             alt=""
           />
@@ -93,7 +101,7 @@ const ProductItem = ({
               }}
             >
               <Media
-                src={`${image ? image : product?.images?.[0]?.url}`}
+                src={`${image ? image : product?.type?.[0]?.image?.url}`}
                 className="img-fluid m-auto"
                 alt=""
               />
@@ -103,11 +111,24 @@ const ProductItem = ({
           ""
         )}
 
-        <div className={cartClass}>
+        <div
+          className={cartClass}
+          style={{
+            backgroundColor: "#00000090",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+          }}
+        >
           <button title="Add to cart" onClick={addCart}>
             <i className="fa fa-shopping-cart" aria-hidden="true"></i>
           </button>
-          <a href={null} title="Add to Wishlist" onClick={addWishlist}>
+          <a
+            href={null}
+            title="Add to Wishlist"
+            onClick={() => addWishlist(typeSelect)}
+          >
             <i className="fa fa-heart" aria-hidden="true"></i>
           </a>
           <a href={null} title="Quick View" onClick={toggle}>

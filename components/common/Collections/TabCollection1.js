@@ -13,6 +13,7 @@ import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import emptySearch from "../../../public/assets/images/empty-search.jpg";
 import PostLoader from "../PostLoader";
 import ProductItem from "../product-box/ProductBox1";
+import { getLocal, setLocal } from "../../../helpers/Local";
 
 const TabContent = ({
   data,
@@ -75,7 +76,9 @@ const TabContent = ({
               symbol={currency.symbol}
               addCompare={() => compareContext.addToCompare(product)}
               addCart={() => context.addToCart(product, quantity)}
-              addWishlist={() => wishListContext.addToWish(product)}
+              addWishlist={(type) =>
+                wishListContext.addToWish(product?.id, type)
+              }
               cartClass={cartClass}
               backImage={backImage}
             />
@@ -97,27 +100,24 @@ const SpecialProducts = ({
   line,
   hrClass,
   backImage,
-  filter,
+  changeTab,
 }) => {
   const context = useContext(CartContext);
+  const filter = getLocal("filter");
+
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [dataCategory, setDataCategory] = useState([]);
 
-  const wishListContext = useContext(WishlistContext);
-  const compareContext = useContext(CompareContext);
-  const curContext = useContext(CurrencyContext);
-  const currency = curContext.state;
-  const quantity = context.quantity;
+  // const wishListContext = useContext(WishlistContext);
+  // const compareContext = useContext(CompareContext);
+  // const curContext = useContext(CurrencyContext);
+  // const currency = curContext.state;
+  // const quantity = context.quantity;
 
-  const productsAPI = useSelector((state) => state?.api?.productsAPI);
-  const categoryAPI = useSelector((state) => state?.api?.categoryAPI);
-  const detailAPI = useSelector((state) => state?.api?.detailAPI);
-  const campaignAPI = useSelector((state) => state?.api?.campaignsAPI);
   const statusAPI = useSelector((state) => state?.api?.status);
-
-  console.log(productsAPI, "productsAPI");
+  const products = useSelector((state) => state?.common?.products);
+  const category = useSelector((state) => state?.common?.category);
 
   useEffect(() => {
     if (statusAPI === "loading") {
@@ -127,95 +127,37 @@ const SpecialProducts = ({
     }
   }, [statusAPI]);
 
-  const mixDataProducts = () => {
-    const productsActive = (productsAPI || []).filter((r) => r?.status);
-    const campaignActive = (campaignAPI || []).filter((v) => {
-      const isStart = moment().isAfter(
-        moment(`${v?.start_day} ${v?.start_hour}`, "DD/MM/YYYY hh:mm")
-      );
-      const isEnd = moment().isAfter(
-        moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
-      );
-      return v.status && isStart && !isEnd;
-    });
-    const mixData = (productsActive || []).map((item) => {
-      let saleProduct = null;
-      let saleDetail = null;
-      let saleCategory = null;
-
-      if (item?.campaign_id) {
-        saleProduct = (campaignActive || [])?.find(
-          (r) => r?.id === item?.campaign_id
-        )?.sale;
-      } else if (!saleProduct) {
-        saleDetail = (campaignActive || [])?.find(
-          (r) => r?.category_detail_id === item?.category_detail_id
-        )?.sale;
-      } else if (!saleDetail) {
-        saleCategory = (campaignActive || [])?.find(
-          (e) => !e?.category_detail_id && e?.category_id === item?.category_id
-        )?.sale;
-      }
-
-      if (saleProduct && saleProduct > 0) {
-        return {
-          ...item,
-          sale: saleProduct,
-        };
-      } else if (saleDetail && saleDetail > 0) {
-        return {
-          ...item,
-          sale: saleDetail,
-        };
-      } else if (saleCategory && saleCategory > 0) {
-        return {
-          ...item,
-          sale: saleCategory,
-        };
-      } else {
-        return item;
-      }
-    });
-
-    return mixData;
-  };
-
   useEffect(() => {
-    if (productsAPI) {
-      const dataProducts = mixDataProducts();
-      setData(dataProducts);
-    }
-    if (categoryAPI) {
-      const categoryActive = (categoryAPI || []).filter((r) => r?.status);
-      setDataCategory(categoryActive);
-    }
-  }, [productsAPI, campaignAPI, categoryAPI, detailAPI]);
-
-  const handleClickTab = (id, type = "category") => {
-    const dataProduct = mixDataProducts();
-    if (!id) {
-      setData(dataProduct || []);
-    } else {
-      if (type) {
-        const dataNew = (dataProduct || [])?.filter(
+    if (type === "product") {
+      setData(products);
+    } else if (type === "filter") {
+      const { id, type, tab } = filter;
+      setTimeout(() => {
+        setActiveTab(tab);
+      }, 300);
+      if (type === "category") {
+        const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+        setData(dataNew || []);
+      } else {
+        const dataNew = (products || [])?.filter(
           (r) => r?.category_detail_id === id
         );
         setData(dataNew || []);
-      } else {
-        const dataNew = (dataProduct || [])?.filter(
-          (r) => r?.category_id === id
-        );
-        setData(dataNew || []);
       }
     }
-  };
+  }, [products, type, changeTab]);
 
-  useEffect(() => {
-    if (filter) {
-      handleClickTab(filter?.id, filter?.detailName);
-      setActiveTab(parseInt(filter?.activeTab) + 1);
+  const handleClickTab = (id, activeTab) => {
+    if (!id) {
+      setData(products || []);
+    } else {
+      const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+      setData(dataNew || []);
     }
-  }, [filter]);
+    if (type === "filter") {
+      setLocal("filter", { ...filter, tab: activeTab });
+    }
+  };
 
   return (
     <div>
@@ -266,16 +208,16 @@ const SpecialProducts = ({
                 <Tab
                   label="All"
                   onClick={() => {
-                    handleClickTab();
+                    handleClickTab(null, 0);
                   }}
                   style={{ fontSize: 16, fontWeight: 600 }}
                 />
-                {(dataCategory || []).map((r, index) => (
+                {(category || []).map((r, index) => (
                   <Tab
                     key={`${r?.id}`}
                     label={r?.name}
                     onClick={() => {
-                      handleClickTab(r?.id);
+                      handleClickTab(r?.id, index + 1);
                     }}
                     style={{ fontSize: 16, fontWeight: 600 }}
                   />
