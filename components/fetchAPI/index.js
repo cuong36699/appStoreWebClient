@@ -55,41 +55,43 @@ export default function FetchAPI() {
       let saleProduct = null;
       let saleDetail = null;
       let saleCategory = null;
-
+      //
       if (item?.campaign_id) {
         saleProduct = (campaignActive || [])?.find(
           (r) => r?.id === item?.campaign_id
-        )?.sale;
+        );
       } else if (!saleProduct) {
         saleDetail = (campaignActive || [])?.find(
           (r) => r?.category_detail_id === item?.category_detail_id
-        )?.sale;
+        );
       } else if (!saleDetail) {
         saleCategory = (campaignActive || [])?.find(
           (e) => !e?.category_detail_id && e?.category_id === item?.category_id
-        )?.sale;
+        );
       }
-
-      if (saleProduct && saleProduct > 0) {
+      //
+      if (saleProduct && saleProduct?.sale > 0) {
         return {
           ...item,
-          sale: saleProduct,
+          sale: saleProduct?.sale,
+          end_date: `${saleProduct?.end_day} ${saleProduct?.end_hour}`,
         };
-      } else if (saleDetail && saleDetail > 0) {
+      } else if (saleDetail && saleDetail?.sale > 0) {
         return {
           ...item,
-          sale: saleDetail,
+          sale: saleDetail?.sale,
+          end_date: `${saleDetail?.end_day} ${saleDetail?.end_hour}`,
         };
-      } else if (saleCategory && saleCategory > 0) {
+      } else if (saleCategory && saleCategory?.sale > 0) {
         return {
           ...item,
-          sale: saleCategory,
+          sale: saleCategory?.sale,
+          end_date: `${saleCategory?.end_day} ${saleCategory?.end_hour}`,
         };
       } else {
         return item;
       }
     });
-
     return mixData;
   };
 

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Container, Row, Col, Media, Modal, ModalBody } from "reactstrap";
 import { useQuery } from "@apollo/client";
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
@@ -65,7 +65,11 @@ const ProductSection = () => {
 
   const clickProductDetail = (product) => {
     const titleProps = product.title.split(" ").join("");
-    router.push(`/product-details/${product.id}` + "-" + `${titleProps}`, undefined, { shallow: true });
+    router.push(
+      `/product-details/${product.id}` + "-" + `${titleProps}`,
+      undefined,
+      { shallow: true }
+    );
   };
 
   const getSelectedProduct = (item) => {
@@ -86,14 +90,14 @@ const ProductSection = () => {
       <Container>
         <Row>
           <Col className="product-related">
-            <h2>related products</h2>
+            <h2>sản phẩm liên quan</h2>
           </Col>
         </Row>
         <Row className="search-product">
           {!data ||
-            !data.products ||
-            data.products.items.length === 0 ||
-            loading ? (
+          !data.products ||
+          data.products.items.length === 0 ||
+          loading ? (
             "loading"
           ) : (
             <>
@@ -212,12 +216,12 @@ const ProductSection = () => {
                         {uniqueTags ? (
                           <ul className="color-variant">
                             {selectedProduct.type === "jewellery" ||
-                              selectedProduct.type === "nursery" ||
-                              selectedProduct.type === "beauty" ||
-                              selectedProduct.type === "electronics" ||
-                              selectedProduct.type === "goggles" ||
-                              selectedProduct.type === "watch" ||
-                              selectedProduct.type === "pets" ? (
+                            selectedProduct.type === "nursery" ||
+                            selectedProduct.type === "beauty" ||
+                            selectedProduct.type === "electronics" ||
+                            selectedProduct.type === "goggles" ||
+                            selectedProduct.type === "watch" ||
+                            selectedProduct.type === "pets" ? (
                               ""
                             ) : (
                               <>

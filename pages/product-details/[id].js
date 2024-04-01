@@ -10,7 +10,7 @@ const LeftSidebar = () => {
   const id = router.query.id;
 
   return (
-    <CommonLayout parent="Home" title="Product">
+    <CommonLayout parent="Trang chủ" title="Sản phẩm">
       <LeftSidebarPage />
       <ProductSection />
     </CommonLayout>

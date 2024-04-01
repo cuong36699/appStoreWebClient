@@ -79,6 +79,7 @@ const MasterProductDetail = ({
                           minHeight: 40,
                           maxHeight: 80,
                           opacity: active === i ? 1 : 0.5,
+                          cursor: "pointer",
                         }}
                       />
                     </li>

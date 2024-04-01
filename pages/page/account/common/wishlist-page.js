@@ -84,7 +84,13 @@ const WishlistPage = () => {
                       <tr key={i}>
                         <td>
                           <a href="#">
-                            <img src={item?.type?.image?.url} alt="" />
+                            <img
+                              src={item?.type?.image?.url}
+                              alt=""
+                              onClick={() => {
+                                handleClick(item?.id, item?.type?.id);
+                              }}
+                            />
                           </a>
                         </td>
                         <td>

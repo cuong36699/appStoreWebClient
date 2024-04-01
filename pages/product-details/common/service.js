@@ -1,47 +1,26 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import MasterServiceContent from "../../../components/common/Service/MasterServiceConternt";
-import {
-  svgFreeShipping,
-  svgservice,
-  svgoffer,
-  svgpayment,
-} from "../../../services/script";
-const Data = [
-  {
-    link: svgFreeShipping,
-    title: "free shipping",
-    service: "free shipping world wide",
-  },
-  {
-    link: svgservice,
-    title: "24 X 7 service",
-    service: "online service for 24 x 7",
-  },
-  {
-    link: svgoffer,
-    title: "festival offer",
-    service: "new online special festival offer",
-  },
-  {
-    link: svgpayment,
-    title: "online payment",
-    service: "new online special festival offer",
-    lastChild: true,
-  },
-];
 
 const Service = () => {
+  const servicesAPI = useSelector((state) => state?.api?.servicesAPI);
+
   return (
-    <div className="collection-filter-block">
-      <div className="product-service">
-        {Data.map((data, index) => {
+    <div
+      className="collection-filter-block"
+      style={{ padding: "20px 20px 0px 20px" }}
+    >
+      <div className="product-service" style={{ padding: 0, margin: 0 }}>
+        {(servicesAPI || []).map((data, index) => {
           return (
             <MasterServiceContent
               key={index}
               link={data.link}
-              title={data.title}
-              service={data.service}
+              title={data.name}
+              service={data.description}
               lastChild={data.lastChild}
+              url={data?.image?.url}
+              lastIndex={index === servicesAPI?.length - 1 ? true : false}
             />
           );
         })}

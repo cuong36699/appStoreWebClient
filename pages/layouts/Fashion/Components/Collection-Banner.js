@@ -26,6 +26,10 @@ const CollectionBanner = () => {
     }
   }, [voucherAPI]);
 
+  if (Array.isArray(data) && data.length <= 0) {
+    return null;
+  }
+
   return (
     <Fragment>
       <Paragraph
@@ -38,7 +42,7 @@ const CollectionBanner = () => {
       <section className="pb-0 voucher-custom" style={{ padding: 0 }}>
         <Container>
           <Row className="partition2">
-            {(data || []).map((data, i) => {
+            {(data || []).map((item, i) => {
               if (i >= 2) {
                 return;
               }
@@ -61,7 +65,7 @@ const CollectionBanner = () => {
                         <p className="p2">Voucher</p>
                       </div>
                       <div className="sale-off">
-                        <span>{` ${data?.sale}% `}</span>
+                        <span>{` ${item?.sale}% `}</span>
                         OFF
                       </div>
                     </div>

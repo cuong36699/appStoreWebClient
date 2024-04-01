@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Link from "next/link";
 import sizeChart from "../../../public/assets/images/size-chart.jpg";
 import { Modal, ModalBody, ModalHeader, Media, Input } from "reactstrap";
@@ -6,10 +6,13 @@ import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart";
 import CountdownComponent from "../../../components/common/widgets/countdownComponent";
 import MasterSocial from "./master_social";
+import { getLocal, updateLocal } from "../../../helpers/Local";
+import { useSelector } from "react-redux";
 
-const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
+const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
   const [modal, setModal] = useState(false);
   const [active, setActive] = useState(0);
+  const productSelect = getLocal("product");
 
   const CurContect = useContext(CurrencyContext);
   const symbol = CurContect.state.symbol;
@@ -22,6 +25,11 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
   const quantity = context.quantity;
   const uniqueColor = [];
   const uniqueSize = [];
+  const keyInfo = product?.infomation
+    ? Object.keys(product?.infomation)?.[0]
+    : null;
+
+  const theme = useSelector((state) => state?.common?.theme);
 
   const changeQty = (e) => {
     setQuantity(parseInt(e.target.value));
@@ -38,6 +46,24 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
     }
   };
 
+  useEffect(() => {
+    const index = product?.type?.findIndex(
+      (r) => r?.id === productSelect?.type
+    );
+    if (index != -1) {
+      setActive(index);
+      setTab(index);
+    }
+  }, []);
+
+  const handleClick = (index, type) => {
+    updateLocal("product", { type });
+    setActive(index);
+    setTab(index);
+  };
+
+  console.log(product, "asdasd");
+
   return (
     <>
       <div className={`product-right ${stickyClass}`}>
@@ -52,35 +78,47 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
           </h4>
         ) : null}
         <h3>
-          {valuePrice()}
-          {symbol}
+          {valuePrice() ? valuePrice() : "Liên hệ"}
+          {valuePrice() ? symbol : null}
         </h3>
-        <div className="product-description border-product">
-          {product.variants ? (
-            <div>
-              <Modal isOpen={modal} toggle={toggle} centered>
-                <ModalHeader toggle={toggle}>Sheer Straight Kurta</ModalHeader>
-                <ModalBody>
-                  <Media src={sizeChart.src} alt="size" className="img-fluid" />
-                </ModalBody>
-              </Modal>
-              <div className="size-box">
-                <ul>
-                  {uniqueSize.map((data, i) => {
-                    return (
-                      <li key={i}>
-                        <a href={null}>{data}</a>
-                      </li>
-                    );
-                  })}
-                </ul>
+        {/*  */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto auto auto",
+            gap: 10,
+            marginBottom: 18,
+          }}
+        >
+          {product?.type?.map((r, index) => (
+            <div
+              key={`${r?.id}-${index}`}
+              style={{
+                transition: "all 0.3s ease",
+                border:
+                  active === index ? "1px solid #ff4c3b" : "1px solid gray",
+                borderRightWidth: active === index ? 5 : 1,
+                borderRadius: 12,
+                padding: 10,
+                display: "flex",
+                gap: 10,
+                alignItems: "center",
+                cursor: "pointer",
+                width: 200,
+              }}
+              onClick={() => handleClick(index, r?.id)}
+            >
+              <img src={r?.image?.url} style={{ maxWidth: 40 }} />
+              <div>
+                <span style={{ fontSize: 16, fontWeight: 600 }}>{r?.name}</span>
+                <p>{r?.price ? `${r?.price}đ` : "Liên hệ"}</p>
               </div>
             </div>
-          ) : (
-            ""
-          )}
-          <span className="instock-cls">{stock}</span>
-          <h6 className="product-title">quantity</h6>
+          ))}
+        </div>
+        <div className="product-description border-product">
+          <span className="instock-cls">{stock ? "Còn hàng" : "hết hàng"}</span>
+          <h6 className="product-title">số lượng</h6>
           <div className="qty-box">
             <div className="input-group">
               <span className="input-group-prepend">
@@ -121,15 +159,81 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
             className="btn btn-solid"
             onClick={() => context.addToCart(product, quantity)}
           >
-            add to cart
+            thêm vào giỏ hàng
           </a>
           <Link href={`/page/account/checkout`}>
-            <a className="btn btn-solid">buy now</a>
+            <a className="btn btn-solid">mua ngay</a>
           </Link>
         </div>
         <div className="border-product">
-          <h6 className="product-title">product details</h6>
-          <p>{product.description}</p>
+          <h6 className="product-title">Thông số kỹ thuật</h6>
+          <div
+            style={{
+              border: "1px solid gray",
+              padding: "0px 20px 15px 20px",
+              marginTop: 10,
+              borderRadius: 12,
+              borderColor: theme ? "#404040" : "#dddddd",
+            }}
+          >
+            {keyInfo ? (
+              (product?.infomation?.[keyInfo] || [])?.map((cInfo, index) => (
+                <div
+                  key={`${cInfo?.name}-${index}`}
+                  style={{
+                    borderTop: index > 0 ? "1px solid gray" : "",
+                    marginTop: index > 0 ? 15 : 0,
+                    paddingTop: 5,
+                    borderColor: theme ? "#404040" : "#dddddd",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: 40,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: theme ? "center" : "",
+                    }}
+                  >
+                    <span style={{ fontSize: 16, fontWeight: 700 }}>
+                      {cInfo?.name}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 7,
+                    }}
+                  >
+                    {cInfo?.detail?.length > 0
+                      ? (cInfo?.detail || [])?.map((detail, i) => (
+                          <div
+                            key={`${detail?.name}-${i}`}
+                            style={{
+                              fontSize: 14,
+                              width: "100%",
+                              fontWeight: 500,
+                              display: "flex",
+                              gap: 7,
+                            }}
+                          >
+                            <span style={{ width: "45%", textAlign: "start" }}>
+                              {detail?.name}
+                            </span>
+                            <p style={{ width: "55%", textAlign: "start" }}>
+                              {detail?.value}
+                            </p>
+                          </div>
+                        ))
+                      : null}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div>Không có thông tin</div>
+            )}
+          </div>
         </div>
         <div className="border-product">
           <h6 className="product-title">share it</h6>
@@ -137,10 +241,12 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar }) => {
             <MasterSocial />
           </div>
         </div>
-        <div className="border-product">
-          <h6 className="product-title">Time Reminder</h6>
-          <CountdownComponent />
-        </div>
+        {product?.sale ? (
+          <div className="border-product">
+            <h6 className="product-title">Time Reminder</h6>
+            <CountdownComponent endDate={product?.end_date} />
+          </div>
+        ) : null}
       </div>
     </>
   );

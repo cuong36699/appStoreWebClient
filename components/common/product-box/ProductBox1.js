@@ -98,6 +98,7 @@ const ProductItem = ({
                 justifyItems: "center",
                 alignItems: "flex-end",
                 height: 300,
+                cursor: "pointer",
               }}
             >
               <Media

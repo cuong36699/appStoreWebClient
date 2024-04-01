@@ -7,12 +7,18 @@ const MasterServiceContent = ({
   marijuana,
   lastChild,
   url,
+  lastIndex,
 }) => {
   return (
     <div
       className={`${!marijuana ? "media" : ""} ${
         lastChild ? "border-0 m-0" : ""
       }`}
+      style={{
+        alignItems: "center",
+        borderBottom: lastIndex ? 0 : "",
+        padding: "",
+      }}
     >
       {link ? (
         <div dangerouslySetInnerHTML={{ __html: link }} />
