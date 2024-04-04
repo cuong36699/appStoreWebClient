@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
-import Link from 'next/link';
+import Link from "next/link";
 
 const Breadcrubs = ({ title, parent, subTitle }) => {
   return (
@@ -21,13 +21,11 @@ const Breadcrubs = ({ title, parent, subTitle }) => {
                 <li className="breadcrumb-item" aria-current="page">
                   {title}
                 </li>
-                {subTitle === undefined ? (
-                  ""
-                ) : (
+                {subTitle ? (
                   <li className="breadcrumb-item active" aria-current="page">
                     {subTitle}
                   </li>
-                )}
+                ) : null}
               </ol>
             </nav>
           </Col>

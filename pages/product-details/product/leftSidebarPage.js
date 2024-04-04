@@ -4,19 +4,21 @@ import NewProduct from "../../shop/common/newProduct";
 import ImageZoom from "../common/image-zoom";
 import Service from "../common/service";
 // import DetailsWithPrice from "../common/detail-price";
-import { useSelector } from "react-redux";
 import { Col, Container, Media, Row } from "reactstrap";
 import DetailsWithPrice from "../common/detail-price";
 import Filter from "../common/filter";
 import { getLocal } from "../../../helpers/Local";
+import { useSelector } from "react-redux";
 
-const LeftSidebarPage = ({ pathId }) => {
+const LeftSidebarPage = ({}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [state, setState] = useState({ nav1: null, nav2: null });
-  const slider1 = useRef();
-  const slider2 = useRef();
+  const [nav1, setNav1] = useState(null);
+  const [nav2, setNav2] = useState(null);
+
+  const slider1 = useRef(null);
+  const slider2 = useRef(null);
   const productSelect = getLocal("product");
 
   const products = useSelector((state) => state?.common?.products);
@@ -42,38 +44,21 @@ const LeftSidebarPage = ({ pathId }) => {
 
   var productsnav = {
     slidesToShow: 3,
-    infinite: data?.type?.length > 3,
+    infinite: data?.type?.[activeTab]?.imagesList?.length > 3,
     swipeToSlide: true,
     arrows: false,
     dots: false,
     focusOnSelect: true,
+    speed: 300,
   };
 
-  // var productsnav = {
-  //   dots: false,
-  //   infinite: data?.type?.length > 3,
-  //   speed: 500,
-  //   slidesToShow: 3,
-  //   slidesToScroll: 3,
-  //   focusOnSelect: true,
-  //   arrows: true,
-  // };
-
   useEffect(() => {
-    setState({
-      nav1: slider1.current,
-      nav2: slider2.current,
-    });
-  }, [products]);
-
-  const { nav1, nav2 } = state;
+    setNav1(slider1.current);
+    setNav2(slider2.current);
+  }, [data]);
 
   const filterClick = () => {
     document.getElementById("filter").style.left = "-15px";
-  };
-
-  const changeColorVar = (img_id) => {
-    slider2.current.slickGoTo(img_id);
   };
 
   return (
@@ -114,38 +99,47 @@ const LeftSidebarPage = ({ pathId }) => {
                         {(data?.type?.[activeTab]?.imagesList || [])?.map(
                           (vari, index) => (
                             <div key={`${vari?.id}-${index}`}>
-                              <ImageZoom image={vari} />
+                              <img
+                                src={`${vari.url}`}
+                                alt={vari.url}
+                                className="img-fluid image_zoom_cls-0"
+                              />
                             </div>
                           )
                         )}
                       </Slider>
                       {/*  */}
-                      <Slider
-                        className="slider-nav"
-                        {...productsnav}
-                        asNavFor={nav1}
-                        ref={(slider) => (slider2.current = slider)}
+                      <div
+                        style={{
+                          maxWidth: "calc(100% - 6px)",
+                        }}
                       >
-                        {data?.type?.[activeTab]?.imagesList
-                          ? (data?.type?.[activeTab]?.imagesList || [])?.map(
-                              (vari, index) => (
-                                <div key={`${vari?.id}-${index}`}>
-                                  <Media
-                                    src={`${vari.url}`}
-                                    key={`${vari?.id}-${index}`}
-                                    alt={vari.alt}
-                                    className="img-fluid"
-                                  />
-                                </div>
+                        <Slider
+                          className="slider-nav"
+                          {...productsnav}
+                          asNavFor={nav1}
+                          ref={(slider) => (slider2.current = slider)}
+                        >
+                          {data?.type?.[activeTab]?.imagesList
+                            ? (data?.type?.[activeTab]?.imagesList || [])?.map(
+                                (vari, index) => (
+                                  <div key={`${vari?.id}-${index}`}>
+                                    <Media
+                                      src={`${vari.url}`}
+                                      key={`${vari?.id}-${index}`}
+                                      alt={vari.alt}
+                                      className="img-fluid"
+                                    />
+                                  </div>
+                                )
                               )
-                            )
-                          : null}
-                      </Slider>
+                            : null}
+                        </Slider>
+                      </div>
                     </Col>
                     <Col lg="6" className="rtl-text">
                       <DetailsWithPrice
                         item={data}
-                        changeColorVar={changeColorVar}
                         setTab={(i) => {
                           setActiveTab(i);
                         }}

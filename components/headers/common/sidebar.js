@@ -14,12 +14,11 @@ const SideBar = () => {
   const category = useSelector((state) => state?.common?.category);
   const categoryDetail = useSelector((state) => state?.api?.detailAPI);
 
-  const handleClick = (id, type, tab) => {
-    console.log("first");
+  const handleClick = (id, type, tab, category, detail) => {
     setLocal("filter", { id: id, type: type, tab: tab + 1 });
     router.push({
       pathname: "/show-filter",
-      query: { activeTab: tab },
+      query: { category, detail, activeTab: tab },
     });
   };
 
@@ -41,49 +40,49 @@ const SideBar = () => {
           <ul id="sub-menu" className="sidebar-menu">
             {category && category?.length > 0
               ? (category || []).map((r, index) => {
-                  if (r?.status) {
-                    return (
-                      <li key={`${r?.id}-${index}`}>
-                        <a
-                          href="#"
-                          onClick={() => {
-                            closeNav();
-                            handleClick(r?.id, "category", index);
-                          }}
-                        >
-                          {r?.name}
-                          {r?.detail.length > 0 ? (
-                            <span className="sub-arrow"></span>
-                          ) : null}
-                        </a>
-                        {r?.detail &&
-                        r?.detail.length > 0 &&
-                        categoryDetail?.length > 0 ? (
-                          <ul>
-                            {(r?.detail || [])?.map((detail, indexDetail) => {
-                              return (
-                                <li key={`${detail?.id}-${indexDetail}`}>
-                                  <a
-                                    href="#"
-                                    onClick={() => {
-                                      closeNav();
-                                      handleClick(
-                                        detail?.id,
-                                        "category_detail",
-                                        index
-                                      );
-                                    }}
-                                  >
-                                    {getDetail(detail?.id)}
-                                  </a>
-                                </li>
-                              );
-                            })}
-                          </ul>
+                  return (
+                    <li key={`${r?.id}-${index}`}>
+                      <a
+                        href="#"
+                        onClick={() => {
+                          closeNav();
+                          handleClick(r?.id, "category", index, r?.name);
+                        }}
+                      >
+                        {r?.name}
+                        {r?.detail.length > 0 ? (
+                          <span className="sub-arrow"></span>
                         ) : null}
-                      </li>
-                    );
-                  }
+                      </a>
+                      {r?.detail &&
+                      r?.detail.length > 0 &&
+                      categoryDetail?.length > 0 ? (
+                        <ul>
+                          {(r?.detail || [])?.map((detail, indexDetail) => {
+                            return (
+                              <li key={`${detail?.id}-${indexDetail}`}>
+                                <a
+                                  href="#"
+                                  onClick={() => {
+                                    closeNav();
+                                    handleClick(
+                                      detail?.id,
+                                      "category_detail",
+                                      index,
+                                      r?.name,
+                                      getDetail(detail?.id)
+                                    );
+                                  }}
+                                >
+                                  {getDetail(detail?.id)}
+                                </a>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : null}
+                    </li>
+                  );
                 })
               : null}
           </ul>

@@ -50,8 +50,8 @@ const MasterProductDetail = ({
           </h4>
         ) : null}
         <h4>
-          {valuePrice() || 0}
-          {currency?.symbol}
+          {valuePrice() ? valuePrice() : "Liên hệ"}
+          {valuePrice() ? currency?.symbol : null}
         </h4>
         <>
           {/* select type */}
@@ -70,7 +70,7 @@ const MasterProductDetail = ({
                         onClick={() => {
                           setActive(i);
                           if (item?.image?.url) {
-                            changeByType(item);
+                            changeByType(item, i);
                           }
                         }}
                         style={{

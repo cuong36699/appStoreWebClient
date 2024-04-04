@@ -14,6 +14,7 @@ import emptySearch from "../../../public/assets/images/empty-search.jpg";
 import PostLoader from "../PostLoader";
 import ProductItem from "../product-box/ProductBox1";
 import { getLocal, setLocal } from "../../../helpers/Local";
+import { useRouter } from "next/router";
 
 const TabContent = ({
   data,
@@ -104,6 +105,7 @@ const SpecialProducts = ({
 }) => {
   const context = useContext(CartContext);
   const filter = getLocal("filter");
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -114,6 +116,8 @@ const SpecialProducts = ({
   // const curContext = useContext(CurrencyContext);
   // const currency = curContext.state;
   // const quantity = context.quantity;
+  const checkCategory = router?.query?.category;
+  const checkDetail = router?.query?.detail;
 
   const statusAPI = useSelector((state) => state?.api?.status);
   const products = useSelector((state) => state?.common?.products);
@@ -134,7 +138,7 @@ const SpecialProducts = ({
       const { id, type, tab } = filter;
       setTimeout(() => {
         setActiveTab(tab);
-      }, 300);
+      }, 500);
       if (type === "category") {
         const dataNew = (products || [])?.filter((r) => r?.category_id === id);
         setData(dataNew || []);
@@ -145,7 +149,7 @@ const SpecialProducts = ({
         setData(dataNew || []);
       }
     }
-  }, [products, type, changeTab]);
+  }, [products, type, changeTab, checkCategory, checkDetail]);
 
   const handleClickTab = (id, activeTab) => {
     if (!id) {

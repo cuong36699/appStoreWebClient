@@ -1,13 +1,23 @@
-import React, { useState } from "react";
-import { Collapse } from "reactstrap";
+import { useRouter } from "next/router";
+import React from "react";
+import { useSelector } from "react-redux";
+import { setLocal } from "../../../helpers/Local";
 
 const Filter = () => {
+  const router = useRouter();
+  const category = useSelector((state) => state?.common?.category);
+
   const backClick = () => {
     document.getElementById("filter").style.left = "-365px";
   };
 
-  const [isBrandOpen, setIsBrandOpen] = useState(true);
-  const toggleBrand = () => setIsBrandOpen(!isBrandOpen);
+  const handleClick = (id, type, tab) => {
+    setLocal("filter", { id: id, type: type, tab: tab + 1 });
+    router.push({
+      pathname: "/show-filter",
+      query: { activeTab: tab },
+    });
+  };
 
   return (
     <div className="collection-filter-block creative-card creative-inner">
@@ -18,32 +28,25 @@ const Filter = () => {
         </span>
       </div>
       <div className="collection-collapse-block border-0 open">
-        <h3 className="collapse-block-title" onClick={toggleBrand}>
-          brand
-        </h3>
-        <Collapse isOpen={isBrandOpen}>
-          <div className="collection-collapse-block-content">
-            <div className="collection-brand-filter">
+        <div className="collapse-block-title">brand</div>
+        <div className="collection-collapse-block-content">
+          <div className="collection-brand-filter">
+            {category && category.length > 0 ? (
               <ul className="category-list">
-                <li>
-                  <a href={null}>clothing</a>
-                </li>
-                <li>
-                  <a href={null}>bags</a>
-                </li>
-                <li>
-                  <a href={null}>footwear</a>
-                </li>
-                <li>
-                  <a href={null}>watches</a>
-                </li>
-                <li>
-                  <a href={null}>accessories</a>
-                </li>
+                {(category || []).map((r, index) => (
+                  <li key={`${r?.id}-${index}`}>
+                    <a
+                      href={null}
+                      onClick={() => handleClick(r?.id, "category", index)}
+                    >
+                      {r?.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
-            </div>
+            ) : null}
           </div>
-        </Collapse>
+        </div>
       </div>
     </div>
   );

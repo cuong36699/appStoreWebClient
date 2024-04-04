@@ -12,7 +12,6 @@ import { useSelector } from "react-redux";
 const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
   const [modal, setModal] = useState(false);
   const [active, setActive] = useState(0);
-  const productSelect = getLocal("product");
 
   const CurContect = useContext(CurrencyContext);
   const symbol = CurContect.state.symbol;
@@ -47,22 +46,24 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
   };
 
   useEffect(() => {
+    const productSelect = getLocal("product");
     const index = product?.type?.findIndex(
       (r) => r?.id === productSelect?.type
     );
     if (index != -1) {
       setActive(index);
       setTab(index);
+    } else {
+      setActive(0);
+      setTab(0);
     }
-  }, []);
+  }, [product]);
 
   const handleClick = (index, type) => {
     updateLocal("product", { type });
     setActive(index);
     setTab(index);
   };
-
-  console.log(product, "asdasd");
 
   return (
     <>
@@ -83,11 +84,13 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
         </h3>
         {/*  */}
         <div
+          className="product-type"
           style={{
             display: "grid",
-            gridTemplateColumns: "auto auto auto",
+            gridTemplateColumns: "50% 50%",
             gap: 10,
             marginBottom: 18,
+            width: "100%",
           }}
         >
           {product?.type?.map((r, index) => (
@@ -98,13 +101,11 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
                 border:
                   active === index ? "1px solid #ff4c3b" : "1px solid gray",
                 borderRightWidth: active === index ? 5 : 1,
-                borderRadius: 12,
                 padding: 10,
                 display: "flex",
                 gap: 10,
                 alignItems: "center",
                 cursor: "pointer",
-                width: 200,
               }}
               onClick={() => handleClick(index, r?.id)}
             >
@@ -167,17 +168,14 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
         </div>
         <div className="border-product">
           <h6 className="product-title">Thông số kỹ thuật</h6>
-          <div
-            style={{
-              border: "1px solid gray",
-              padding: "0px 20px 15px 20px",
-              marginTop: 10,
-              borderRadius: 12,
-              borderColor: theme ? "#404040" : "#dddddd",
-            }}
-          >
-            {keyInfo ? (
-              (product?.infomation?.[keyInfo] || [])?.map((cInfo, index) => (
+          {keyInfo ? (
+            <div
+              className="product-infomation scrollbar"
+              style={{
+                borderColor: theme ? "#404040" : "#dddddd",
+              }}
+            >
+              {(product?.infomation?.[keyInfo] || [])?.map((cInfo, index) => (
                 <div
                   key={`${cInfo?.name}-${index}`}
                   style={{
@@ -192,7 +190,6 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
                       height: 40,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: theme ? "center" : "",
                     }}
                   >
                     <span style={{ fontSize: 16, fontWeight: 700 }}>
@@ -229,14 +226,18 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
                       : null}
                   </div>
                 </div>
-              ))
-            ) : (
-              <div>Không có thông tin</div>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div>Không có thông tin</div>
+          )}
         </div>
         <div className="border-product">
-          <h6 className="product-title">share it</h6>
+          <h6 className="product-title">mô tả</h6>
+          <div className="product-icon">{product?.description}</div>
+        </div>
+        <div className="border-product">
+          <h6 className="product-title">chia sẻ</h6>
           <div className="product-icon">
             <MasterSocial />
           </div>

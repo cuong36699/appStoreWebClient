@@ -60,13 +60,12 @@ const HeaderOne = ({
       document.documentElement.scrollTop ||
       document.body.scrollTop ||
       0;
-    if (number >= 300) {
+
+    if (number >= 50) {
       if (window.innerWidth < 581)
         document.getElementById("sticky").classList.remove("fixed");
       else document.getElementById("sticky").classList.add("fixed");
     } else document.getElementById("sticky").classList.remove("fixed");
-
-    // document.getElementById("sticky").classList.add("fixed");
   };
 
   const openNav = () => {
@@ -106,11 +105,7 @@ const HeaderOne = ({
 
   return (
     <div>
-      <header
-        id="sticky"
-        className={`sticky ${headerClass}`}
-        style={{ position: "relative" }}
-      >
+      <header id="sticky" className={`sticky ${headerClass}`}>
         <div className="mobile-fix-option"></div>
         {/*Top Header Component*/}
         {noTopBar ? "" : <TopBarDark topClass={topClass} />}

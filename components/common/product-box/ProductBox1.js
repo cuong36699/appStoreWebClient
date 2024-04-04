@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useState } from "react";
-import { useDispatch } from "react-redux";
 import { Col, Media, Modal, ModalBody, Row } from "reactstrap";
 import CartContext from "../../../helpers/cart";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
@@ -21,7 +20,6 @@ const ProductItem = ({
 }) => {
   // eslint-disable-next-line
   // 400 x 296
-  const dispatch = useDispatch();
   const router = useRouter();
   const cartContext = useContext(CartContext);
   const curContext = useContext(CurrencyContext);
@@ -34,7 +32,7 @@ const ProductItem = ({
   const [image, setImage] = useState("");
   const [modal, setModal] = useState(false);
   const [modalCompare, setModalCompare] = useState(false);
-  const [typeSelect, setTypeSelect] = useState(product?.type?.[0]?.id);
+  const [active, setActive] = useState(0);
 
   const toggleCompare = () => setModalCompare(!modalCompare);
   const toggle = () => setModal(!modal);
@@ -45,13 +43,29 @@ const ProductItem = ({
   };
 
   const clickProductDetail = () => {
-    setLocal("product", { id: product?.id, type: typeSelect });
+    setLocal("product", {
+      id: product?.id,
+      type: product?.type?.[active]?.id,
+      category: product?.category_id,
+      detail: product?.category_detail_id,
+    });
     router.push(`/product-details/product`);
   };
 
-  const changeByType = (item) => {
-    setTypeSelect(item?.id);
+  const changeByType = (item, index) => {
+    setActive(index);
     setImage(item?.image?.url);
+  };
+
+  const valuePrice = () => {
+    if (product?.sale) {
+      const price = product?.type?.[active]?.price.replaceAll(",", "");
+      const priceOff = price - (price * (product?.sale || 0)) / 100;
+      const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return valuePrice;
+    } else {
+      return product?.type?.[active]?.price;
+    }
   };
 
   return (
@@ -128,7 +142,7 @@ const ProductItem = ({
           <a
             href={null}
             title="Add to Wishlist"
-            onClick={() => addWishlist(typeSelect)}
+            onClick={() => addWishlist(product?.type?.[active]?.id)}
           >
             <i className="fa fa-heart" aria-hidden="true"></i>
           </a>
@@ -205,7 +219,9 @@ const ProductItem = ({
               <div className="quick-view-img">
                 <Media
                   src={`${
-                    product?.type && image ? image : product.images[0].url
+                    product?.type && image
+                      ? image
+                      : product?.type?.[0]?.image?.url
                   }`}
                   alt=""
                   className="img-fluid"
@@ -216,69 +232,15 @@ const ProductItem = ({
               <div className="product-right">
                 <h2> {product?.name} </h2>
                 <h3>
-                  {currency.symbol}
-                  {(product.price * currency.value).toFixed(2)}
+                  {valuePrice() ? valuePrice() : "Liên hệ"}
+                  {valuePrice() ? currency.symbol : null}
                 </h3>
-                {product.variants ? (
-                  <ul className="color-variant">
-                    {uniqueTags ? (
-                      <ul className="color-variant">
-                        {product.type === "jewellery" ||
-                        product.type === "nursery" ||
-                        product.type === "beauty" ||
-                        product.type === "electronics" ||
-                        product.type === "goggles" ||
-                        product.type === "watch" ||
-                        product.type === "pets" ? (
-                          ""
-                        ) : (
-                          <>
-                            {uniqueTags.map((vari, i) => {
-                              return (
-                                <li
-                                  className={vari.color}
-                                  key={i}
-                                  title={vari.color}
-                                  onClick={() =>
-                                    variantChangeByColor(
-                                      vari.image_id,
-                                      product.images
-                                    )
-                                  }
-                                ></li>
-                              );
-                            })}
-                          </>
-                        )}
-                      </ul>
-                    ) : (
-                      ""
-                    )}
-                  </ul>
-                ) : (
-                  ""
-                )}
                 <div className="border-product">
-                  <h6 className="product-title">product details</h6>
+                  <h6 className="product-title">Mô tả</h6>
                   <p>{product.description}</p>
                 </div>
                 <div className="product-description border-product">
-                  {product.size ? (
-                    <div className="size-box">
-                      <ul>
-                        {product.size.map((size, i) => {
-                          return (
-                            <li key={i}>
-                              <a href={null}>{size}</a>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  <h6 className="product-title">quantity</h6>
+                  <h6 className="product-title">só lượng</h6>
                   <div className="qty-box">
                     <div className="input-group">
                       <span className="input-group-prepend">
@@ -318,13 +280,13 @@ const ProductItem = ({
                     className="btn btn-solid"
                     onClick={() => addCart(product)}
                   >
-                    add to cart
+                    thêm vào giỏ
                   </button>
                   <button
                     className="btn btn-solid"
                     onClick={clickProductDetail}
                   >
-                    View detail
+                    xem chi tiết
                   </button>
                 </div>
               </div>

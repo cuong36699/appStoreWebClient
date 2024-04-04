@@ -1,45 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Media, Modal, ModalBody } from "reactstrap";
-import { useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
 import { useRouter } from "next/router";
-
-const GET_PRODUCTS = gql`
-  query products($type: _CategoryType!, $indexFrom: Int!, $limit: Int!) {
-    products(type: $type, indexFrom: $indexFrom, limit: $limit) {
-      items {
-        id
-        title
-        description
-        type
-        brand
-        category
-        price
-        new
-        stock
-        sale
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
-      }
-    }
-  }
-`;
+import { useSelector } from "react-redux";
+import { getLocal, setLocal } from "../../../helpers/Local";
 
 const ProductSection = () => {
   const router = useRouter();
@@ -54,36 +21,64 @@ const ProductSection = () => {
   const plusQty = cartCtx.plusQty;
   const minusQty = cartCtx.minusQty;
   const setQuantity = cartCtx.setQuantity;
-  const [selectedProduct, setSelectedProduct] = useState();
-  const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
   const uniqueTags = [];
+
+  const [previewProduct, setPreviewProduct] = useState();
+  const [modal, setModal] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [active, setActive] = useState(0);
+
+  const products = useSelector((state) => state?.common?.products);
 
   const changeQty = (e) => {
     setQuantity(parseInt(e.target.value));
   };
 
-  const clickProductDetail = (product) => {
-    const titleProps = product.title.split(" ").join("");
-    router.push(
-      `/product-details/${product.id}` + "-" + `${titleProps}`,
-      undefined,
-      { shallow: true }
+  const getData = () => {
+    const productSelect = getLocal("product");
+    setLoading(true);
+    const newData = (products || [])?.filter(
+      (r) =>
+        r?.category_id === productSelect?.category &&
+        r?.id !== productSelect?.id
     );
+    setData(newData);
+    setLoading(false);
   };
 
-  const getSelectedProduct = (item) => {
-    setSelectedProduct(item);
+  useEffect(() => {
+    getData();
+  }, [products]);
+
+  const clickProductDetail = (product) => {
+    const type = product?.type?.[active]?.id;
+    setLocal("product", {
+      id: product?.id,
+      type,
+      category: product?.category_id,
+      detail: product?.category_detail_id,
+    });
+    router.push(`/product-details/product`, undefined, { shallow: true });
+    getData();
+  };
+
+  const getPreviewProduct = (item) => {
+    setPreviewProduct(item);
     toggle();
   };
 
-  var { loading, data } = useQuery(GET_PRODUCTS, {
-    variables: {
-      type: "fashion",
-      indexFrom: 0,
-      limit: 8,
-    },
-  });
+  const valuePrice = (product) => {
+    if (product?.sale) {
+      const price = product?.type?.[active]?.price.replaceAll(",", "");
+      const priceOff = price - (price * (product?.sale || 0)) / 100;
+      const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return valuePrice;
+    } else {
+      return product?.type?.[active]?.price;
+    }
+  };
 
   return (
     <section className="section-b-space ratio_asos">
@@ -94,38 +89,47 @@ const ProductSection = () => {
           </Col>
         </Row>
         <Row className="search-product">
-          {!data ||
-          !data.products ||
-          data.products.items.length === 0 ||
-          loading ? (
+          {!data || data?.length === 0 || loading ? (
             "loading"
           ) : (
             <>
               {data &&
-                data.products.items.slice(0, 6).map((product, index) => (
+                data?.slice(0, 6).map((product, index) => (
                   <Col xl="2" md="4" sm="6" key={index}>
                     <div className="product-box">
                       <div className="img-wrapper">
                         <div className="front">
-                          <a href={null}>
+                          <a href="#">
                             <Media
                               onClick={() => clickProductDetail(product)}
-                              src={product.images[0].src}
+                              src={product.type?.[0]?.image?.url}
                               className="img-fluid blur-up lazyload bg-img"
                               alt=""
                             />
                           </a>
                         </div>
                         <div className="back">
-                          <a href={null}>
+                          <a href="#">
                             <Media
-                              src={product.images[1].src}
+                              onClick={() => clickProductDetail(product)}
+                              src={product.type?.[0]?.image?.url}
                               className="img-fluid blur-up lazyload bg-img"
                               alt=""
                             />
                           </a>
                         </div>
-                        <div className="cart-info cart-wrap">
+                        {/*  */}
+                        <div
+                          className="cart-info cart-wrap"
+                          style={{
+                            height: "100%",
+                            backgroundColor: "#00000090",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "flex-end",
+                          }}
+                        >
                           <button
                             data-toggle="modal"
                             data-target="#addtocart"
@@ -135,15 +139,20 @@ const ProductSection = () => {
                             <i className="fa fa-shopping-cart"></i>
                           </button>
                           <a
-                            href="#"
-                            onClick={() => wishlistContext.addToWish(product)}
+                            href={null}
+                            onClick={() =>
+                              wishlistContext.addToWish(
+                                product,
+                                product?.type?.[active]?.id
+                              )
+                            }
                             title="Add to Wishlist"
                           >
                             <i className="fa fa-heart" aria-hidden="true"></i>
                           </a>
                           <a
-                            href="#"
-                            onClick={() => getSelectedProduct(product)}
+                            href={null}
+                            onClick={() => getPreviewProduct(product)}
                             data-toggle="modal"
                             data-target="#quick-view"
                             title="Quick View"
@@ -151,7 +160,7 @@ const ProductSection = () => {
                             <i className="fa fa-search" aria-hidden="true"></i>
                           </a>
                           <a
-                            href="#"
+                            href={null}
                             onClick={() => compareContext.addToCompare(product)}
                             title="Compare"
                           >
@@ -168,17 +177,43 @@ const ProductSection = () => {
                           <i className="fa fa-star"></i>
                         </div>
                         <a href={null}>
-                          <h6>{product.title}</h6>
+                          <h6>{product.name}</h6>
                         </a>
                         <h4>
+                          {valuePrice(product)}
                           {symbol}
-                          {product.price}
                         </h4>
-                        <ul className="color-variant">
-                          <li className="bg-light0"></li>
-                          <li className="bg-light1"></li>
-                          <li className="bg-light2"></li>
-                        </ul>
+                        {/* <ul
+                          // className="color-variant"
+                          style={{ display: "flex", gap: 10, marginTop: 12 }}
+                        >
+                          {product?.type ? (
+                            <ul style={{ display: "flex", gap: 5 }}>
+                              {(product?.type || [])?.map((item, i) => (
+                                <li key={i}>
+                                  <Media
+                                    src={`${item?.image?.url}`}
+                                    alt="wishlist"
+                                    onClick={() => {
+                                      setActive(i);
+                                      if (item?.image?.url) {
+                                        changeByType(item, i);
+                                      }
+                                    }}
+                                    style={{
+                                      maxWidth: 40,
+                                      objectFit: "cover",
+                                      minHeight: 40,
+                                      maxHeight: 80,
+                                      opacity: active === i ? 1 : 0.5,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </ul> */}
                       </div>
                     </div>
                   </Col>
@@ -186,7 +221,7 @@ const ProductSection = () => {
             </>
           )}
         </Row>
-        {selectedProduct ? (
+        {previewProduct ? (
           <Modal
             isOpen={modal}
             toggle={toggle}
@@ -198,7 +233,7 @@ const ProductSection = () => {
                 <Col lg="6" xs="12">
                   <div className="quick-view-img">
                     <Media
-                      src={`${selectedProduct.images[0].src}`}
+                      src={`${previewProduct.type?.[0]?.image?.url}`}
                       alt=""
                       className="img-fluid"
                     />
@@ -206,77 +241,17 @@ const ProductSection = () => {
                 </Col>
                 <Col lg="6" className="rtl-text">
                   <div className="product-right">
-                    <h2> {selectedProduct.title} </h2>
+                    <h2> {previewProduct.name} </h2>
                     <h3>
+                      {valuePrice(previewProduct)}
                       {currency.symbol}
-                      {(selectedProduct.price * currency.value).toFixed(2)}
                     </h3>
-                    {selectedProduct.variants ? (
-                      <ul className="color-variant">
-                        {uniqueTags ? (
-                          <ul className="color-variant">
-                            {selectedProduct.type === "jewellery" ||
-                            selectedProduct.type === "nursery" ||
-                            selectedProduct.type === "beauty" ||
-                            selectedProduct.type === "electronics" ||
-                            selectedProduct.type === "goggles" ||
-                            selectedProduct.type === "watch" ||
-                            selectedProduct.type === "pets" ? (
-                              ""
-                            ) : (
-                              <>
-                                {uniqueTags ? (
-                                  <ul className="color-variant">
-                                    {uniqueTags.map((vari, i) => {
-                                      return (
-                                        <li
-                                          className={vari.color}
-                                          key={i}
-                                          title={vari.color}
-                                          onClick={() =>
-                                            variantChangeByColor(
-                                              vari.image_id,
-                                              selectedProduct.images
-                                            )
-                                          }
-                                        ></li>
-                                      );
-                                    })}
-                                  </ul>
-                                ) : (
-                                  ""
-                                )}
-                              </>
-                            )}
-                          </ul>
-                        ) : (
-                          ""
-                        )}
-                      </ul>
-                    ) : (
-                      ""
-                    )}
                     <div className="border-product">
-                      <h6 className="product-title">product details</h6>
-                      <p>{selectedProduct.description}</p>
+                      <h6 className="product-title">thông tin sản phẩm</h6>
+                      <p>{previewProduct.description}</p>
                     </div>
                     <div className="product-description border-product">
-                      {selectedProduct.size ? (
-                        <div className="size-box">
-                          <ul>
-                            {selectedProduct.size.map((size, i) => {
-                              return (
-                                <li key={i}>
-                                  <a href={null}>{size}</a>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                      <h6 className="product-title">quantity</h6>
+                      <h6 className="product-title">số lượng</h6>
                       <div className="qty-box">
                         <div className="input-group">
                           <span className="input-group-prepend">
@@ -301,7 +276,7 @@ const ProductSection = () => {
                             <button
                               type="button"
                               className="btn quantity-right-plus"
-                              onClick={() => plusQty(selectedProduct)}
+                              onClick={() => plusQty(previewProduct)}
                               data-type="plus"
                               data-field=""
                             >
@@ -314,15 +289,15 @@ const ProductSection = () => {
                     <div className="product-buttons">
                       <button
                         className="btn btn-solid"
-                        onClick={() => addToCart(selectedProduct, quantity)}
+                        onClick={() => addToCart(previewProduct, quantity)}
                       >
-                        add to cart
+                        thêm vào giỏ
                       </button>
                       <button
                         className="btn btn-solid"
-                        onClick={() => clickProductDetail(selectedProduct)}
+                        onClick={() => clickProductDetail(previewProduct)}
                       >
-                        View detail
+                        Xem chi tiết
                       </button>
                     </div>
                   </div>

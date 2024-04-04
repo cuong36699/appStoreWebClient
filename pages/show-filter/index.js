@@ -1,50 +1,17 @@
 import { useRouter } from "next/router";
 import React from "react";
 import SpecialProducts from "../../components/common/Collections/TabCollection1";
+import CommonLayout from "../../components/shop/common-layout";
 import { Product4 } from "../../services/script";
-import { Helmet } from "react-helmet";
-import HeaderOne from "../../components/headers/header-one";
-import HeaderFour from "../../components/headers/header-four";
-import MasterFooter from "../../components/footers/common/MasterFooter";
 
 export default function Category() {
   const router = useRouter();
   const { activeTab } = router?.query;
+  const { category } = router?.query;
+  const { detail } = router?.query;
 
   return (
-    <div>
-      <Helmet>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
-          rel="icon"
-          type="image/x-icon"
-          href={"/assets/images/favicon/1.png"}
-        />
-      </Helmet>
-      {/*  */}
-      <HeaderOne logoName={"logo.png"} topClass="top-header" />
-      {/*  */}
-      <div
-        style={{
-          width: "100%",
-          height: 50,
-          backgroundColor: "#f8f8f8",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div style={{ width: "72%", fontWeight: "500" }}>
-          <a> {"Home >"}</a>
-          {/* {router.query?.categoryName ? (
-            <a> {router.query?.categoryName}</a>
-          ) : null}
-          {router.query?.detailName ? (
-            <a>{`> ${router.query?.detailName}`}</a>
-          ) : null} */}
-        </div>
-      </div>
-      {/*  */}
+    <CommonLayout parent="Trang chủ" title={category} subTitle={detail}>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div style={{ width: "72%" }}>
           <SpecialProducts
@@ -61,15 +28,6 @@ export default function Category() {
           />
         </div>
       </div>
-      {/*  */}
-      <MasterFooter
-        footerClass={`footer-light`}
-        footerLayOut={"light-layout upper-footer"}
-        footerSection={"small-section border-section border-top-0"}
-        belowSection={"section-b-space light-layout"}
-        newLatter={true}
-        logoName={"logo.png"}
-      />
-    </div>
+    </CommonLayout>
   );
 }

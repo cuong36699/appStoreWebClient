@@ -42,6 +42,8 @@ const WishlistPage = () => {
             id: find?.id,
             type: findType,
             price: valuePrice,
+            category: find?.category_id,
+            detail: find?.category_detail_id,
           };
         }
       }
@@ -49,12 +51,15 @@ const WishlistPage = () => {
     setData(dataWishList);
   }, [wishlist, products]);
 
+  console.log(data, "xcvcxv");
+
   const checkOut = () => {
     router.push("/page/account/checkout");
   };
 
-  const handleClick = (id, type) => {
-    setLocal("product", { id, type });
+  const handleClick = (id, type, category, detail) => {
+    console.log(category, "zxzxzx");
+    setLocal("product", { id, type, category, detail });
     router.push(`/product-details/product`);
   };
 
@@ -75,7 +80,6 @@ const WishlistPage = () => {
                       <th scope="col">tên hàng</th>
                       <th scope="col">loại</th>
                       <th scope="col">giá</th>
-                      <th scope="col">availability</th>
                       <th scope="col">action</th>
                     </tr>
                   </thead>
@@ -88,7 +92,12 @@ const WishlistPage = () => {
                               src={item?.type?.image?.url}
                               alt=""
                               onClick={() => {
-                                handleClick(item?.id, item?.type?.id);
+                                handleClick(
+                                  item?.id,
+                                  item?.type?.id,
+                                  item?.category,
+                                  item?.detail
+                                );
                               }}
                             />
                           </a>
@@ -96,7 +105,12 @@ const WishlistPage = () => {
                         <td>
                           <h4
                             onClick={() => {
-                              handleClick(item?.id, item?.type?.id);
+                              handleClick(
+                                item?.id,
+                                item?.type?.id,
+                                item?.category,
+                                item?.detail
+                              );
                             }}
                             style={{ cursor: "pointer" }}
                           >
@@ -107,15 +121,14 @@ const WishlistPage = () => {
                             style={{ gap: 10 }}
                           >
                             <div className="col-xs-3">
-                              <h4>{item?.type?.name}</h4>
+                              <h4>({item?.type?.name})</h4>
                             </div>
                             <div className="col-xs-3">
-                              <p style={{ marginTop: -5 }}>
-                                {item?.stock > 0 ? "In Stock" : "out of Stock"}
-                              </p>
-                            </div>
-                            <div className="col-xs-3">
-                              <h2 className="td-color">{item?.price}đ</h2>
+                              <h2 className="td-color">
+                                {item?.price && item?.price != 0
+                                  ? `${item?.price}đ`
+                                  : "Liên hệ"}
+                              </h2>
                             </div>
                             <div className="col-xs-3">
                               <h2 className="td-color">
@@ -133,10 +146,11 @@ const WishlistPage = () => {
                           <h4>{item?.type?.name}</h4>
                         </td>
                         <td>
-                          <h4>{item?.price}đ</h4>
-                        </td>
-                        <td>
-                          <p>{item?.stock > 0 ? "In Stock" : "out of Stock"}</p>
+                          <h4>
+                            {item?.price && item?.price != 0
+                              ? `${item?.price}đ`
+                              : "Liên hệ"}
+                          </h4>
                         </td>
                         <td>
                           <a
