@@ -1,9 +1,12 @@
 import { useRouter } from "next/router";
 import React, { Fragment, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLocal } from "../../../helpers/Local";
+import { changeBrand } from "../../../redux/reducers/common";
 
 const SideBar = () => {
+  const dispatch = useDispatch();
+
   const closeNav = () => {
     var closemyslide = document.getElementById("mySidenav");
     if (closemyslide) closemyslide.classList.remove("open-side");
@@ -15,10 +18,11 @@ const SideBar = () => {
   const categoryDetail = useSelector((state) => state?.api?.detailAPI);
 
   const handleClick = (id, type, tab, category, detail) => {
-    setLocal("filter", { id: id, type: type, tab: tab + 1 });
+    setLocal("filter", { id: id, type: type, tab: tab + 1, category, detail });
+    dispatch(changeBrand({ category, detail }));
     router.push({
       pathname: "/show-filter",
-      query: { category, detail, activeTab: tab },
+      query: { category, detail },
     });
   };
 

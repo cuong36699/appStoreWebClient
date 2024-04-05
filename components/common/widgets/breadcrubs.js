@@ -21,7 +21,7 @@ const Breadcrubs = ({ title, parent, subTitle }) => {
                 <li className="breadcrumb-item" aria-current="page">
                   {title}
                 </li>
-                {subTitle ? (
+                {subTitle && subTitle !== "none" ? (
                   <li className="breadcrumb-item active" aria-current="page">
                     {subTitle}
                   </li>

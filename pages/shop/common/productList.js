@@ -1,79 +1,47 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Col, Row, Media, Button, Spinner } from "reactstrap";
-import Menu2 from "../../../public/assets/images/mega-menu/2.jpg";
-import { useQuery } from "@apollo/client";
-import { gql } from "@apollo/client";
-import FilterContext from "../../../helpers/filter/FilterContext";
-import ProductItem from "../../../components/common/product-box/ProductBox1";
-import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Col, Media, Row, Spinner } from "reactstrap";
 import PostLoader from "../../../components/common/PostLoader";
+import ProductItem from "../../../components/common/product-box/ProductBox1";
 import CartContext from "../../../helpers/cart";
-import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import { CompareContext } from "../../../helpers/Compare/CompareContext";
-
-const GET_PRODUCTS = gql`
-  query products(
-    $type: _CategoryType!
-    $indexFrom: Int!
-    $limit: Int!
-    $color: String!
-    $brand: [String!]!
-    $sortBy: _SortBy!
-    $priceMax: Int!
-    $priceMin: Int!
-  ) {
-    products(
-      type: $type
-      indexFrom: $indexFrom
-      limit: $limit
-      color: $color
-      brand: $brand
-      sortBy: $sortBy
-      priceMax: $priceMax
-      priceMin: $priceMin
-    ) {
-      total
-      hasMore
-      items {
-        id
-        title
-        description
-        type
-        brand
-        category
-        price
-        new
-        sale
-        stock
-        discount
-        variants {
-          id
-          sku
-          size
-          color
-          image_id
-        }
-        images {
-          image_id
-          id
-          alt
-          src
-        }
-      }
-    }
-  }
-`;
+import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
+import FilterContext from "../../../helpers/filter/FilterContext";
+import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
+import { getLocal, updateLocal } from "../../../helpers/Local";
+import { changeBrand } from "../../../redux/reducers/common";
 
 const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [data, setData] = useState([]);
+  // const [dataRaw, setData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [limit, setLimit] = useState(8);
+  const [grid, setGrid] = useState(colClass);
+  const [sortBy, setSortBy] = useState("AscOrder");
+  const [isLoading, setIsLoading] = useState(false);
+  const [layout, setLayout] = useState(layoutList);
+  const [url, setUrl] = useState();
+
+  const products = useSelector((state) => state?.common?.products);
+  const category = useSelector((state) => state?.common?.category);
+
+  const filter = getLocal("filter");
+  const checkCategory = router?.query?.category;
+  const checkDetail = router?.query?.detail;
   const cartContext = useContext(CartContext);
   const quantity = cartContext.quantity;
   const wishlistContext = useContext(WishlistContext);
   const compareContext = useContext(CompareContext);
-  const router = useRouter();
-  const [limit, setLimit] = useState(8);
   const curContext = useContext(CurrencyContext);
-  const [grid, setGrid] = useState(colClass);
   const symbol = curContext.state.symbol;
   const filterContext = useContext(FilterContext);
   const selectedBrands = filterContext.selectedBrands;
@@ -81,74 +49,86 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   const selectedPrice = filterContext.selectedPrice;
   const selectedCategory = filterContext.state;
   const selectedSize = filterContext.selectedSize;
-  const [sortBy, setSortBy] = useState("AscOrder");
-  const [isLoading, setIsLoading] = useState(false);
-  const [layout, setLayout] = useState(layoutList);
-  const [url, setUrl] = useState();
+
+  // useEffect(() => {
+  //   const pathname = window.location.pathname;
+  //   setUrl(pathname);
+  //   router.push(
+  //     `${pathname}?${filterContext.state}&brand=${selectedBrands}&color=${selectedColor}&size=${selectedSize}&minPrice=${selectedPrice.min}&maxPrice=${selectedPrice.max}`,
+  //     undefined,
+  //     { shallow: true }
+  //   );
+  // }, [selectedBrands, selectedColor, selectedSize, selectedPrice]);
 
   useEffect(() => {
-    const pathname = window.location.pathname;
-    setUrl(pathname);
-    router.push(
-      `${pathname}?${filterContext.state}&brand=${selectedBrands}&color=${selectedColor}&size=${selectedSize}&minPrice=${selectedPrice.min}&maxPrice=${selectedPrice.max}`, undefined, { shallow: true }
-    );
-  }, [selectedBrands, selectedColor, selectedSize, selectedPrice]);
+    const { id, type, tab } = filter;
+    setTimeout(() => {
+      setActiveTab(tab);
+    }, 500);
+    if (id === "all") {
+      setData(products);
+    } else {
+      if (type === "category") {
+        const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+        setData(dataNew || []);
+      } else {
+        const dataNew = (products || [])?.filter(
+          (r) => r?.category_detail_id === id
+        );
+        setData(dataNew || []);
+      }
+    }
+  }, [products, checkCategory, checkDetail]);
 
-  var { loading, data, fetchMore } = useQuery(GET_PRODUCTS, {
-    variables: {
-      type: selectedCategory,
-      priceMax: selectedPrice.max,
-      priceMin: selectedPrice.min,
-      color: selectedColor,
-      brand: selectedBrands,
-      sortBy: sortBy,
-      indexFrom: 0,
-      limit: limit,
-    },
-  });
+  const handlePagination = () => {};
 
-  const handlePagination = () => {
-    setIsLoading(true);
-    setTimeout(
-      () =>
-        fetchMore({
-          variables: {
-            indexFrom: data.products.items.length,
-          },
-          updateQuery: (prev, { fetchMoreResult }) => {
-            if (!fetchMoreResult) return prev;
-            setIsLoading(false);
-            return {
-              products: {
-                __typename: prev.products.__typename,
-                total: prev.products.total,
-                items: [
-                  ...prev.products.items,
-                  ...fetchMoreResult.products.items,
-                ],
-                hasMore: fetchMoreResult.products.hasMore,
-              },
-            };
-          },
-        }),
-      1000
-    );
+  const sortData = (sort, data) => {
+    setSortBy(sort);
+    const dataSort = [...data];
+    switch (sort) {
+      case "DescOrder":
+        dataSort.sort((a, b) => b?.name?.trim().localeCompare(a?.name?.trim()));
+        setData([...dataSort]);
+        break;
+      case "AscOrder":
+        dataSort?.sort((a, b) =>
+          a?.name?.trim().localeCompare(b?.name?.trim())
+        );
+        setData([...dataSort]);
+        break;
+
+      case "LowToHigh":
+        dataSort?.sort((a, b) => {
+          const priceA = a?.type?.[0]?.price?.replaceAll(",", "");
+          const priceB = b?.type?.[0]?.price?.replaceAll(",", "");
+          return priceA - priceB;
+        });
+        setData([...dataSort]);
+        break;
+
+      case "HighToLow":
+        dataSort?.sort((a, b) => {
+          const priceA = a?.type?.[0]?.price?.replaceAll(",", "");
+          const priceB = b?.type?.[0]?.price?.replaceAll(",", "");
+          return priceB - priceA;
+        });
+        setData([...dataSort]);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  const removeBrand = (val) => {
-    const temp = [...selectedBrands];
-    temp.splice(selectedBrands.indexOf(val), 1);
-    filterContext.setSelectedBrands(temp);
-  };
-
-  const removeSize = (val) => {
-    const temp = [...selectedSize];
-    temp.splice(selectedSize.indexOf(val), 1);
-    filterContext.setSelectedSize(temp);
-  };
-
-  const removeColor = () => {
-    filterContext.setSelectedColor("");
+  const handleClickTab = (id, name) => {
+    if (!id) {
+      sortData(sortBy, products || []);
+      dispatch(changeBrand({ category: "all", detail: "none" }));
+    } else {
+      const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+      sortData(sortBy, dataNew || []);
+      dispatch(changeBrand({ category: name, detail: "none" }));
+    }
   };
 
   return (
@@ -156,78 +136,8 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
       <div className="page-main-content">
         <Row>
           <Col sm="12">
-            <div className="top-banner-wrapper">
-              <a href={null}>
-                <Media
-                  src={Menu2.src}
-                  className="img-fluid blur-up lazyload"
-                  alt=""
-                />
-              </a>
-              <div className="top-banner-content small-section">
-                <h4>fashion</h4>
-                <h5>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry.
-                </h5>
-                <p>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book. It has survived not only five centuries, but
-                  also the leap into electronic typesetting, remaining
-                  essentially unchanged. It was popularised in the 1960s with
-                  the release of Letraset sheets containing Lorem Ipsum
-                  passages, and more recently with desktop publishing software
-                  like Aldus PageMaker including versions of Lorem Ipsum.
-                </p>
-              </div>
-            </div>
             <Row>
-              <Col xs="12">
-                <ul className="product-filter-tags">
-                  {selectedBrands.map((brand, i) => (
-                    <li key={i}>
-                      <a href={null} className="filter_tag">
-                        {brand}
-                        <i
-                          className="fa fa-close"
-                          onClick={() => removeBrand(brand)}
-                        ></i>
-                      </a>
-                    </li>
-                  ))}
-                  {selectedColor ? (
-                    <li>
-                      <a href={null} className="filter_tag">
-                        {selectedColor}
-                        <i className="fa fa-close" onClick={removeColor}></i>
-                      </a>
-                    </li>
-                  ) : (
-                    ""
-                  )}
-                  {selectedSize.map((size, i) => (
-                    <li key={i}>
-                      <a href={null} className="filter_tag">
-                        {size}
-                        <i
-                          className="fa fa-close"
-                          onClick={() => removeSize(size)}
-                        ></i>
-                      </a>
-                    </li>
-                  ))}
-                  {
-                    <li>
-                      <a href={null} className="filter_tag">
-                        price: {selectedPrice.min}- {selectedPrice.max}
-                      </a>
-                    </li>
-                  }
-                </ul>
-              </Col>
+              <Col xs="12">{/*  */}</Col>
             </Row>
             <div className="collection-product-wrapper">
               <div className="product-top-filter">
@@ -253,10 +163,9 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                     <div className="product-filter-content">
                       <div className="search-count">
                         <h5>
-                          {data
-                            ? `Showing Products 1-${data.products.items.length} of ${data.products.total}`
-                            : "loading"}{" "}
-                          Result
+                          {data && data?.length < limit
+                            ? `Có ${data?.length} trên tổng ${data?.length} sản phẩm đang được hiển thị`
+                            : "loading"}
                         </h5>
                       </div>
                       <div className="collection-view">
@@ -328,19 +237,28 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                         <select
                           onChange={(e) => setLimit(parseInt(e.target.value))}
                         >
-                          <option value="10">10 Products Per Page</option>
-                          <option value="15">15 Products Per Page</option>
-                          <option value="20">20 Products Per Page</option>
+                          <option value="10">10 Sản phẩm trên trang</option>
+                          <option value="15">15 Sản phẩm trên trang</option>
+                          <option value="20">20 Sản phẩm trên trang</option>
                         </select>
                       </div>
                       <div className="product-page-filter">
-                        <select onChange={(e) => setSortBy(e.target.value)}>
-                          <option value="AscOrder">Sorting items</option>
-                          <option value="HighToLow">High To Low</option>
-                          <option value="LowToHigh">Low To High</option>
-                          <option value="Newest">Newest</option>
-                          <option value="AscOrder">Asc Order</option>
-                          <option value="DescOrder">Desc Order</option>
+                        <select
+                          onChange={(e) => sortData(e.target.value, data)}
+                          defaultValue={"none"}
+                        >
+                          <option
+                            value="none"
+                            style={{ color: "gray" }}
+                            disabled={true}
+                          >
+                            Sắp xếp theo
+                          </option>
+                          <option value="LowToHigh">Từ thấp tới cao</option>
+                          <option value="HighToLow">Từ cao xuống thấp</option>
+                          <option value="Newest">Mới nhất</option>
+                          <option value="AscOrder">Theo chữ A-Z</option>
+                          <option value="DescOrder">Theo chữ Z-A</option>
                         </select>
                       </div>
                     </div>
@@ -348,17 +266,62 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                 </Row>
               </div>
               <div className={`product-wrapper-grid ${layout}`}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyItems: "center",
+                    width: "100%",
+                    height: "auto",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: "95%",
+                      maxWidth: { xs: 320, sm: 1200 },
+                      bgcolor: "background.paper",
+                      flexGrow: 1,
+                      marginBottom: 2,
+                    }}
+                  >
+                    <Tabs
+                      value={activeTab}
+                      onChange={(_, index) => {
+                        setActiveTab(index);
+                      }}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      aria-label="scrollable auto tabs example"
+                    >
+                      <Tab
+                        label="All"
+                        onClick={() => {
+                          handleClickTab(null);
+                          updateLocal("filter", { tab: 0, id: "all" });
+                        }}
+                        style={{ fontSize: 16, fontWeight: 600 }}
+                      />
+                      {(category || []).map((r, index) => (
+                        <Tab
+                          key={`${r?.id}`}
+                          label={r?.name}
+                          onClick={() => {
+                            handleClickTab(r?.id, r?.name);
+                            updateLocal("filter", {
+                              tab: index + 1,
+                              id: r?.id,
+                            });
+                          }}
+                          style={{ fontSize: 16, fontWeight: 600 }}
+                        />
+                      ))}
+                    </Tabs>
+                  </Box>
+                </div>
+                {/*  */}
                 <Row>
                   {/* Product Box */}
-                  {!data ||
-                    !data.products ||
-                    !data.products.items ||
-                    data.products.items.length === 0 ||
-                    loading ? (
-                    data &&
-                      data.products &&
-                      data.products.items &&
-                      data.products.items.length === 0 ? (
+                  {!data || data?.length === 0 || loading ? (
+                    data && data?.length === 0 ? (
                       <Col xs="12">
                         <div>
                           <div className="col-sm-12 empty-cart-cls text-center">
@@ -368,9 +331,9 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                               alt=""
                             />
                             <h3>
-                              <strong>Your Cart is Empty</strong>
+                              <strong>Không có sản phẩm được tìm thấy</strong>
                             </h3>
-                            <h4>Explore more shortlist some items.</h4>
+                            <h4>Vui lòng chọn mục khác.</h4>
                           </div>
                         </div>
                       </Col>
@@ -392,7 +355,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                     )
                   ) : (
                     data &&
-                    data.products.items.map((product, i) => (
+                    (data || []).map((product, i) => (
                       <div className={grid} key={i}>
                         <div className="product">
                           <div>
@@ -422,12 +385,15 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                 <div className="text-center">
                   <Row>
                     <Col xl="12" md="12" sm="12">
-                      {data && data.products && data.products.hasMore && (
-                        <Button className="load-more" onClick={() => handlePagination()}>
+                      {data && data.length > limit && (
+                        <Button
+                          className="load-more"
+                          // onClick={() => handlePagination()}
+                        >
                           {isLoading && (
                             <Spinner animation="border" variant="light" />
                           )}
-                          Load More
+                          Xem thêm
                         </Button>
                       )}
                     </Col>

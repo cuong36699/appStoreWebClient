@@ -3,10 +3,14 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Col, Container, Row } from "reactstrap";
 import Paragraph from "../../../../components/common/Paragraph";
+import { useRouter } from "next/router";
+import { setLocal } from "../../../../helpers/Local";
 
 const background = "/assets/images/voucher-coupon.jpg";
 
 const CollectionBanner = () => {
+  const router = useRouter();
+
   const [data, setData] = useState([]);
 
   const voucherAPI = useSelector((state) => state?.api?.voucherAPI);
@@ -29,6 +33,13 @@ const CollectionBanner = () => {
   if (Array.isArray(data) && data.length <= 0) {
     return null;
   }
+
+  const handleClick = (id) => {
+    setLocal("voucher", {
+      id,
+    });
+    router.push(`/show-voucher`);
+  };
 
   return (
     <Fragment>
@@ -53,6 +64,7 @@ const CollectionBanner = () => {
                     style={{
                       backgroundImage: `url(${background})`,
                     }}
+                    onClick={() => handleClick(item?.id)}
                   >
                     <div
                       style={{

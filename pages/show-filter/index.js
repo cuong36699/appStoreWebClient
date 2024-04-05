@@ -1,33 +1,36 @@
 import { useRouter } from "next/router";
 import React from "react";
-import SpecialProducts from "../../components/common/Collections/TabCollection1";
+import { useSelector } from "react-redux";
+import { Container, Row } from "reactstrap";
 import CommonLayout from "../../components/shop/common-layout";
-import { Product4 } from "../../services/script";
+import ProductList from "../shop/common/productList";
+import { getLocal } from "../../helpers/Local";
 
-export default function Category() {
+export default function ShowFilter() {
   const router = useRouter();
-  const { activeTab } = router?.query;
   const { category } = router?.query;
   const { detail } = router?.query;
+  const filter = getLocal("filter");
+  const brand = useSelector((state) => state?.common?.brand);
 
   return (
-    <CommonLayout parent="Trang chủ" title={category} subTitle={detail}>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "72%" }}>
-          <SpecialProducts
-            type="filter"
-            fluid="true"
-            title="title2"
-            inner="title-inner2"
-            designClass="section-b-space ratio_square"
-            productSlider={Product4}
-            noSlider="true"
-            cartClass="cart-info cart-wrap"
-            noTitle="true"
-            changeTab={activeTab}
-          />
+    <CommonLayout
+      parent="Trang chủ"
+      title={brand?.category || category || filter?.category}
+      subTitle={brand?.detail || detail || filter?.detail}
+    >
+      <section className="section-b-space ratio_asos">
+        <div className="collection-wrapper">
+          <Container>
+            <Row>
+              <ProductList
+                colClass="col-xl-3 col-6 col-grid-box"
+                noSidebar={true}
+              />
+            </Row>
+          </Container>
         </div>
-      </div>
+      </section>
     </CommonLayout>
   );
 }

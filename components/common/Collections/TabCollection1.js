@@ -44,9 +44,9 @@ const TabContent = ({
                   alt=""
                 />
                 <h3>
-                  <strong>Your Cart is Empty</strong>
+                  <strong>Không sản phẩm nào được tìm thấy</strong>
                 </h3>
-                <h4>Explore more shortlist some items.</h4>
+                <h4>Vui lòng chọn mục khác.</h4>
               </div>
             </div>
           </Col>
@@ -101,10 +101,8 @@ const SpecialProducts = ({
   line,
   hrClass,
   backImage,
-  changeTab,
 }) => {
   const context = useContext(CartContext);
-  const filter = getLocal("filter");
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState(0);
@@ -116,8 +114,6 @@ const SpecialProducts = ({
   // const curContext = useContext(CurrencyContext);
   // const currency = curContext.state;
   // const quantity = context.quantity;
-  const checkCategory = router?.query?.category;
-  const checkDetail = router?.query?.detail;
 
   const statusAPI = useSelector((state) => state?.api?.status);
   const products = useSelector((state) => state?.common?.products);
@@ -132,24 +128,8 @@ const SpecialProducts = ({
   }, [statusAPI]);
 
   useEffect(() => {
-    if (type === "product") {
-      setData(products);
-    } else if (type === "filter") {
-      const { id, type, tab } = filter;
-      setTimeout(() => {
-        setActiveTab(tab);
-      }, 500);
-      if (type === "category") {
-        const dataNew = (products || [])?.filter((r) => r?.category_id === id);
-        setData(dataNew || []);
-      } else {
-        const dataNew = (products || [])?.filter(
-          (r) => r?.category_detail_id === id
-        );
-        setData(dataNew || []);
-      }
-    }
-  }, [products, type, changeTab, checkCategory, checkDetail]);
+    setData(products);
+  }, [products]);
 
   const handleClickTab = (id, activeTab) => {
     if (!id) {
@@ -157,9 +137,6 @@ const SpecialProducts = ({
     } else {
       const dataNew = (products || [])?.filter((r) => r?.category_id === id);
       setData(dataNew || []);
-    }
-    if (type === "filter") {
-      setLocal("filter", { ...filter, tab: activeTab });
     }
   };
 

@@ -100,7 +100,7 @@ const ProductItem = ({
         </div>
         {/*  */}
         {backImage ? (
-          product.images[1] === "undefined" ? (
+          product?.type?.[0]?.image?.url === "undefined" ? (
             "false"
           ) : (
             <div
@@ -164,9 +164,9 @@ const ProductItem = ({
                   <div className="media">
                     <Media
                       src={`${
-                        product.variants && image
+                        product?.type && image
                           ? image
-                          : product.images[0].src
+                          : product?.type?.[0]?.image?.url
                       }`}
                       alt=""
                       className="img-fluid"

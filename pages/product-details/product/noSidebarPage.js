@@ -37,15 +37,14 @@ const GET_SINGLE_PRODUCTS = gql`
   }
 `;
 
-const NoSidebarPage = ({ pathId }) => {
+const NoSidebarPage = () => {
+  const [data, setdata] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [state, setState] = useState({ nav1: null, nav2: null });
   const slider1 = useRef();
   const slider2 = useRef();
-  var { loading, data } = useQuery(GET_SINGLE_PRODUCTS, {
-    variables: {
-      id: 1,
-    },
-  });
+
   var products = {
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -60,7 +59,6 @@ const NoSidebarPage = ({ pathId }) => {
     dots: false,
     focusOnSelect: true,
   };
-
 
   const changeColorVar = (img_id) => {
     slider2.current.slickGoTo(img_id);
@@ -122,16 +120,16 @@ const NoSidebarPage = ({ pathId }) => {
                           : ""}
                       </Slider>
                     </Col>
-                    <Col lg="6" className="rtl-text">
+                    {/* <Col lg="6" className="rtl-text">
                       <DetailsWithPrice
                         changeColorVar={changeColorVar}
                         item={data.product}
                       />
-                    </Col>
+                    </Col> */}
                   </Row>
                 )}
               </div>
-              <ProductTab />
+              {/* <ProductTab /> */}
             </Col>
           </Row>
         </Container>
