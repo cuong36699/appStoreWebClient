@@ -24,7 +24,6 @@ const WishlistPage = () => {
   useEffect(() => {
     const dataWishList = (wishlist || []).map((r) => {
       const find = products.find((product) => product?.id === r?.id);
-      console.log(find, "zzzzzz");
       if (find) {
         const findType = (find?.type || []).find(
           (type) => type?.id === r?.type
@@ -51,14 +50,11 @@ const WishlistPage = () => {
     setData(dataWishList);
   }, [wishlist, products]);
 
-  console.log(data, "xcvcxv");
-
   const checkOut = () => {
     router.push("/page/account/checkout");
   };
 
   const handleClick = (id, type, category, detail) => {
-    console.log(category, "zxzxzx");
     setLocal("product", { id, type, category, detail });
     router.push(`/product-details/product`);
   };

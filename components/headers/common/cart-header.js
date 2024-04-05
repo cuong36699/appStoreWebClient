@@ -2,29 +2,55 @@ import React, { Fragment, useContext } from "react";
 import Link from "next/link";
 import CartContext from "../../../helpers/cart";
 import { Media } from "reactstrap";
+import { setLocal } from "../../../helpers/Local";
+import { useRouter } from "next/router";
 
 const CartHeader = ({ item, symbol }) => {
   const context = useContext(CartContext);
+  const router = useRouter();
+
+  const handleClick = (id, type, category, detail) => {
+    setLocal("product", { id, type, category, detail });
+    router.push(`/product-details/product`);
+  };
+
   return (
     <Fragment>
       <li>
         <div className="media">
-          <Link href={"/product-details/" + item.id}>
-            <a>
-              <Media alt="" className="me-3" src={`${item.images[0].src}`} />
-            </a>
-          </Link>
+          <a
+            onClick={() =>
+              handleClick(item?.id, item?.typeID, item?.category, item?.detail)
+            }
+          >
+            <Media
+              alt=""
+              className="me-3"
+              src={`${item?.image?.url}`}
+              style={{ cursor: "pointer" }}
+            />
+          </a>
           <div className="media-body">
-            <Link href={"/product-details/" + item.id}>
-              <a>
-                <h6>{item.title}</h6>
-              </a>
-            </Link>
+            <a
+              onClick={() =>
+                handleClick(
+                  item?.id,
+                  item?.typeID,
+                  item?.category,
+                  item?.detail
+                )
+              }
+              style={{ cursor: "pointer" }}
+            >
+              <h6>
+                {item?.name} ({item?.typeName})
+              </h6>
+            </a>
 
             <h4>
               <span>
-                {item.qty} x {symbol}
-                {(item.price - (item.price * item.discount) / 100).toFixed(2)}
+                {item?.price}
+                {symbol} {"x"} {item?.qty || 1}
               </span>
             </h4>
           </div>

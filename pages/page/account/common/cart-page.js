@@ -4,8 +4,11 @@ import CartContext from "../../../../helpers/cart";
 import { Container, Row, Col, Media, Input } from "reactstrap";
 import { CurrencyContext } from "../../../../helpers/Currency/CurrencyContext";
 import cart from "../../../../public/assets/images/icon-empty-cart.png";
+import { setLocal } from "../../../../helpers/Local";
+import { useRouter } from "next/router";
 
 const CartPage = () => {
+  const router = useRouter();
   const context = useContext(CartContext);
   const cartItems = context.state;
   const curContext = useContext(CurrencyContext);
@@ -44,9 +47,14 @@ const CartPage = () => {
     }
   };
 
+  const handleClick = (id, type, category, detail) => {
+    setLocal("product", { id, type, category, detail });
+    router.push(`/product-details/product`);
+  };
+
   return (
     <div>
-      {cartItems && cartItems.length > 0 ? (
+      {cartItems && cartItems?.length > 0 ? (
         <section className="cart-section section-b-space">
           <Container>
             <Row>
@@ -54,37 +62,54 @@ const CartPage = () => {
                 <table className="table cart-table table-responsive-xs">
                   <thead>
                     <tr className="table-head">
-                      <th scope="col">image</th>
-                      <th scope="col">product name</th>
-                      <th scope="col">price</th>
-                      <th scope="col">quantity</th>
+                      <th scope="col">hình ảnh</th>
+                      <th scope="col">tên sản phẩm</th>
+                      <th scope="col">giá</th>
+                      <th scope="col">số lượng</th>
                       <th scope="col">action</th>
-                      <th scope="col">total</th>
+                      <th scope="col">tổng</th>
                     </tr>
                   </thead>
-                  {cartItems.map((item, index) => {
+                  {cartItems?.map((item, index) => {
                     return (
                       <tbody key={index}>
                         <tr>
                           <td>
-                            <Link href={`/left-sidebar/product/` + item.id}>
-                              <a>
-                                <Media
-                                  src={
-                                    item.images
-                                      ? item.images[0].src
-                                      : item.images[0].src
-                                  }
-                                  alt=""
-                                />
-                              </a>
-                            </Link>
+                            <a
+                              onClick={() =>
+                                handleClick(
+                                  item?.id,
+                                  item?.typeID,
+                                  item?.category,
+                                  item?.detail
+                                )
+                              }
+                            >
+                              <Media
+                                style={{ cursor: "pointer" }}
+                                src={item?.image ? item?.image?.url : ""}
+                                alt=""
+                              />
+                            </a>
                           </td>
                           <td>
-                            <Link href={`/left-sidebar/product/` + item.id}>
-                              <a>{item.title}</a>
-                            </Link>
-                            <div className="mobile-cart-content row">
+                            <a
+                              onClick={() =>
+                                handleClick(
+                                  item?.id,
+                                  item?.typeID,
+                                  item?.category,
+                                  item?.detail
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              {item?.name} ({item?.typeName})
+                            </a>
+                            <div
+                              className="mobile-cart-content row"
+                              style={{ gap: 10 }}
+                            >
                               <div className="col-xs-3">
                                 <div className="qty-box">
                                   <div className="input-group">
@@ -102,13 +127,11 @@ const CartPage = () => {
                                     />
                                   </div>
                                 </div>
-                                {item.qty >= item.stock ? "out of Stock" : ""}
                               </div>
                               <div className="col-xs-3">
                                 <h2 className="td-color">
+                                  {item?.price}
                                   {symbol}
-                                  {item.price -
-                                    (item.price * item.discount) / 100}
                                 </h2>
                               </div>
                               <div className="col-xs-3">
@@ -125,8 +148,8 @@ const CartPage = () => {
                           </td>
                           <td>
                             <h2>
+                              {item?.price}
                               {symbol}
-                              {item.price - (item.price * item.discount) / 100}
                             </h2>
                           </td>
                           <td>
@@ -156,8 +179,8 @@ const CartPage = () => {
                           </td>
                           <td>
                             <h2 className="td-color">
-                              {symbol}
                               {item.total}
+                              {symbol}
                             </h2>
                           </td>
                         </tr>
@@ -171,7 +194,8 @@ const CartPage = () => {
                       <td>total price :</td>
                       <td>
                         <h2>
-                          {symbol} {total}{" "}
+                          {total}
+                          {symbol}
                         </h2>
                       </td>
                     </tr>
@@ -182,12 +206,12 @@ const CartPage = () => {
             <Row className="cart-buttons">
               <Col xs="6">
                 <Link href={`/shop/left_sidebar`}>
-                  <a className="btn btn-solid">continue shopping</a>
+                  <a className="btn btn-solid">Tiếp tục mua sắm</a>
                 </Link>
               </Col>
               <Col xs="6">
                 <Link href={`/page/account/checkout`}>
-                  <a className="btn btn-solid">check out</a>
+                  <a className="btn btn-solid">thanh toán</a>
                 </Link>
               </Col>
             </Row>
@@ -206,9 +230,9 @@ const CartPage = () => {
                       alt=""
                     />
                     <h3>
-                      <strong>Your Cart is Empty</strong>
+                      <strong>Giỏ hàng trống</strong>
                     </h3>
-                    <h4>Explore more shortlist some items.</h4>
+                    <h4>Hãy chọn một sản phẩm.</h4>
                   </div>
                 </div>
               </Col>

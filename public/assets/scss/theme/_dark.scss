@@ -1543,6 +1543,7 @@ body {
     tfoot {
       tr {
         td {
+          background-color: $dark-body;
           &:first-child {
             color: $white-3;
           }

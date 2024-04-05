@@ -118,7 +118,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
           ))}
         </div>
         <div className="product-description border-product">
-          <span className="instock-cls">{stock ? "Còn hàng" : "hết hàng"}</span>
+          <span className="instock-cls">{stock}</span>
           <h6 className="product-title">số lượng</h6>
           <div className="qty-box">
             <div className="input-group">
@@ -158,13 +158,10 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
           <a
             href={null}
             className="btn btn-solid"
-            onClick={() => context.addToCart(product, quantity)}
+            onClick={() => context.addToCart(product, product?.type?.[active])}
           >
             thêm vào giỏ hàng
           </a>
-          <Link href={`/page/account/checkout`}>
-            <a className="btn btn-solid">mua ngay</a>
-          </Link>
         </div>
         <div className="border-product">
           <h6 className="product-title">Thông số kỹ thuật</h6>

@@ -22,77 +22,95 @@ const CartProvider = (props) => {
   const [stock, setStock] = useState("InStock");
 
   useEffect(() => {
-    const Total = cartItems.reduce((a, b) => a + b.total, 0);
-    setCartTotal(Total);
+    const Total = cartItems.reduce(
+      (a, b) => a + Number((b?.total || "0")?.replaceAll(",", "")),
+      0
+    );
+    const mixTotal = `${Total}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    setCartTotal(mixTotal);
 
     localStorage.setItem("cartList", JSON.stringify(cartItems));
   }, [cartItems]);
 
   // Add Product To Cart
-  const addToCart = (item, quantity) => {
-    toast.success("Product Added Successfully !");
-    const index = cartItems.findIndex((itm) => itm.id === item.id);
+  const addToCart = (product, type) => {
+    const index = cartItems.findIndex(
+      (item) => item.id === product?.id && item?.typeId === type?.id
+    );
+    const price = type?.price?.replaceAll(",", "");
+    const priceOff = price - (price * (product?.sale || 0)) / 100;
+    const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const priceTotal = priceOff * quantity;
+    const valueTotal = `${priceTotal}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    const param = {
+      id: product?.id,
+      name: product?.name,
+      typeName: type?.name,
+      typeId: type?.id,
+      image: type?.image,
+      price: valuePrice,
+      total: valueTotal,
+      qty: quantity,
+      category: product?.category_id,
+      detail: product?.category_detail_id,
+    };
 
     if (index !== -1) {
-      cartItems[index] = {
-        ...item,
-        qty: quantity,
-        total: (item.price - (item.price * item.discount) / 100) * quantity,
-      };
-      setCartItems([...cartItems]);
+      toast.warning("Sản phẩm đã có trong giỏ hàng!");
     } else {
-      const product = {
-        ...item,
-        qty: quantity,
-        total: item.price - (item.price * item.discount) / 100,
-      };
-      setCartItems([...cartItems, product]);
+      setCartItems([...cartItems, param]);
+      toast.success("Đã thêm sản phẩm vào giỏ hàng thành công!");
     }
   };
 
   const removeFromCart = (item) => {
     toast.error("Product Removed Successfully !");
-    setCartItems(cartItems.filter((e) => e.id !== item.id));
+    setCartItems(cartItems.filter((e) => e.typeID !== item.typeID));
   };
 
   const minusQty = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
-      setStock("InStock");
+      setStock("Còn hàng");
     }
   };
 
   const plusQty = (item) => {
-    if (item.stock >= quantity) {
-      setQuantity(quantity + 1);
-    } else {
-      setStock("Out of Stock !");
-    }
+    setQuantity(quantity + 1);
+
+    // if (item.stock >= quantity) {
+    //   setQuantity(quantity + 1);
+    // } else {
+    //   setStock("Hết hàng!");
+    // }
   };
 
   // Update Product Quantity
-  const updateQty = (item, quantity) => {
-    if (quantity >= 1) {
-      const index = cartItems.findIndex((itm) => itm.id === item.id);
-      if (index !== -1) {
-        cartItems[index] = {
-          ...item,
-          qty: quantity,
-          total: item.price * quantity,
-        };
-        setCartItems([...cartItems]);
-        toast.info("Product Quantity Updated !");
-      } else {
-        const product = {
-          ...item,
-          qty: quantity,
-          total: (item.price - (item.price * item.discount) / 100) * quantity,
-        };
-        setCartItems([...cartItems, product]);
-        toast.success("Product Added Updated !");
-      }
+  const updateQty = (product, quantity) => {
+    const index = cartItems.findIndex(
+      (item) => item.id === product.id && item?.typeID === product?.typeID
+    );
+
+    if (index == -1) {
+      // cartItems[index] = {
+      //   ...item,
+      //   qty: quantity,
+      //   total: item.price * quantity,
+      // };
+      // setCartItems([...cartItems]);
+      // toast.info("Product Quantity Updated !");
     } else {
-      toast.error("Enter Valid Quantity !");
+      const price = product?.price.replaceAll(",", "");
+      const valueTotal = price * quantity;
+      const mixTotal = `${valueTotal}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+      cartItems[index] = {
+        ...product,
+        qty: quantity,
+        total: mixTotal,
+      };
+      setCartItems([...cartItems]);
     }
   };
 

@@ -15,7 +15,7 @@ const CartContainer = ({ icon }) => {
   return (
     <Fragment>
       <li className="onhover-div mobile-cart">
-        <div className="cart-qty-cls">{cartList.length}</div>
+        <div className="cart-qty-cls">{cartList?.length}</div>
         <Link href={`/page/account/cart`}>
           <div href={null}>
             <Media src={icon} className="img-fluid" alt="" />
@@ -23,10 +23,10 @@ const CartContainer = ({ icon }) => {
           </div>
         </Link>
         <ul className="show-div shopping-cart">
-          {cartList.map((item, index) => (
+          {cartList?.map((item, index) => (
             <CartHeader key={index} item={item} total={total} symbol={symbol} />
           ))}
-          {cartList.length > 0 ? (
+          {cartList?.length > 0 ? (
             <div>
               <li>
                 <div className="total">
@@ -42,10 +42,10 @@ const CartContainer = ({ icon }) => {
               <li>
                 <div className="buttons view-cart">
                   <Link href={`/page/account/cart`}>
-                    <a>view cart</a>
+                    <a>xem giỏ hàng</a>
                   </Link>
                   <Link href={`/page/account/checkout`}>
-                    <a className="checkout">checkout</a>
+                    <a className="checkout">thanh toán</a>
                   </Link>
                 </div>
               </li>

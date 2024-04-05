@@ -136,7 +136,10 @@ const ProductItem = ({
             justifyContent: "flex-end",
           }}
         >
-          <button title="Add to cart" onClick={addCart}>
+          <button
+            title="Add to cart"
+            onClick={() => addCart(product?.type?.[active])}
+          >
             <i className="fa fa-shopping-cart" aria-hidden="true"></i>
           </button>
           <a
@@ -278,7 +281,7 @@ const ProductItem = ({
                 <div className="product-buttons">
                   <button
                     className="btn btn-solid"
-                    onClick={() => addCart(product)}
+                    onClick={() => addCart(product?.type?.[active])}
                   >
                     thêm vào giỏ
                   </button>
