@@ -14,9 +14,13 @@ import {
   changeTheme,
   saveCategory,
   saveProducts,
+  setID,
+  setListCard,
 } from "../../redux/reducers/common";
 import moment from "moment";
-import { getLocal } from "../../helpers/Local";
+import { getLocal, setLocal } from "../../helpers/Local";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../pages/firebase-config";
 
 export default function FetchAPI() {
   const dispatch = useDispatch();
@@ -25,6 +29,19 @@ export default function FetchAPI() {
   const detailAPI = useSelector((state) => state?.api?.detailAPI);
   const campaignAPI = useSelector((state) => state?.api?.campaignsAPI);
   const theme = getLocal("theme");
+
+  const checkUser = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        setLocal("isLogin", true);
+        dispatch(setID(uid));
+      } else {
+        setLocal("isLogin", false);
+        dispatch(setID(null));
+      }
+    });
+  };
 
   useEffect(() => {
     // api
@@ -38,6 +55,7 @@ export default function FetchAPI() {
     dispatch(fetchBanner());
     // local store
     dispatch(changeTheme(theme));
+    checkUser();
   }, []);
 
   const mixDataProducts = () => {

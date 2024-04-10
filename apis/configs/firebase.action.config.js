@@ -1,4 +1,10 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { firestore } from "../../pages/firebase-config";
 
 export const getFirebase = (key) => {
@@ -15,6 +21,24 @@ export const getFirebase = (key) => {
       //   setGlobalToaster({
       //     active: true,
       //     mess: `${error}` || "error api! get",
+      //     status: "error",
+      //   })
+      // );
+      return null;
+    });
+};
+
+export const postFirebase = (key, params) => {
+  const collectionRef = collection(firestore, key);
+  return addDoc(collectionRef, { ...params })
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      // useDispatch(
+      //   setGlobalToaster({
+      //     active: true,
+      //     mess: `${error}` || "error api! post",
       //     status: "error",
       //   })
       // );

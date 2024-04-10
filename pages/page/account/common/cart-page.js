@@ -4,8 +4,9 @@ import CartContext from "../../../../helpers/cart";
 import { Container, Row, Col, Media, Input } from "reactstrap";
 import { CurrencyContext } from "../../../../helpers/Currency/CurrencyContext";
 import cart from "../../../../public/assets/images/icon-empty-cart.png";
-import { setLocal } from "../../../../helpers/Local";
+import { getLocal, setLocal } from "../../../../helpers/Local";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 const CartPage = () => {
   const router = useRouter();
@@ -18,6 +19,8 @@ const CartPage = () => {
   const [quantity, setQty] = useState(1);
   const [quantityError, setQuantityError] = useState(false);
   const updateQty = context.updateQty;
+  const isLogin = getLocal("isLogin");
+  const userID = useSelector((state) => state?.common?.userID);
 
   const handleQtyUpdate = (item, quantity) => {
     if (quantity >= 1) {
@@ -50,6 +53,14 @@ const CartPage = () => {
   const handleClick = (id, type, category, detail) => {
     setLocal("product", { id, type, category, detail });
     router.push(`/product-details/product`);
+  };
+
+  const handleCheckOut = () => {
+    if (isLogin && userID) {
+      router.push("/page/account/checkout");
+    } else {
+      router.push("/page/account/login");
+    }
   };
 
   return (
@@ -191,7 +202,25 @@ const CartPage = () => {
                 <table className="table cart-table table-responsive-md">
                   <tfoot>
                     <tr>
-                      <td>total price :</td>
+                      <td>tổng số tiền:</td>
+                      <td>
+                        <h4>
+                          {total}
+                          {symbol}
+                        </h4>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>giảm giá:</td>
+                      <td>
+                        <h4>
+                          {total}
+                          {symbol}
+                        </h4>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>tổng thanh toán:</td>
                       <td>
                         <h2>
                           {total}
@@ -210,9 +239,9 @@ const CartPage = () => {
                 </Link>
               </Col>
               <Col xs="6">
-                <Link href={`/page/account/checkout`}>
-                  <a className="btn btn-solid">thanh toán</a>
-                </Link>
+                <a onClick={handleCheckOut} className="btn btn-solid">
+                  thanh toán
+                </a>
               </Col>
             </Row>
           </Container>

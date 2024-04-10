@@ -5,10 +5,13 @@ const initialState = {
   category: [],
   theme: false,
   brand: { category: null, detail: null },
+  userID: null,
+  billDetail: {},
+  listCard: 0,
 };
 
 export const common = createSlice({
-  name: "counter",
+  name: "common",
   initialState,
   reducers: {
     saveProducts: (state, action) => {
@@ -27,10 +30,24 @@ export const common = createSlice({
       const brand = action?.payload;
       state.brand = brand;
     },
+    setID: (state, action) => {
+      const userID = action?.payload;
+      state.userID = userID;
+    },
+    setBillDetail: (state, action) => {
+      const billDetail = action?.payload;
+      state.billDetail = billDetail;
+    },
   },
 });
 
-export const { saveProducts, saveCategory, changeTheme, changeBrand } =
-  common.actions;
+export const {
+  saveProducts,
+  saveCategory,
+  changeTheme,
+  changeBrand,
+  setID,
+  setBillDetail,
+} = common.actions;
 
 export default common.reducer;

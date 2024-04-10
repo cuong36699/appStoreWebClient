@@ -123,10 +123,10 @@ const TopCollection = ({
                           <ProductItems
                             product={product}
                             title={title}
-                            addWishlist={() =>
-                              contextWishlist.addToWish(product)
+                            addWishlist={(type) =>
+                              wishListContext.addToWish(product?.id, type)
                             }
-                            addCart={() => context.addToCart(product, quantity)}
+                            addCart={(type) => context.addToCart(product, type)}
                             addCompare={() => comapreList.addToCompare(product)}
                             cartClass={cartClass}
                             backImage={backImage}
@@ -175,10 +175,12 @@ const TopCollection = ({
                           product={product}
                           backImage={backImage}
                           addCompare={() => comapreList.addToCompare(product)}
-                          addWishlist={() => contextWishlist.addToWish(product)}
+                          addWishlist={(type) =>
+                            wishListContext.addToWish(product?.id, type)
+                          }
                           title={title}
                           cartClass={cartClass}
-                          addCart={() => context.addToCart(product, quantity)}
+                          addCart={(type) => context.addToCart(product, type)}
                           key={index}
                         />
                       </div>

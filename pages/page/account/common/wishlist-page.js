@@ -5,9 +5,10 @@ import CartContext from "../../../../helpers/cart/index";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { setLocal } from "../../../../helpers/Local";
+import { getLocal, setLocal } from "../../../../helpers/Local";
 
 const WishlistPage = () => {
+  const isLogin = getLocal("isLogin");
   const router = useRouter();
   const context = useContext(WishlistContext);
   const cartContext = useContext(CartContext);
@@ -51,7 +52,11 @@ const WishlistPage = () => {
   }, [wishlist, products]);
 
   const checkOut = () => {
-    router.push("/page/account/checkout");
+    if (isLogin) {
+      router.push("/page/account/checkout");
+    } else {
+      router.push("/page/account/login");
+    }
   };
 
   const handleClick = (id, type, category, detail) => {
@@ -182,11 +187,11 @@ const WishlistPage = () => {
               <Col sm="12">
                 <Link href={"/"}>
                   <a href={null} className="btn btn-solid">
-                    continue shopping
+                    tiếp tục mua sắm
                   </a>
                 </Link>
                 <a href={null} className="btn btn-solid" onClick={checkOut}>
-                  check out
+                  thanh toán
                 </a>
               </Col>
             </Row>

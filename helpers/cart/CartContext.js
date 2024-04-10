@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Context from "./index";
 import { toast } from "react-toastify";
+import { removeLocal } from "../Local";
 
 const getLocalCartItems = () => {
   try {
@@ -65,8 +66,13 @@ const CartProvider = (props) => {
   };
 
   const removeFromCart = (item) => {
-    toast.error("Product Removed Successfully !");
-    setCartItems(cartItems.filter((e) => e.typeID !== item.typeID));
+    toast.error("Xóa khỏi giỏ hàng thành công!");
+    setCartItems(cartItems.filter((e) => e.typeId !== item.typeId));
+  };
+
+  const removeAllCart = () => {
+    setCartItems([]);
+    removeLocal("cartList");
   };
 
   const minusQty = () => {
@@ -128,6 +134,7 @@ const CartProvider = (props) => {
         plusQty: plusQty,
         minusQty: minusQty,
         updateQty: updateQty,
+        removeAllCart: removeAllCart,
       }}
     >
       {props.children}

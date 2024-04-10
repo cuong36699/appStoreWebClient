@@ -2,16 +2,27 @@ import React from "react";
 import { Container, Row, Col } from "reactstrap";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getLocal, setLocal } from "../../../helpers/Local";
+import { signOut } from "firebase/auth";
+import { auth } from "../../../pages/firebase-config";
+import { setID } from "../../../redux/reducers/common";
 
 const TopBarDark = ({ topClass, fluid }) => {
   const router = useRouter();
   const isLogin = getLocal("isLogin");
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    setLocal("isLogin", false);
-    router.push("/page/account/login");
+    signOut(auth)
+      .then(() => {
+        setLocal("isLogin", false);
+        router.push("/page/account/login");
+        dispatch(setID(null));
+      })
+      .catch((error) => {
+        toast.error(`${error}`);
+      });
   };
 
   const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
@@ -41,7 +52,8 @@ const TopBarDark = ({ topClass, fluid }) => {
               <li className="mobile-wishlist">
                 <Link href="/page/account/wishlist">
                   <a>
-                    <i className="fa fa-heart" aria-hidden="true"></i> wishlist
+                    <i className="fa fa-heart" aria-hidden="true"></i> Danh sách
+                    yêu thích
                   </a>
                 </Link>
               </li>
@@ -65,7 +77,7 @@ const TopBarDark = ({ topClass, fluid }) => {
 
                   {isLogin ? (
                     <li onClick={() => handleLogout()}>
-                      <a>Logout</a>
+                      <a>Đăng xuất</a>
                     </li>
                   ) : null}
                 </ul>

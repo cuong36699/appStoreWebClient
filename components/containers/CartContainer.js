@@ -4,6 +4,9 @@ import CartHeader from "../headers/common/cart-header";
 import CartContext from "../../helpers/cart";
 import { Media } from "reactstrap";
 import { CurrencyContext } from "../../helpers/Currency/CurrencyContext";
+import { getLocal } from "../../helpers/Local";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 const CartContainer = ({ icon }) => {
   const context = useContext(CartContext);
@@ -11,6 +14,17 @@ const CartContainer = ({ icon }) => {
   const symbol = currContext.state.symbol;
   const cartList = context.state;
   const total = context.cartTotal;
+  const isLogin = getLocal("isLogin");
+  const router = useRouter();
+  const userID = useSelector((state) => state?.common?.userID);
+
+  const checkOut = () => {
+    if (isLogin && userID) {
+      router.push("/page/account/checkout");
+    } else {
+      router.push("/page/account/login");
+    }
+  };
 
   return (
     <Fragment>
@@ -44,9 +58,13 @@ const CartContainer = ({ icon }) => {
                   <Link href={`/page/account/cart`}>
                     <a>xem giỏ hàng</a>
                   </Link>
-                  <Link href={`/page/account/checkout`}>
-                    <a className="checkout">thanh toán</a>
-                  </Link>
+                  <a
+                    onClick={checkOut}
+                    className="checkout"
+                    style={{ cursor: "pointer" }}
+                  >
+                    thanh toán
+                  </a>
                 </div>
               </li>
             </div>

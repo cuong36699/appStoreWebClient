@@ -3,23 +3,30 @@ import CommonLayout from "../../../components/shop/common-layout";
 import { Container, Row, Form, Label, Input, Col } from "reactstrap";
 import { setLocal } from "../../../helpers/Local";
 import { useRouter } from "next/router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase-config";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const router = useRouter();
 
-  const [loginForm, setloginForm] = useState({
+  const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
   });
 
   const handleLogin = () => {
-    if (loginForm?.email == "123" && loginForm?.password == "123") {
-      setLocal("isLogin", true);
-      router.push({
-        pathname: "/",
-        query: {},
+    signInWithEmailAndPassword(auth, loginForm?.email, loginForm?.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (user?.uid) {
+          router.push("/");
+          setLocal("isLogin", true);
+        }
+      })
+      .catch((error) => {
+        toast.error(`Tài khoản không tồn tại`);
       });
-    }
   };
 
   const handleSignup = () => {
@@ -34,7 +41,7 @@ const Login = () => {
         <Container>
           <Row>
             <Col lg="6">
-              <h3>Login</h3>
+              <h3>đăng nhập</h3>
               <div className="theme-card">
                 <Form className="theme-form">
                   <div className="form-group">
@@ -49,13 +56,13 @@ const Login = () => {
                       required=""
                       value={loginForm?.email}
                       onChange={(e) => {
-                        setloginForm({ ...loginForm, email: e.target.value });
+                        setLoginForm({ ...loginForm, email: e.target.value });
                       }}
                     />
                   </div>
                   <div className="form-group">
                     <Label className="form-label" for="review">
-                      Password
+                      mật khẩu
                     </Label>
                     <Input
                       type="password"
@@ -65,7 +72,7 @@ const Login = () => {
                       required=""
                       value={loginForm?.password}
                       onChange={(e) => {
-                        setloginForm({
+                        setLoginForm({
                           ...loginForm,
                           password: e.target.value,
                         });
@@ -73,22 +80,22 @@ const Login = () => {
                     />
                   </div>
                   <a className="btn btn-solid" onClick={() => handleLogin()}>
-                    Login
+                    Đăng nhập
                   </a>
                 </Form>
               </div>
             </Col>
             <Col lg="6" className="right-login">
-              <h3>New Customer</h3>
+              <h3>khách hàng mới</h3>
               <div className="theme-card authentication-right">
-                <h6 className="title-font">Create A Account</h6>
+                <h6 className="title-font">tạo một tài khoản</h6>
                 <p>
-                  Sign up for a free account at our store. Registration is quick
-                  and easy. It allows you to be able to order from our shop. To
-                  start shopping click register.
+                  Trở thành viên miễn phí. Đăng ký nhanh và dễ dàng. Nó cho phép
+                  bạn đặt hàng từ cửa hàng chúng tôi. Để bắt đầu mua sắm hãy bấm
+                  vào đăng ký tài khoản.
                 </p>
                 <a className="btn btn-solid" onClick={() => handleSignup()}>
-                  Create an Account
+                  Đăng ký tài khoản
                 </a>
               </div>
             </Col>
