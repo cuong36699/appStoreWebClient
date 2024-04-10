@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { setID } from "../../../redux/reducers/common";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { add_users } from "../../../apis/apiServices/post";
+import moment from "moment/moment";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -19,14 +21,27 @@ const Register = () => {
     password: "",
   });
 
+  const success = (user) => {
+    const id = user?.uid;
+    const param = {
+      create_at: moment().format("DD/MM/YYYY hh:mm"),
+      email: form?.email,
+      id: id,
+      role: "user",
+      status: true,
+    };
+    add_users(param, id);
+    dispatch(setID(id));
+    setLocal("isLogin", true);
+    router.push("/");
+  };
+
   const handleClick = () => {
     createUserWithEmailAndPassword(auth, form?.email, form?.password)
       .then((userCredential) => {
         // Signed up
         const user = userCredential.user;
-        setLocal("isLogin", true);
-        dispatch(setID(user?.uid));
-        router.push("/");
+        success(user);
       })
       .catch((error) => {
         const errorCode = error.code;

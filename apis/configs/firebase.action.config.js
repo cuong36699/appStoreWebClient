@@ -1,9 +1,11 @@
 import {
   addDoc,
   collection,
+  doc,
   getDocs,
   orderBy,
   query,
+  setDoc,
 } from "firebase/firestore";
 import { firestore } from "../../pages/firebase-config";
 
@@ -42,6 +44,24 @@ export const postFirebase = (key, params) => {
       //     status: "error",
       //   })
       // );
+      return null;
+    });
+};
+
+export const putFirebaseHasID = (key, params, id) => {
+  const collectionRef = doc(firestore, key, id);
+  return setDoc(collectionRef, { ...params })
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      useDispatch(
+        setGlobalToaster({
+          active: true,
+          mess: `${error}` || "error api! post",
+          status: "error",
+        })
+      );
       return null;
     });
 };
