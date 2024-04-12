@@ -13,22 +13,11 @@ const CollectionBanner = () => {
 
   const [data, setData] = useState([]);
 
-  const voucherAPI = useSelector((state) => state?.api?.voucherAPI);
+  const voucher = useSelector((state) => state?.common?.voucher);
 
   useEffect(() => {
-    if (voucherAPI) {
-      const voucherActive = (voucherAPI || []).filter((v) => {
-        const isStart = moment().isAfter(
-          moment(`${v?.start_day} ${v?.start_hour}`, "DD/MM/YYYY hh:mm")
-        );
-        const isEnd = moment().isAfter(
-          moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
-        );
-        return v.status && isStart && !isEnd;
-      });
-      setData(voucherActive);
-    }
-  }, [voucherAPI]);
+    setData(voucher);
+  }, [voucher]);
 
   if (Array.isArray(data) && data.length <= 0) {
     return null;

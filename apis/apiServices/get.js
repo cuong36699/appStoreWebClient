@@ -1,4 +1,7 @@
-import { getFirebase } from "../configs/firebase.action.config";
+import {
+  getFirebase,
+  getFirebaseHasID,
+} from "../configs/firebase.action.config";
 
 export const get_category = () => {
   const key = "category";
@@ -68,4 +71,9 @@ export const get_products = () => {
 export const get_settings = () => {
   const key = "settings";
   return getFirebase(key);
+};
+
+export const get_current_user = (id) => {
+  const key = "users";
+  return getFirebaseHasID(key, id);
 };

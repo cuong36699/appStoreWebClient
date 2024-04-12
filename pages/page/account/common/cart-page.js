@@ -20,7 +20,7 @@ const CartPage = () => {
   const [quantityError, setQuantityError] = useState(false);
   const updateQty = context.updateQty;
   const isLogin = getLocal("isLogin");
-  const userID = useSelector((state) => state?.common?.userID);
+  const user = useSelector((state) => state?.common?.user);
 
   const handleQtyUpdate = (item, quantity) => {
     if (quantity >= 1) {
@@ -56,7 +56,7 @@ const CartPage = () => {
   };
 
   const handleCheckOut = () => {
-    if (isLogin && userID) {
+    if (isLogin && user?.id) {
       router.push("/page/account/checkout");
     } else {
       router.push("/page/account/login");

@@ -14,13 +14,14 @@ import {
   changeTheme,
   saveCategory,
   saveProducts,
-  setID,
-  setListCard,
+  saveVoucher,
+  setUser,
 } from "../../redux/reducers/common";
 import moment from "moment";
 import { getLocal, setLocal } from "../../helpers/Local";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../pages/firebase-config";
+import { get_current_user } from "../../apis/apiServices";
 
 export default function FetchAPI() {
   const dispatch = useDispatch();
@@ -28,17 +29,24 @@ export default function FetchAPI() {
   const categoryAPI = useSelector((state) => state?.api?.categoryAPI);
   const detailAPI = useSelector((state) => state?.api?.detailAPI);
   const campaignAPI = useSelector((state) => state?.api?.campaignsAPI);
+  const voucherAPI = useSelector((state) => state?.api?.voucherAPI);
+
   const theme = getLocal("theme");
+
+  const getUserCurrent = async (uid) => {
+    const userCurrent = await get_current_user(uid);
+    dispatch(setUser(userCurrent));
+  };
 
   const checkUser = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
+        const uid = user?.uid;
+        getUserCurrent(uid);
         setLocal("isLogin", true);
-        dispatch(setID(uid));
       } else {
         setLocal("isLogin", false);
-        dispatch(setID(null));
+        dispatch(set(null));
       }
     });
   };
@@ -126,6 +134,21 @@ export default function FetchAPI() {
       dispatch(saveCategory(categoryActive));
     }
   }, [categoryAPI]);
+
+  useEffect(() => {
+    if (voucherAPI) {
+      const voucherActive = (voucherAPI || []).filter((v) => {
+        const isStart = moment().isAfter(
+          moment(`${v?.start_day} ${v?.start_hour}`, "DD/MM/YYYY hh:mm")
+        );
+        const isEnd = moment().isAfter(
+          moment(`${v?.end_day} ${v?.end_hour}`, "DD/MM/YYYY hh:mm")
+        );
+        return v.status && isStart && !isEnd;
+      });
+      dispatch(saveVoucher(voucherActive));
+    }
+  }, [voucherAPI]);
 
   return null;
 }

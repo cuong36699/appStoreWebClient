@@ -36,7 +36,7 @@ const Login = () => {
   };
 
   return (
-    <CommonLayout parent="home" title="login">
+    <CommonLayout parent="trang chủ" title="đăng nhập">
       <section className="login-page section-b-space">
         <Container>
           <Row>

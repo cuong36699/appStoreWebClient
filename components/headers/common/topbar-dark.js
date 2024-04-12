@@ -1,34 +1,80 @@
-import React from "react";
-import { Container, Row, Col } from "reactstrap";
+import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Modal,
+  ModalBody,
+  Input,
+  Label,
+} from "reactstrap";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { getLocal, setLocal } from "../../../helpers/Local";
 import { signOut } from "firebase/auth";
 import { auth } from "../../../pages/firebase-config";
-import { setID } from "../../../redux/reducers/common";
+import { setUser } from "../../../redux/reducers/common";
+import { toast } from "react-toastify";
+import { edit_profile } from "../../../apis/apiServices";
 
 const TopBarDark = ({ topClass, fluid }) => {
   const router = useRouter();
   const isLogin = getLocal("isLogin");
+  const user = auth.currentUser;
   const dispatch = useDispatch();
+
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState({ pass: "", passConfirm: "" });
+
+  const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
+  const userCurrent = useSelector((state) => state?.common?.user);
+
+  console.log(userCurrent, "userCurrent");
 
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
         setLocal("isLogin", false);
         router.push("/page/account/login");
-        dispatch(setID(null));
+        dispatch(setUser(null));
       })
       .catch((error) => {
         toast.error(`${error}`);
       });
   };
 
-  const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
   const phoneNumber = (aboutAPI?.social?.data || []).find(
     (r) => r?.name === "Phone" || r?.name === "phone"
   )?.link;
+
+  const toggle = () => setModal(!modal);
+
+  const handleClick = async () => {
+    if (form?.pass || form?.passConfirm) {
+      if (form?.pass === form?.passConfirm) {
+        updatePassword(user, form?.passConfirm)
+          .then(() => {
+            toast.success(`Thay đổi mật khẩu thành công`);
+            toggle();
+            handleLogout();
+          })
+          .catch((error) => {
+            toast.error(`${error}`);
+          });
+      } else {
+        toast.error(`Mật khẩu không trùng khớp`);
+      }
+    }
+    if (userCurrent && Object.keys(userCurrent).length > 0) {
+      await edit_profile(userCurrent, userCurrent?.id);
+      toggle();
+    }
+  };
+
+  const handleChange = (value, type) => {
+    dispatch(setUser({ ...userCurrent, [type]: value }));
+  };
 
   return (
     <div className={topClass}>
@@ -58,7 +104,14 @@ const TopBarDark = ({ topClass, fluid }) => {
                 </Link>
               </li>
               <li className="onhover-dropdown mobile-account">
-                <i className="fa fa-user" aria-hidden="true"></i> Tài khoản
+                <i className="fa fa-user" aria-hidden="true"></i>{" "}
+                {isLogin
+                  ? userCurrent?.last_name
+                    ? `${userCurrent?.last_name}`
+                    : userCurrent?.email
+                    ? `${userCurrent?.email}`
+                    : `Người dùng`
+                  : "Tài khoản"}
                 <ul className="onhover-show-div">
                   {!isLogin ? (
                     <div>
@@ -76,15 +129,176 @@ const TopBarDark = ({ topClass, fluid }) => {
                   ) : null}
 
                   {isLogin ? (
-                    <li onClick={() => handleLogout()}>
-                      <a>Đăng xuất</a>
-                    </li>
+                    <div>
+                      <li onClick={() => toggle()}>
+                        <a>Cập nhật hồ sơ</a>
+                      </li>
+                      <li onClick={() => handleLogout()}>
+                        <a>Đăng xuất</a>
+                      </li>
+                    </div>
                   ) : null}
                 </ul>
               </li>
             </ul>
           </Col>
         </Row>
+        {/*  */}
+        <Modal
+          isOpen={modal}
+          toggle={toggle}
+          className="modal-lg quickview-modal"
+          centered
+        >
+          <ModalBody>
+            <div style={{ display: "flex", gap: 20 }} className="modal-custom">
+              <Col lg="12">
+                <Row className="content-input">
+                  <Col>
+                    <Label className="form-label" for="firstName">
+                      Họ
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="first_name"
+                      placeholder="Họ"
+                      required=""
+                      value={userCurrent?.first_name || ""}
+                      onChange={(e) => {
+                        handleChange(e.target.value, "first_name");
+                      }}
+                    />
+                  </Col>
+                  <Col>
+                    <Label className="form-label" for="lastName">
+                      Tên
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="last_name"
+                      placeholder="Tên"
+                      required=""
+                      value={userCurrent?.last_name || ""}
+                      onChange={(e) => {
+                        handleChange(e.target.value, "last_name");
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <Row className="content-input">
+                  <Col>
+                    <Label className="form-label" for="state">
+                      Quận / Huyện
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="state"
+                      placeholder="Quận / Huyện"
+                      required=""
+                      value={userCurrent?.state || ""}
+                      onChange={(e) => {
+                        handleChange(e.target.value, "state");
+                      }}
+                    />
+                  </Col>
+                  <Col>
+                    <Label className="form-label" for="city">
+                      Thành phố
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="city"
+                      placeholder="Thành phố"
+                      required=""
+                      value={userCurrent?.city || ""}
+                      onChange={(e) => {
+                        handleChange(e.target.value, "city");
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <Row className="content-input">
+                  <Col>
+                    <Label className="form-label" for="address">
+                      Địa chỉ
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="address"
+                      placeholder="Địa chỉ"
+                      required=""
+                      value={userCurrent?.address || ""}
+                      onChange={(e) => {
+                        handleChange(e.target.value, "address");
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <Row className="content-input">
+                  <Col>
+                    <Label className="form-label" for="email">
+                      Email
+                    </Label>
+                    <Input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="Email"
+                      required=""
+                      value={user?.email}
+                      disabled
+                    />
+                  </Col>
+                </Row>
+                <Row className="content-input">
+                  <Col md="6">
+                    <Label className="form-label" for="password">
+                      Mật khẩu
+                    </Label>
+                    <Input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      placeholder="Nhập mật khẩu"
+                      required=""
+                      value={form?.pass}
+                      onChange={(e) => {
+                        setForm({ ...form, pass: e.target.value });
+                      }}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <Label className="form-label" for="password">
+                      Nhập lại mật khẩu
+                    </Label>
+                    <Input
+                      type="password"
+                      className="form-control"
+                      id="passwordConfirm"
+                      placeholder="Nhập mật khẩu"
+                      required=""
+                      value={form?.passConfirm}
+                      onChange={(e) => {
+                        setForm({ ...form, passConfirm: e.target.value });
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="12">
+                    <a
+                      href="#"
+                      className="btn btn-solid w-auto"
+                      onClick={handleClick}
+                    >
+                      Cập nhật
+                    </a>
+                  </Col>
+                </Row>
+              </Col>
+            </div>
+          </ModalBody>
+        </Modal>
       </Container>
     </div>
   );

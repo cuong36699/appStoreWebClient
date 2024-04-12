@@ -19,6 +19,7 @@ const Register = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
+    passwordConfirm: "",
   });
 
   const success = (user) => {
@@ -37,17 +38,21 @@ const Register = () => {
   };
 
   const handleClick = () => {
-    createUserWithEmailAndPassword(auth, form?.email, form?.password)
-      .then((userCredential) => {
-        // Signed up
-        const user = userCredential.user;
-        success(user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        toast.error(`${errorMessage}`);
-      });
+    if (form?.passwordConfirm && form?.password === form?.passwordConfirm) {
+      createUserWithEmailAndPassword(auth, form?.email, form?.password)
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          success(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          toast.error(`${errorMessage}`);
+        });
+    } else {
+      toast.error(`Mật khẩu không trùng khớp`);
+    }
   };
 
   return (
@@ -86,41 +91,66 @@ const Register = () => {
                     </Col>
                   </Row> */}
                   <Row>
-                    <Col md="6">
-                      <Label className="form-label" for="email">
-                        email
-                      </Label>
-                      <Input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="Email"
-                        required=""
-                        value={form?.email}
-                        onChange={(e) => {
-                          setForm({ ...form, email: e.target.value });
-                        }}
-                      />
-                    </Col>
-                    <Col md="6">
-                      <Label className="form-label" for="review">
-                        mật khẩu
-                      </Label>
-                      <Input
-                        type="password"
-                        className="form-control"
-                        id="review"
-                        placeholder="Nhập mật khẩu"
-                        required=""
-                        value={form?.password}
-                        onChange={(e) => {
-                          setForm({
-                            ...form,
-                            password: e.target.value,
-                          });
-                        }}
-                      />
-                    </Col>
+                    <Row>
+                      <Col md="6">
+                        <Label className="form-label" for="email">
+                          email
+                        </Label>
+                        <Input
+                          type="email"
+                          className="form-control"
+                          id="email"
+                          placeholder="Email"
+                          required=""
+                          value={form?.email}
+                          onChange={(e) => {
+                            setForm({ ...form, email: e.target.value });
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md="6">
+                        <Label className="form-label" for="review">
+                          mật khẩu
+                        </Label>
+                        <Input
+                          type="password"
+                          className="form-control"
+                          id="review"
+                          placeholder="Nhập mật khẩu"
+                          required=""
+                          value={form?.password}
+                          onChange={(e) => {
+                            setForm({
+                              ...form,
+                              password: e.target.value,
+                            });
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md="6">
+                        <Label className="form-label" for="review">
+                          nhập lại mật khẩu
+                        </Label>
+                        <Input
+                          type="password"
+                          className="form-control"
+                          id="review"
+                          placeholder="Nhập mật khẩu"
+                          required=""
+                          value={form?.passwordConfirm}
+                          onChange={(e) => {
+                            setForm({
+                              ...form,
+                              passwordConfirm: e.target.value,
+                            });
+                          }}
+                        />
+                      </Col>
+                    </Row>
                     <Col md="12">
                       <a
                         href="#"

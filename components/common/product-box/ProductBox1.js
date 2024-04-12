@@ -6,6 +6,7 @@ import CartContext from "../../../helpers/cart";
 import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import MasterProductDetail from "./MasterProductDetail";
 import { setLocal } from "../../../helpers/Local";
+import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 
 const ProductItem = ({
   product,
@@ -28,6 +29,9 @@ const ProductItem = ({
   const minusQty = cartContext.minusQty;
   const quantity = cartContext.quantity;
   const setQuantity = cartContext.setQuantity;
+  const cartItems = cartContext.state;
+  const context = useContext(WishlistContext);
+  const wishlist = context.wishlistItems;
 
   const [image, setImage] = useState("");
   const [modal, setModal] = useState(false);
@@ -140,14 +144,38 @@ const ProductItem = ({
             title="Add to cart"
             onClick={() => addCart(product?.type?.[active])}
           >
-            <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+            <i
+              className="fa fa-shopping-cart"
+              aria-hidden="true"
+              style={{
+                color: (cartItems || []).some(
+                  (r) =>
+                    r?.id === product?.id &&
+                    r?.typeId === product?.type?.[active]?.id
+                )
+                  ? "#ff4c3b"
+                  : "",
+              }}
+            ></i>
           </button>
           <a
             href={null}
             title="Add to Wishlist"
             onClick={() => addWishlist(product?.type?.[active]?.id)}
           >
-            <i className="fa fa-heart" aria-hidden="true"></i>
+            <i
+              className="fa fa-heart"
+              aria-hidden="true"
+              style={{
+                color: (wishlist || []).some(
+                  (r) =>
+                    r?.id === product?.id &&
+                    r?.type === product?.type?.[active]?.id
+                )
+                  ? "#ff4c3b"
+                  : "",
+              }}
+            ></i>
           </a>
           <a href={null} title="Quick View" onClick={toggle}>
             <i className="fa fa-search" aria-hidden="true"></i>

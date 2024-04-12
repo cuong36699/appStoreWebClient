@@ -5,9 +5,10 @@ const initialState = {
   category: [],
   theme: false,
   brand: { category: null, detail: null },
-  userID: null,
+  user: null,
   billDetail: {},
   listCard: 0,
+  voucher: [],
 };
 
 export const common = createSlice({
@@ -30,13 +31,17 @@ export const common = createSlice({
       const brand = action?.payload;
       state.brand = brand;
     },
-    setID: (state, action) => {
-      const userID = action?.payload;
-      state.userID = userID;
+    setUser: (state, action) => {
+      const user = action?.payload;
+      state.user = user;
     },
     setBillDetail: (state, action) => {
       const billDetail = action?.payload;
       state.billDetail = billDetail;
+    },
+    saveVoucher: (state, action) => {
+      const voucher = action?.payload;
+      state.voucher = voucher;
     },
   },
 });
@@ -46,8 +51,9 @@ export const {
   saveCategory,
   changeTheme,
   changeBrand,
-  setID,
+  setUser,
   setBillDetail,
+  saveVoucher,
 } = common.actions;
 
 export default common.reducer;
