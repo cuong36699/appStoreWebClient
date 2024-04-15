@@ -61,9 +61,11 @@ const MasterFooter = ({
         {newLatter ? (
           <div className={footerLayOut}>
             <Container fluid={containerFluid ? containerFluid : ""}>
-              <section className={footerSection}>
-                <div className="brand-logo">
-                  <LogoImage logo={"logo.png"} />
+              <section className={`${footerSection} footer-theme-logo`}>
+                <div className="footer-contant">
+                  <div className="footer-logo">
+                    <LogoImage logo={logoName} />
+                  </div>
                 </div>
               </section>
             </Container>

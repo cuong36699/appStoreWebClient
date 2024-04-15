@@ -40,16 +40,18 @@ const LeftSidebarPage = ({}) => {
     dots: false,
     arrows: true,
     fade: true,
+    lazyLoad: true,
   };
 
   var productsnav = {
-    slidesToShow: 3,
-    infinite: data?.type?.[activeTab]?.imagesList?.length > 3,
+    slidesToShow: 9,
+    infinite: data?.type?.[activeTab]?.imagesList?.length > 9,
     swipeToSlide: true,
     arrows: false,
     dots: false,
     focusOnSelect: true,
     speed: 300,
+    lazyLoad: true,
   };
 
   useEffect(() => {
@@ -98,12 +100,23 @@ const LeftSidebarPage = ({}) => {
                       >
                         {(data?.type?.[activeTab]?.imagesList || [])?.map(
                           (vari, index) => (
-                            <div key={`${vari?.id}-${index}`}>
-                              <img
-                                src={`${vari.url}`}
-                                alt={vari.url}
-                                className="img-fluid image_zoom_cls-0"
-                              />
+                            <div
+                              className="product-slick-div-img"
+                              key={`${vari?.id}-${index}`}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <img
+                                  src={`${vari.url}`}
+                                  alt={vari.url}
+                                  className="img-fluid image_zoom_cls-0"
+                                  style={{ width: 280, resize: "center" }}
+                                />
+                              </div>
                             </div>
                           )
                         )}
@@ -124,11 +137,12 @@ const LeftSidebarPage = ({}) => {
                             ? (data?.type?.[activeTab]?.imagesList || [])?.map(
                                 (vari, index) => (
                                   <div key={`${vari?.id}-${index}`}>
-                                    <Media
+                                    <img
                                       src={`${vari.url}`}
                                       key={`${vari?.id}-${index}`}
                                       alt={vari.alt}
                                       className="img-fluid"
+                                      style={{ width: 50 }}
                                     />
                                   </div>
                                 )

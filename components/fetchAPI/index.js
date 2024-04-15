@@ -46,7 +46,7 @@ export default function FetchAPI() {
         setLocal("isLogin", true);
       } else {
         setLocal("isLogin", false);
-        dispatch(set(null));
+        dispatch(setUser(null));
       }
     });
   };

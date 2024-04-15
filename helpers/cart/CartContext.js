@@ -35,6 +35,11 @@ const CartProvider = (props) => {
 
   // Add Product To Cart
   const addToCart = (product, type) => {
+    if (!type?.price || type?.price == 0) {
+      toast.error("Hay liên hệ cửa hàng để mua!");
+      return;
+    }
+
     const index = cartItems.findIndex(
       (item) => item.id === product?.id && item?.typeId === type?.id
     );

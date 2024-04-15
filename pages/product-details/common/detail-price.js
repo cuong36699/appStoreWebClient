@@ -134,7 +134,9 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
         </div>
         <div className="product-description border-product">
           <span className="instock-cls">{stock}</span>
-          <h6 className="product-title">số lượng</h6>
+          <h6 className="product-title">
+            số lượng {product.unit ? `(${product.unit})` : ""}
+          </h6>
           <div className="qty-box">
             <div className="input-group">
               <span className="input-group-prepend">
@@ -186,6 +188,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
               thêm vào giỏ hàng
             </p>
           </a>
+          <a className="btn btn-solid">mua ngay</a>
         </div>
         <div className="border-product">
           <h6 className="product-title">Thông số kỹ thuật</h6>

@@ -314,7 +314,7 @@ body {
       }
     }
   }
-  .footer-theme {
+  .footer-theme-logo {
     .footer-logo {
       a {
         img {
@@ -542,6 +542,9 @@ body {
   .breadcrumb-section {
     .breadcrumb {
       a {
+        color: $grey-about;
+      }
+      .breadcrumb-item::before {
         color: $grey-about;
       }
     }

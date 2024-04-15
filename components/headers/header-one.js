@@ -26,9 +26,20 @@ const HeaderOne = ({
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [dataSearch, setDataSearch] = useState([]);
+  const [positionFixed, setPositionFixed] = useState(false);
 
   const productsAPI = useSelector((state) => state?.api?.productsAPI);
   const theme = useSelector((state) => state?.common?.theme);
+  const pathname = window.location.pathname;
+
+  const checkPage = () => {
+    const check = pathname.includes("product-details");
+    if (check) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   /*=====================
      Pre loader
@@ -62,10 +73,16 @@ const HeaderOne = ({
       0;
 
     if (number >= 50) {
-      if (window.innerWidth < 581)
+      if (window.innerWidth < 581) {
         document.getElementById("sticky").classList.remove("fixed");
-      else document.getElementById("sticky").classList.add("fixed");
-    } else document.getElementById("sticky").classList.remove("fixed");
+      } else {
+        document.getElementById("sticky").classList.add("fixed");
+        setPositionFixed(true);
+      }
+    } else {
+      document.getElementById("sticky").classList.remove("fixed");
+      setPositionFixed(false);
+    }
   };
 
   const openNav = () => {
@@ -113,7 +130,10 @@ const HeaderOne = ({
         <Container>
           <Row>
             <Col>
-              <div className="main-menu">
+              <div
+                className="main-menu"
+                style={{ height: checkPage() && positionFixed ? 70 : "" }}
+              >
                 <div className="menu-left">
                   <div className="navbar">
                     {/* drawer */}
