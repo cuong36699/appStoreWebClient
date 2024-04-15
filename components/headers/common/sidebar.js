@@ -37,7 +37,10 @@ const SideBar = () => {
         <a href={null} className="sidebar-overlay" onClick={closeNav}></a>
         <nav>
           <a href={null} onClick={closeNav}>
-            <div className="sidebar-back text-start">
+            <div
+              className="sidebar-back text-start"
+              style={{ justifyContent: "flex-end" }}
+            >
               <i className="fa fa-angle-left pe-2" aria-hidden="true"></i>
             </div>
           </a>

@@ -59,6 +59,7 @@
     "react-responsive-carousel": "^3.2.23",
     "react-slick": "^0.29.0",
     "react-sticky-el": "^2.0.9",
+    "react-svg": "^16.1.34",
     "react-tabs": "4.2.1",
     "react-toastify": "^9.0.4",
     "reactstrap": "^8.10.0",

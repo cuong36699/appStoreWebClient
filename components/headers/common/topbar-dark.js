@@ -17,6 +17,8 @@ import { auth } from "../../../pages/firebase-config";
 import { setUser } from "../../../redux/reducers/common";
 import { toast } from "react-toastify";
 import { edit_profile } from "../../../apis/apiServices";
+import Icons from "../../../public/assets/svg/icon";
+import SVG from "../../SVG";
 
 const TopBarDark = ({ topClass, fluid }) => {
   const router = useRouter();
@@ -24,13 +26,12 @@ const TopBarDark = ({ topClass, fluid }) => {
   const user = auth.currentUser;
   const dispatch = useDispatch();
 
+  const [seen, setSeen] = useState(false);
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ pass: "", passConfirm: "" });
 
   const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
   const userCurrent = useSelector((state) => state?.common?.user);
-
-  console.log(userCurrent, "userCurrent");
 
   const handleLogout = () => {
     signOut(auth)
@@ -251,12 +252,12 @@ const TopBarDark = ({ topClass, fluid }) => {
                   </Col>
                 </Row>
                 <Row className="content-input">
-                  <Col md="6">
+                  <Col md="6" style={{ position: "relative" }}>
                     <Label className="form-label" for="password">
                       Mật khẩu
                     </Label>
                     <Input
-                      type="password"
+                      type={seen ? "text" : "password"}
                       className="form-control"
                       id="password"
                       placeholder="Nhập mật khẩu"
@@ -266,13 +267,29 @@ const TopBarDark = ({ topClass, fluid }) => {
                         setForm({ ...form, pass: e.target.value });
                       }}
                     />
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: 22,
+                        top: 40,
+                        cursor: "pointer",
+                      }}
+                      onMouseDown={() => {
+                        setSeen(true);
+                      }}
+                      onMouseUp={() => {
+                        setSeen(false);
+                      }}
+                    >
+                      <SVG src={Icons.eye} size={28} />
+                    </div>
                   </Col>
-                  <Col md="6">
+                  <Col md="6" style={{ position: "relative" }}>
                     <Label className="form-label" for="password">
                       Nhập lại mật khẩu
                     </Label>
                     <Input
-                      type="password"
+                      type={seen ? "text" : "password"}
                       className="form-control"
                       id="passwordConfirm"
                       placeholder="Nhập mật khẩu"
@@ -282,6 +299,22 @@ const TopBarDark = ({ topClass, fluid }) => {
                         setForm({ ...form, passConfirm: e.target.value });
                       }}
                     />
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: 22,
+                        top: 40,
+                        cursor: "pointer",
+                      }}
+                      onMouseDown={() => {
+                        setSeen(true);
+                      }}
+                      onMouseUp={() => {
+                        setSeen(false);
+                      }}
+                    >
+                      <SVG src={Icons.eye} size={28} />
+                    </div>
                   </Col>
                 </Row>
                 <Row>

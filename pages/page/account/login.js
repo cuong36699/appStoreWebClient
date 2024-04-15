@@ -6,10 +6,13 @@ import { useRouter } from "next/router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { toast } from "react-toastify";
+import SVG from "../../../components/SVG";
+import Icons from "../../../public/assets/svg/icon";
 
 const Login = () => {
   const router = useRouter();
 
+  const [seen, setSeen] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -60,12 +63,12 @@ const Login = () => {
                       }}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-group" style={{ position: "relative" }}>
                     <Label className="form-label" for="review">
                       mật khẩu
                     </Label>
                     <Input
-                      type="password"
+                      type={seen ? "text" : "password"}
                       className="form-control"
                       id="review"
                       placeholder="Enter your password"
@@ -78,6 +81,22 @@ const Login = () => {
                         });
                       }}
                     />
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: 18,
+                        top: 35,
+                        cursor: "pointer",
+                      }}
+                      onMouseDown={() => {
+                        setSeen(true);
+                      }}
+                      onMouseUp={() => {
+                        setSeen(false);
+                      }}
+                    >
+                      <SVG src={Icons.eye} size={28} />
+                    </div>
                   </div>
                   <a className="btn btn-solid" onClick={() => handleLogin()}>
                     Đăng nhập

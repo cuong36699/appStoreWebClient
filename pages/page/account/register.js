@@ -11,11 +11,14 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { add_users } from "../../../apis/apiServices/post";
 import moment from "moment/moment";
+import SVG from "../../../components/SVG";
+import Icons from "../../../public/assets/svg/icon";
 
 const Register = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const [seen, setSeen] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -110,12 +113,12 @@ const Register = () => {
                       </Col>
                     </Row>
                     <Row>
-                      <Col md="6">
+                      <Col md="6" style={{ position: "relative" }}>
                         <Label className="form-label" for="review">
                           mật khẩu
                         </Label>
                         <Input
-                          type="password"
+                          type={seen ? "text" : "password"}
                           className="form-control"
                           id="review"
                           placeholder="Nhập mật khẩu"
@@ -128,15 +131,31 @@ const Register = () => {
                             });
                           }}
                         />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 25,
+                            top: 35,
+                            cursor: "pointer",
+                          }}
+                          onMouseDown={() => {
+                            setSeen(true);
+                          }}
+                          onMouseUp={() => {
+                            setSeen(false);
+                          }}
+                        >
+                          <SVG src={Icons.eye} size={28} />
+                        </div>
                       </Col>
                     </Row>
                     <Row>
-                      <Col md="6">
+                      <Col md="6" style={{ position: "relative" }}>
                         <Label className="form-label" for="review">
                           nhập lại mật khẩu
                         </Label>
                         <Input
-                          type="password"
+                          type={seen ? "text" : "password"}
                           className="form-control"
                           id="review"
                           placeholder="Nhập mật khẩu"
@@ -149,6 +168,22 @@ const Register = () => {
                             });
                           }}
                         />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 25,
+                            top: 35,
+                            cursor: "pointer",
+                          }}
+                          onMouseDown={() => {
+                            setSeen(true);
+                          }}
+                          onMouseUp={() => {
+                            setSeen(false);
+                          }}
+                        >
+                          <SVG src={Icons.eye} size={28} />
+                        </div>
                       </Col>
                     </Row>
                     <Col md="12">
