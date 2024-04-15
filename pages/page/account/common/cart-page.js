@@ -233,12 +233,7 @@ const CartPage = () => {
               </Col>
             </Row>
             <Row className="cart-buttons">
-              <Col xs="6">
-                <Link href={`/shop/left_sidebar`}>
-                  <a className="btn btn-solid">Tiếp tục mua sắm</a>
-                </Link>
-              </Col>
-              <Col xs="6">
+              <Col xs="12">
                 <a onClick={handleCheckOut} className="btn btn-solid">
                   thanh toán
                 </a>

@@ -157,3 +157,49 @@
     }
   }
 }
+
+.button-add-to-card-custom {
+  a {
+    &:hover {
+      p {
+        color: #000000 !important;
+      }
+    }
+  }
+}
+
+.filter-search {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+
+  .header-search-custom {
+    background-color: #f8f8f8;
+    width: 60%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    &.is-theme {
+      background-color: #f8f8f890;
+    }
+
+    .input-search {
+      border: 0;
+      outline: 0;
+      width: 90%;
+      height: 100%;
+      background-color: #f8f8f8;
+      border-radius: 16px;
+
+      &.is-theme {
+        background-color: #f8f8f805;
+        color: black;
+      }
+    }
+  }
+}

@@ -22,6 +22,9 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
   const plusQty = context.plusQty;
   const minusQty = context.minusQty;
   const quantity = context.quantity;
+  const setQuantity = context.setQuantity;
+  const cartItems = context.state;
+
   const uniqueColor = [];
   const uniqueSize = [];
   const keyInfo = product?.infomation
@@ -31,7 +34,13 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
   const theme = useSelector((state) => state?.common?.theme);
 
   const changeQty = (e) => {
-    setQuantity(parseInt(e.target.value));
+    if (e > 10) {
+      setQuantity(parseInt(10));
+    } else if (e < 0) {
+      setQuantity(parseInt(1));
+    } else if (e > 0 && e <= 10) {
+      setQuantity(parseInt(e));
+    }
   };
 
   const valuePrice = () => {
@@ -63,6 +72,12 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
     updateLocal("product", { type });
     setActive(index);
     setTab(index);
+  };
+
+  const checkAddCard = () => {
+    return (cartItems || []).some(
+      (r) => r?.typeId === product?.type?.[active]?.id
+    );
   };
 
   return (
@@ -137,7 +152,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
                 type="text"
                 name="quantity"
                 value={quantity}
-                onChange={changeQty}
+                onChange={(e) => changeQty(e.target.value)}
                 className="form-control input-number"
               />
               <span className="input-group-prepend">
@@ -154,13 +169,22 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
             </div>
           </div>
         </div>
-        <div className="product-buttons">
+        <div className="product-buttons button-add-to-card-custom">
           <a
             href={null}
             className="btn btn-solid"
             onClick={() => context.addToCart(product, product?.type?.[active])}
+            style={{
+              background: checkAddCard() ? "#f9f9f9" : "",
+            }}
           >
-            thêm vào giỏ hàng
+            <p
+              style={{
+                color: checkAddCard() ? "#000000" : "white",
+              }}
+            >
+              thêm vào giỏ hàng
+            </p>
           </a>
         </div>
         <div className="border-product">

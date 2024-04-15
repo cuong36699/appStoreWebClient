@@ -14,6 +14,7 @@ import FilterContext from "../../../helpers/filter/FilterContext";
 import { WishlistContext } from "../../../helpers/wishlist/WishlistContext";
 import { getLocal, updateLocal } from "../../../helpers/Local";
 import { changeBrand } from "../../../redux/reducers/common";
+import search from "../../../public/assets/images/icon/search.png";
 
 const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   const router = useRouter();
@@ -30,9 +31,11 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [layout, setLayout] = useState(layoutList);
   const [url, setUrl] = useState();
+  const [search, setSearch] = useState("");
 
   const products = useSelector((state) => state?.common?.products);
   const category = useSelector((state) => state?.common?.category);
+  const theme = useSelector((state) => state?.common?.theme);
 
   const filter = getLocal("filter");
   const checkCategory = router?.query?.category;
@@ -120,25 +123,45 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
     }
   };
 
-  const handleClickTab = (id, name) => {
-    if (!id) {
+  // const handleClickTab = (id, name) => {
+  //   if (!id) {
+  //     sortData(sortBy, products || []);
+  //     dispatch(changeBrand({ category: "all", detail: "none" }));
+  //   } else {
+  //     const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+  //     sortData(sortBy, dataNew || []);
+  //     dispatch(changeBrand({ category: name, detail: "none" }));
+  //   }
+  // };
+
+  useEffect(() => {
+    if (activeTab === 0) {
       sortData(sortBy, products || []);
       dispatch(changeBrand({ category: "all", detail: "none" }));
     } else {
-      const dataNew = (products || [])?.filter((r) => r?.category_id === id);
-      sortData(sortBy, dataNew || []);
-      dispatch(changeBrand({ category: name, detail: "none" }));
+      const dataNew = (products || [])?.filter(
+        (r) => r?.category_id === category?.[activeTab - 1]?.id
+      );
+      const dataSearch = (dataNew || []).filter(
+        (r) => r?.name && (r?.name).toLowerCase().includes(search.toLowerCase())
+      );
+      // setData(dataSearch);
+      sortData(sortBy, dataSearch || []);
+      dispatch(
+        changeBrand({
+          category: category?.[activeTab - 1]?.name,
+          detail: "none",
+        })
+      );
     }
-  };
+  }, [search, activeTab, products, sortBy]);
 
   return (
     <Col className="collection-content">
       <div className="page-main-content">
         <Row>
           <Col sm="12">
-            <Row>
-              <Col xs="12">{/*  */}</Col>
-            </Row>
+            <Row></Row>
             <div className="collection-product-wrapper">
               <div className="product-top-filter">
                 {!noSidebar ? (
@@ -295,7 +318,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                       <Tab
                         label="All"
                         onClick={() => {
-                          handleClickTab(null);
+                          // handleClickTab(null);
                           updateLocal("filter", { tab: 0, id: "all" });
                         }}
                         style={{ fontSize: 16, fontWeight: 600 }}
@@ -305,7 +328,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                           key={`${r?.id}`}
                           label={r?.name}
                           onClick={() => {
-                            handleClickTab(r?.id, r?.name);
+                            // handleClickTab(r?.id, r?.name);
                             updateLocal("filter", {
                               tab: index + 1,
                               id: r?.id,
@@ -317,6 +340,30 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                     </Tabs>
                   </Box>
                 </div>
+                {/*  */}
+                <Row>
+                  <Col xs="12">
+                    <div className="filter-search">
+                      <div
+                        className={`header-search-custom ${
+                          theme ? "is-theme" : ""
+                        }`}
+                      >
+                        <input
+                          className={`input-search ${theme ? "is-theme" : ""}`}
+                          onChange={(e) => {
+                            setSearch(e.target.value);
+                          }}
+                          placeholder="Bạn cần tìm gì?"
+                        />
+                      </div>
+                      <i
+                        className="fa fa-search"
+                        style={{ fontSize: 28, fontWeight: "300" }}
+                      ></i>
+                    </div>
+                  </Col>
+                </Row>
                 {/*  */}
                 <Row>
                   {/* Product Box */}

@@ -16,6 +16,7 @@ const WishlistPage = () => {
   const wishlist = context.wishlistItems;
   const removeFromWish = context.removeFromWish;
   const addCart = cartContext.addToCart;
+  const cartList = cartContext.state;
 
   const [data, setData] = useState([]);
 
@@ -42,8 +43,8 @@ const WishlistPage = () => {
             id: find?.id,
             type: findType,
             price: valuePrice,
-            category: find?.category_id,
-            detail: find?.category_detail_id,
+            category_id: find?.category_id,
+            category_detail_id: find?.category_detail_id,
           };
         }
       }
@@ -62,6 +63,14 @@ const WishlistPage = () => {
   const handleClick = (id, type, category, detail) => {
     setLocal("product", { id, type, category, detail });
     router.push(`/product-details/product`);
+  };
+
+  const handleAddCard = (item) => {
+    addCart(item, item?.type);
+  };
+
+  const checkCartList = (id, type) => {
+    return (cartList || []).some((r) => r?.id === id && r?.typeId === type);
   };
 
   return (
@@ -96,8 +105,8 @@ const WishlistPage = () => {
                                 handleClick(
                                   item?.id,
                                   item?.type?.id,
-                                  item?.category,
-                                  item?.detail
+                                  item?.category_id,
+                                  item?.category_detail_id
                                 );
                               }}
                             />
@@ -109,8 +118,8 @@ const WishlistPage = () => {
                               handleClick(
                                 item?.id,
                                 item?.type?.id,
-                                item?.category,
-                                item?.detail
+                                item?.category_id,
+                                item?.category_detail_id
                               );
                             }}
                             style={{ cursor: "pointer" }}
@@ -169,11 +178,19 @@ const WishlistPage = () => {
                           <a
                             href={null}
                             className="cart"
-                            onClick={() => addCart(item)}
+                            onClick={() => {
+                              handleAddCard(item);
+                            }}
                           >
                             <i
                               className="fa fa-shopping-cart"
-                              style={{ color: theme ? "#f8f8f8" : "" }}
+                              style={{
+                                color: checkCartList(item?.id, item?.type?.id)
+                                  ? "#ff4c3b"
+                                  : theme
+                                  ? "#f8f8f8"
+                                  : "",
+                              }}
                             ></i>
                           </a>
                         </td>
@@ -183,7 +200,7 @@ const WishlistPage = () => {
                 </Table>
               </Col>
             </Row>
-            <Row className="wishlist-buttons">
+            {/* <Row className="wishlist-buttons">
               <Col sm="12">
                 <Link href={"/"}>
                   <a href={null} className="btn btn-solid">
@@ -194,7 +211,7 @@ const WishlistPage = () => {
                   thanh toán
                 </a>
               </Col>
-            </Row>
+            </Row> */}
           </Container>
         </section>
       ) : (

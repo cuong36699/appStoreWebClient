@@ -20,7 +20,7 @@ const CartProvider = (props) => {
   const [cartItems, setCartItems] = useState(getLocalCartItems());
   const [cartTotal, setCartTotal] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [stock, setStock] = useState("InStock");
+  const [stock, setStock] = useState("Còn hàng");
 
   useEffect(() => {
     const Total = cartItems.reduce(
@@ -83,7 +83,9 @@ const CartProvider = (props) => {
   };
 
   const plusQty = (item) => {
-    setQuantity(quantity + 1);
+    if (quantity < 10) {
+      setQuantity(quantity + 1);
+    }
 
     // if (item.stock >= quantity) {
     //   setQuantity(quantity + 1);

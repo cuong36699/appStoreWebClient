@@ -28,7 +28,7 @@ const Filter = () => {
         </span>
       </div>
       <div className="collection-collapse-block border-0 open">
-        <div className="collapse-block-title">brand</div>
+        <div className="collapse-block-title">Chuyên mục</div>
         <div className="collection-collapse-block-content">
           <div className="collection-brand-filter">
             {category && category.length > 0 ? (
