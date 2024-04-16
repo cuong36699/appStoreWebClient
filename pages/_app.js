@@ -16,6 +16,7 @@ import { useApollo } from "../helpers/apollo";
 import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import FetchAPI from "../components/fetchAPI";
+import ChatBox from "../components/chatBox";
 
 export default function MyApp({ Component, pageProps }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -83,6 +84,7 @@ export default function MyApp({ Component, pageProps }) {
                 </SettingProvider>
                 <ToastContainer />
                 <TapTop />
+                <ChatBox />
               </Provider>
             </div>
           </>

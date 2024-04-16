@@ -32,7 +32,10 @@ const TabContent = ({
   const quantity = context.quantity;
 
   return (
-    <Row className="no-slider">
+    <Row
+      className="no-slider"
+      // style={{ display: "flex", justifyContent: "center" }}
+    >
       {!data || data.length === 0 || loading ? (
         data && data.length === 0 ? (
           <Col xs="12">

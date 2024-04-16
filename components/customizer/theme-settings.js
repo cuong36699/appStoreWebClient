@@ -29,7 +29,6 @@ const ThemeSettings = () => {
   const themeLayout = useSelector((state) => state?.common?.theme);
   const notification = useSelector((state) => state?.api?.notificationAPI?.[0]);
 
-  console.log(notification, "notification");
   /*=====================
      Tap on Top
      ==========================*/
@@ -80,37 +79,37 @@ const ThemeSettings = () => {
     }
   }
 
-  const MasterComponent = ({ ribon, bg, name, link, btnName }) => {
-    return (
-      <Col sm="6" className="text-center demo-effects">
-        <div className="set-position">
-          <div className={`layout-container ${bg}`}>
-            {ribon ? (
-              <div className="ribbon-1">
-                <span>n</span>
-                <span>e</span>
-                <span>w</span>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-          <div className="demo-text">
-            <h4>{name}</h4>
-            <div
-              className="btn-group demo-btn"
-              role="group"
-              aria-label="Basic example"
-            >
-              <Link href={link}>
-                <a className="btn new-tab-btn">{btnName} </a>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </Col>
-    );
-  };
+  // const MasterComponent = ({ ribon, bg, name, link, btnName }) => {
+  //   return (
+  //     <Col sm="6" className="text-center demo-effects">
+  //       <div className="set-position">
+  //         <div className={`layout-container ${bg}`}>
+  //           {ribon ? (
+  //             <div className="ribbon-1">
+  //               <span>n</span>
+  //               <span>e</span>
+  //               <span>w</span>
+  //             </div>
+  //           ) : (
+  //             ""
+  //           )}
+  //         </div>
+  //         <div className="demo-text">
+  //           <h4>{name}</h4>
+  //           <div
+  //             className="btn-group demo-btn"
+  //             role="group"
+  //             aria-label="Basic example"
+  //           >
+  //             <Link href={link}>
+  //               <a className="btn new-tab-btn">{btnName} </a>
+  //             </Link>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </Col>
+  //   );
+  // };
 
   return (
     <div>

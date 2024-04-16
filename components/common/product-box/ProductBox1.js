@@ -73,7 +73,7 @@ const ProductItem = ({
   };
 
   return (
-    <div className="product-box product-wrap">
+    <div className="product-box product-wrap" style={{ maxWidth: 240 }}>
       <div className="img-wrapper">
         <div className="lable-block">
           {/* {product.new === true ? <span className="lable3">new</span> : ""} */}
@@ -96,7 +96,7 @@ const ProductItem = ({
             alignItems: "flex-end",
           }}
         >
-          <Media
+          <img
             src={`${image ? image : product?.type?.[0]?.image?.url}`}
             className="img-fluid m-auto"
             alt=""
@@ -119,7 +119,7 @@ const ProductItem = ({
                 cursor: "pointer",
               }}
             >
-              <Media
+              <img
                 src={`${image ? image : product?.type?.[0]?.image?.url}`}
                 className="img-fluid m-auto"
                 alt=""

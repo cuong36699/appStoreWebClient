@@ -16,10 +16,10 @@ const CartContainer = ({ icon }) => {
   const total = context.cartTotal;
   const isLogin = getLocal("isLogin");
   const router = useRouter();
-  const userID = useSelector((state) => state?.common?.userID);
+  const user = useSelector((state) => state?.common?.user);
 
   const checkOut = () => {
-    if (isLogin && userID) {
+    if (isLogin && user?.id) {
       router.push("/page/account/checkout");
     } else {
       router.push("/page/account/login");

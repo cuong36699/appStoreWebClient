@@ -33,8 +33,9 @@ const HeaderOne = ({
   const pathname = window.location.pathname;
 
   const checkPage = () => {
-    const check = pathname.includes("product-details");
-    if (check) {
+    const check1 = pathname.includes("product-details");
+    const check2 = pathname.includes("show-filter");
+    if (check1 || check2) {
       return true;
     } else {
       return false;
