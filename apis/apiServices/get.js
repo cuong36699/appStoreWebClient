@@ -77,3 +77,8 @@ export const get_current_user = (id) => {
   const key = "users";
   return getFirebaseHasID(key, id);
 };
+
+export const get_notification = () => {
+  const key = "notification";
+  return getFirebase(key);
+};

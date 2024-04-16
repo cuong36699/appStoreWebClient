@@ -5,6 +5,7 @@ import {
   get_campaign,
   get_category,
   get_category_detail,
+  get_notification,
   get_products,
   get_services,
   get_voucher,
@@ -19,6 +20,7 @@ const initialState = {
   servicesAPI: [],
   aboutAPI: [],
   bannerAPI: [],
+  notificationAPI: [],
   status: null,
   error: null,
   loading: false,
@@ -113,6 +115,18 @@ export const fetchBanner = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const data = await get_banners();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchNotification = createAsyncThunk(
+  "api/fetchNotification",
+  async (id, { rejectWithValue }) => {
+    try {
+      const data = await get_notification();
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -218,6 +232,18 @@ const api = createSlice({
         state.bannerAPI = action.payload;
       })
       .addCase(fetchBanner.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      // fetch banner
+      .addCase(fetchNotification.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchNotification.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.notificationAPI = action.payload;
+      })
+      .addCase(fetchNotification.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

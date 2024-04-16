@@ -6,6 +6,7 @@ import {
   fetchCampaign,
   fetchCategory,
   fetchCategoryDetail,
+  fetchNotification,
   fetchProduct,
   fetchServices,
   fetchVoucher,
@@ -61,6 +62,7 @@ export default function FetchAPI() {
     dispatch(fetchServices());
     dispatch(fetchAbout());
     dispatch(fetchBanner());
+    dispatch(fetchNotification());
     // local store
     dispatch(changeTheme(theme));
     checkUser();
