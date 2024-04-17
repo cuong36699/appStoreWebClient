@@ -231,6 +231,29 @@
   .text-chat {
     font-size: 14px;
   }
+
+  .chat-body {
+    &.scrollbar {
+      overflow-y: scroll;
+    }
+
+    &.scrollbar::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &.scrollbar::-webkit-scrollbar-track {
+      background: #dddddd;
+    }
+
+    &.scrollbar::-webkit-scrollbar-thumb {
+      background: var(--theme-deafult);
+      border-radius: 4px;
+    }
+
+    &.scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #ff4c3b80;
+    }
+  }
 }
 
 @media (max-width: 577px) {

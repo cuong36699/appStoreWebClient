@@ -78,6 +78,8 @@ export default function ChatBox() {
     setValueChat("");
   };
 
+  const handleSelectFile = () => {};
+
   return (
     <div className="chat-box-custom">
       <div className="chat-box-icon">
@@ -110,7 +112,10 @@ export default function ChatBox() {
               </span>
             </div>
           </div>
-          <div style={{ width: "100%", height: 378, padding: 16 }}>
+          <div
+            style={{ width: "100%", height: 378, padding: 16 }}
+            className="chat-body scrollbar"
+          >
             {(dataChatBox || []).map((r, index) => (
               <div
                 key={`${r?.id}-${index}`}
@@ -163,7 +168,7 @@ export default function ChatBox() {
             </div>
             <div
               style={{ width: "7%", cursor: "pointer" }}
-              onClick={handleSend}
+              onClick={handleSelectFile}
             >
               <SVG src={Icons.attach} size={24} />
             </div>
