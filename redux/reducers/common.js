@@ -9,6 +9,11 @@ const initialState = {
   billDetail: {},
   listCard: 0,
   voucher: [],
+  toasterGlobal: {
+    active: false,
+    mess: "",
+    status: "",
+  },
 };
 
 export const common = createSlice({
@@ -43,6 +48,14 @@ export const common = createSlice({
       const voucher = action?.payload;
       state.voucher = voucher;
     },
+    setToasterGlobal: (state, action) => {
+      const toasterGlobal = action?.payload || {
+        status: false,
+        des: "",
+        mess: "",
+      };
+      state.toasterGlobal = toasterGlobal;
+    },
   },
 });
 
@@ -54,6 +67,7 @@ export const {
   setUser,
   setBillDetail,
   saveVoucher,
+  setToasterGlobal,
 } = common.actions;
 
 export default common.reducer;

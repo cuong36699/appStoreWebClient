@@ -17,6 +17,7 @@ import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import FetchAPI from "../components/fetchAPI";
 import ChatBox from "../components/chatBox";
+import ToasterGlobal from "../components/ToasterGlobal";
 
 export default function MyApp({ Component, pageProps }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +69,7 @@ export default function MyApp({ Component, pageProps }) {
             <div>
               <Provider store={store}>
                 <FetchAPI />
+                <ToasterGlobal />
                 <SettingProvider>
                   <CompareContextProvider>
                     <CurrencyContextProvider>

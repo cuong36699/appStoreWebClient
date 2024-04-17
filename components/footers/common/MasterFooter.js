@@ -48,11 +48,15 @@ const MasterFooter = ({
   }, [aboutAPI]);
 
   const handleClick = (data) => {
-    const dataString = JSON.stringify(data);
-    router.push({
-      pathname: "/about",
-      query: { data: dataString },
-    });
+    if (data?.link) {
+      window.open(data?.link);
+    } else {
+      const dataString = JSON.stringify(data);
+      router.push({
+        pathname: "/about",
+        query: { data: dataString },
+      });
+    }
   };
 
   return (
@@ -107,7 +111,12 @@ const MasterFooter = ({
                       <ul>
                         {(data?.introduce?.data || []).map((r, i) => (
                           <li key={i}>
-                            <a style={{ cursor: "pointer" }}>{r?.name}</a>
+                            <a
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleClick(r)}
+                            >
+                              {r?.name}
+                            </a>
                           </li>
                         ))}
                       </ul>

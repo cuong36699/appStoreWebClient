@@ -28,9 +28,11 @@ const HeaderOne = ({
   const [dataSearch, setDataSearch] = useState([]);
   const [positionFixed, setPositionFixed] = useState(false);
 
-  const productsAPI = useSelector((state) => state?.api?.productsAPI);
+  const productsAPI = useSelector((state) => state?.common?.products);
   const theme = useSelector((state) => state?.common?.theme);
   const pathname = window.location.pathname;
+
+  console.log(data, "zzzzzzzzzzz");
 
   const checkPage = () => {
     const check1 = pathname.includes("product-details");
@@ -119,6 +121,17 @@ const HeaderOne = ({
   const handleClickItem = (name, id) => {
     const nameProps = name?.split(" ").join("");
     router.push(`/product-details/${id}` + "-" + `${nameProps}`);
+  };
+
+  const valuePrice = (product) => {
+    if (product?.sale) {
+      const price = product?.type?.[0]?.price.replaceAll(",", "");
+      const priceOff = price - (price * (product?.sale || 0)) / 100;
+      const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return valuePrice;
+    } else {
+      return product?.type?.[0]?.price;
+    }
   };
 
   return (
@@ -224,7 +237,7 @@ const HeaderOne = ({
               position: "fixed",
               width: "30%",
               maxHeight: 500,
-              minHeight: 100,
+              minHeight: 80,
               backgroundColor: "#fff",
               zIndex: 50,
               right: "17%",
@@ -255,7 +268,34 @@ const HeaderOne = ({
                       style={{ objectFit: "cover" }}
                     />
                   </div>
-                  <span style={{ marginLeft: 10 }}>{item?.name}</span>
+                  <div
+                    style={{
+                      marginLeft: 10,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: -10,
+                    }}
+                  >
+                    <b style={{ color: "#2b2b2b" }}>{item?.name}</b>
+                    {item?.description ? (
+                      <b
+                        className="header-search-description"
+                        style={{ fontWeight: "400", color: "gray" }}
+                      >
+                        {item?.description}
+                      </b>
+                    ) : null}
+                    <div>
+                      {item?.sale ? (
+                        <del>
+                          <b>{item?.type?.[0]?.price}</b>
+                        </del>
+                      ) : null}
+                      <b>
+                        {valuePrice(item) ? ` ${valuePrice(item)}đ` : "Liên hệ"}
+                      </b>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (

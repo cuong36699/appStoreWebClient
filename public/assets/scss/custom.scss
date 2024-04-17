@@ -82,40 +82,6 @@
   }
 }
 
-@media (max-width: 577px) {
-  .icon-nav {
-    .header-search-custom {
-      display: none;
-    }
-  }
-
-  .voucher-custom {
-    .voucher-background {
-      height: 200px;
-    }
-
-    .voucher-desc {
-      height: 110px;
-
-      .p1 {
-        font-size: 38px;
-      }
-
-      .p2 {
-        font-size: 24px;
-      }
-    }
-
-    .sale-off {
-      font-size: 24px;
-
-      span {
-        font-size: 44px;
-      }
-    }
-  }
-}
-
 .product-infomation {
   border: 1px solid gray;
   padding: 0px 20px 15px 20px;
@@ -213,9 +179,9 @@
 .chat-box-custom {
   .chat-box-icon {
     position: fixed;
-    width: 48px;
-    height: 48px;
-    right: 32px;
+    width: 50px;
+    height: 50px;
+    right: 30px;
     bottom: 60px;
     border-radius: 12px;
     background-color: #ff4c3b;
@@ -230,7 +196,7 @@
     position: fixed;
     right: 90px;
     bottom: 60px;
-    width: 35%;
+    width: 400px;
     height: 500px;
     background-color: #f9f9f9;
     // box-shadow: 1px 1.5px 3px 1px gray;
@@ -265,4 +231,62 @@
   .text-chat {
     font-size: 14px;
   }
+}
+
+@media (max-width: 577px) {
+  .icon-nav {
+    .header-search-custom {
+      display: none;
+    }
+  }
+
+  .voucher-custom {
+    .voucher-background {
+      height: 200px;
+    }
+
+    .voucher-desc {
+      height: 110px;
+
+      .p1 {
+        font-size: 38px;
+      }
+
+      .p2 {
+        font-size: 24px;
+      }
+    }
+
+    .sale-off {
+      font-size: 24px;
+
+      span {
+        font-size: 44px;
+      }
+    }
+  }
+
+  .chat-box-icon {
+    width: 35px !important;
+    height: 35px !important;
+    right: 20px !important;
+    bottom: 80px !important;
+    padding: 5px !important;
+  }
+
+  .chat-container {
+    right: 20px !important;
+    bottom: 180px !important;
+    width: 384px !important;
+    min-width: 384px !important;
+  }
+}
+
+.header-search-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines to show */
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
 }

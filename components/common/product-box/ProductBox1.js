@@ -73,7 +73,10 @@ const ProductItem = ({
   };
 
   return (
-    <div className="product-box product-wrap" style={{ maxWidth: 240 }}>
+    <div
+      className="product-box product-wrap"
+      // style={{ maxWidth: 240 }}
+    >
       <div className="img-wrapper">
         <div className="lable-block">
           {/* {product.new === true ? <span className="lable3">new</span> : ""} */}
@@ -206,7 +209,7 @@ const ProductItem = ({
                       <h5>
                         <i className="fa fa-check"></i>Item{" "}
                         <span>{product.title} </span>
-                        <span> successfully added to your Compare list</span>
+                        <span> Đã được thêm vào danh sách so sánh</span>
                       </h5>
                       <div className="buttons d-flex justify-content-center">
                         <Link href="/page/compare">
@@ -215,7 +218,7 @@ const ProductItem = ({
                             className="btn-sm btn-solid"
                             onClick={addCompare}
                           >
-                            View Compare list
+                            Xem danh sách so sánh
                           </a>
                         </Link>
                       </div>
