@@ -24,7 +24,7 @@ const MasterServiceContent = ({
         <div dangerouslySetInnerHTML={{ __html: link }} />
       ) : (
         <div>
-          <img src={url} style={{ width: 80 }} />
+          <img src={url} style={{ width: 80 }} loading="lazy" />
         </div>
       )}
       <div className="media-body">

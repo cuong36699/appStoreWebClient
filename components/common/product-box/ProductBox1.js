@@ -103,6 +103,7 @@ const ProductItem = ({
             src={`${image ? image : product?.type?.[0]?.image?.url}`}
             className="img-fluid m-auto"
             alt=""
+            loading="lazy"
           />
         </div>
         {/*  */}
@@ -126,6 +127,7 @@ const ProductItem = ({
                 src={`${image ? image : product?.type?.[0]?.image?.url}`}
                 className="img-fluid m-auto"
                 alt=""
+                loading="lazy"
               />
             </div>
           )

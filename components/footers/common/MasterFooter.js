@@ -248,6 +248,7 @@ const MasterFooter = ({
                             alt={r?.image?.url}
                             src={r?.image?.url || "https://placehold.co/200"}
                             style={{ cursor: "pointer", width: 40, height: 40 }}
+                            loading="lazy"
                           />
                         ))}
                       </div>
@@ -288,6 +289,7 @@ const MasterFooter = ({
                             alt={r?.image?.url}
                             src={r?.image?.url || "https://placehold.co/200"}
                             style={{ cursor: "pointer", width: 40, height: 40 }}
+                            loading="lazy"
                           />
                         ))}
                       </div>
@@ -343,6 +345,7 @@ const MasterFooter = ({
                             height: 200,
                             objectFit: "cover",
                           }}
+                          loading="lazy"
                         />
                       ) : null}
                       {!width ? (
@@ -399,6 +402,7 @@ const MasterFooter = ({
                 "http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png"
               }
               style={{ maxHeight: 80 }}
+              loading="lazy"
             />
           </div>
         </div>

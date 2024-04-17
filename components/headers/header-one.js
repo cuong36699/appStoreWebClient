@@ -266,6 +266,7 @@ const HeaderOne = ({
                       width={50}
                       height={70}
                       style={{ objectFit: "cover" }}
+                      loading="lazy"
                     />
                   </div>
                   <div

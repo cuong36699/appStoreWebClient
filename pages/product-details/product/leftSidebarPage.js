@@ -115,6 +115,7 @@ const LeftSidebarPage = ({}) => {
                                   alt={vari.url}
                                   className="img-fluid image_zoom_cls-0"
                                   style={{ width: 280, resize: "center" }}
+                                  loading="lazy"
                                 />
                               </div>
                             </div>
@@ -143,6 +144,7 @@ const LeftSidebarPage = ({}) => {
                                       alt={vari.alt}
                                       className="img-fluid"
                                       style={{ width: 50 }}
+                                      loading="lazy"
                                     />
                                   </div>
                                 )

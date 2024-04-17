@@ -124,7 +124,11 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
               }}
               onClick={() => handleClick(index, r?.id)}
             >
-              <img src={r?.image?.url} style={{ maxWidth: 40 }} />
+              <img
+                src={r?.image?.url}
+                style={{ maxWidth: 40 }}
+                loading="lazy"
+              />
               <div>
                 <span style={{ fontSize: 16, fontWeight: 600 }}>{r?.name}</span>
                 <p>{r?.price ? `${r?.price}đ` : "Liên hệ"}</p>

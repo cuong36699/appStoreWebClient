@@ -376,6 +376,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                               src={`/assets/images/empty-search.jpg`}
                               className="img-fluid mb-4 mx-auto"
                               alt=""
+                              loading="lazy"
                             />
                             <h3>
                               <strong>Không có sản phẩm được tìm thấy</strong>

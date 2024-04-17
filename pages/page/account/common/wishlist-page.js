@@ -109,6 +109,7 @@ const WishlistPage = () => {
                                   item?.category_detail_id
                                 );
                               }}
+                              loading="lazy"
                             />
                           </a>
                         </td>
