@@ -73,10 +73,7 @@ const ProductItem = ({
   };
 
   return (
-    <div
-      className="product-box product-wrap"
-      // style={{ maxWidth: 240 }}
-    >
+    <div className="product-box product-wrap">
       <div className="img-wrapper">
         <div className="lable-block">
           {/* {product.new === true ? <span className="lable3">new</span> : ""} */}

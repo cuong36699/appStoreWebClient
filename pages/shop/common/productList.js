@@ -135,6 +135,10 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   // };
 
   useEffect(() => {
+    const { activeMenu } = filter;
+    if (activeMenu) {
+      return;
+    }
     if (activeTab === 0) {
       sortData(sortBy, products || []);
       dispatch(changeBrand({ category: "all", detail: "none" }));
@@ -319,7 +323,11 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                         label="All"
                         onClick={() => {
                           // handleClickTab(null);
-                          updateLocal("filter", { tab: 0, id: "all" });
+                          updateLocal("filter", {
+                            tab: 0,
+                            id: "all",
+                            activeMenu: false,
+                          });
                         }}
                         style={{ fontSize: 16, fontWeight: 600 }}
                       />
@@ -332,6 +340,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                             updateLocal("filter", {
                               tab: index + 1,
                               id: r?.id,
+                              activeMenu: false,
                             });
                           }}
                           style={{ fontSize: 16, fontWeight: 600 }}

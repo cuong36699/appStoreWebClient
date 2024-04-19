@@ -7,8 +7,10 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { CurrencyContext } from "../../../../helpers/Currency/CurrencyContext";
 import { useDispatch } from "react-redux";
-import { setBillDetail } from "../../../../redux/reducers/common";
-import { toast } from "react-toastify";
+import {
+  setBillDetail,
+  setToasterGlobal,
+} from "../../../../redux/reducers/common";
 import moment from "moment";
 import { add_bills } from "../../../../apis/apiServices";
 import { removeLocal } from "../../../../helpers/Local";
@@ -45,7 +47,13 @@ const CheckoutPage = () => {
       };
       const success = await add_bills(params);
       if (success) {
-        toast.success("Bạn đã đặt hàng thành công!");
+        dispatch(
+          setToasterGlobal({
+            active: true,
+            mess: `Bạn đã đặt hàng thành công!`,
+            status: "success",
+          })
+        );
         router.push({
           pathname: "/page/order-success",
           state: {

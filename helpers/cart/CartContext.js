@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Context from "./index";
-import { toast } from "react-toastify";
 import { removeLocal } from "../Local";
+import { setToasterGlobal } from "../../redux/reducers/common";
+import { useDispatch } from "react-redux";
 
 const getLocalCartItems = () => {
   try {
@@ -17,6 +18,8 @@ const getLocalCartItems = () => {
 };
 
 const CartProvider = (props) => {
+  const dispatch = useDispatch();
+
   const [cartItems, setCartItems] = useState(getLocalCartItems());
   const [cartTotal, setCartTotal] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -36,7 +39,13 @@ const CartProvider = (props) => {
   // Add Product To Cart
   const addToCart = (product, type) => {
     if (!type?.price || type?.price == 0) {
-      toast.error("Hay liên hệ cửa hàng để mua!");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Hãy liên hệ cửa hàng để mua!`,
+          status: "error",
+        })
+      );
       return;
     }
 
@@ -63,15 +72,33 @@ const CartProvider = (props) => {
     };
 
     if (index !== -1) {
-      toast.warning("Sản phẩm đã có trong giỏ hàng!");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Sản phẩm đã có trong giỏ hàng!`,
+          status: "warning",
+        })
+      );
     } else {
       setCartItems([...cartItems, param]);
-      toast.success("Đã thêm sản phẩm vào giỏ hàng thành công!");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Đã thêm sản phẩm vào giỏ hàng thành công!`,
+          status: "success",
+        })
+      );
     }
   };
 
   const removeFromCart = (item) => {
-    toast.error("Xóa khỏi giỏ hàng thành công!");
+    dispatch(
+      setToasterGlobal({
+        active: true,
+        mess: `Xóa khỏi giỏ hàng thành công!`,
+        status: "error",
+      })
+    );
     setCartItems(cartItems.filter((e) => e.typeId !== item.typeId));
   };
 
@@ -112,7 +139,6 @@ const CartProvider = (props) => {
       //   total: item.price * quantity,
       // };
       // setCartItems([...cartItems]);
-      // toast.info("Product Quantity Updated !");
     } else {
       const price = product?.price.replaceAll(",", "");
       const valueTotal = price * quantity;

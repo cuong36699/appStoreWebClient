@@ -10,7 +10,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { firestore } from "../../pages/firebase-config";
-import { toast } from "react-toastify";
+import { setToasterGlobal } from "../../redux/reducers/common";
 
 export const getFirebase = (key) => {
   const collectionRef = query(
@@ -22,15 +22,13 @@ export const getFirebase = (key) => {
       return result?.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     })
     .catch((error) => {
-      toast.error(`${error}`);
-
-      // useDispatch(
-      //   setGlobalToaster({
-      //     active: true,
-      //     mess: `${error}` || "error api! get",
-      //     status: "error",
-      //   })
-      // );
+      useDispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `${error}` || "error api! get",
+          status: "error",
+        })
+      );
       return null;
     });
 };
@@ -41,25 +39,15 @@ export const getFirebaseHasID = async (key, id) => {
   if (docSnap.exists()) {
     return docSnap.data();
   } else {
+    useDispatch(
+      setToasterGlobal({
+        active: true,
+        mess: `${error}` || "error api! get",
+        status: "error",
+      })
+    );
     return null;
   }
-  // return getDoc(collectionRef)
-  //   .then((result) => {
-
-  //     return result;
-  //   })
-  //   .catch((error) => {
-  //     toast.error(`${error}`);
-
-  // useDispatch(
-  //   setGlobalToaster({
-  //     active: true,
-  //     mess: `${error}` || "error api! get",
-  //     status: "error",
-  //   })
-  // );
-  //     return null;
-  //   });
 };
 
 export const postFirebase = (key, params) => {
@@ -69,15 +57,13 @@ export const postFirebase = (key, params) => {
       return result;
     })
     .catch((error) => {
-      toast.error(`${error}`);
-
-      // useDispatch(
-      //   setGlobalToaster({
-      //     active: true,
-      //     mess: `${error}` || "error api! post",
-      //     status: "error",
-      //   })
-      // );
+      useDispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `${error}` || "error api! get",
+          status: "error",
+        })
+      );
       return null;
     });
 };
@@ -89,15 +75,13 @@ export const putFirebaseHasID = (key, params, id) => {
       return result;
     })
     .catch((error) => {
-      toast.error(`${error}`);
-
-      // useDispatch(
-      //   setGlobalToaster({
-      //     active: true,
-      //     mess: `${error}` || "error api! post",
-      //     status: "error",
-      //   })
-      // );
+      useDispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `${error}` || "error api! get",
+          status: "error",
+        })
+      );
       return null;
     });
 };
@@ -109,15 +93,13 @@ export const putFirebase = (key, params, id) => {
       return result;
     })
     .catch((error) => {
-      toast.error(`${error}`);
-
-      // useDispatch(
-      //   setGlobalToaster({
-      //     active: true,
-      //     mess: `${error}` || "error api! put",
-      //     status: "error",
-      //   })
-      // );
+      useDispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `${error}` || "error api! get",
+          status: "error",
+        })
+      );
       return null;
     });
 };

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setToasterGlobal } from "../../redux/reducers/common";
 
 export const Context = createContext({
   wishlistItems: Function,
@@ -21,6 +22,8 @@ const getLocalWishlistItems = () => {
 };
 
 export const Provider = (props) => {
+  const dispatch = useDispatch();
+
   const [wishlistItems, setWishlistItems] = useState(getLocalWishlistItems());
 
   useEffect(() => {
@@ -33,10 +36,22 @@ export const Provider = (props) => {
       (wish) => wish.id === id && wish?.type === type
     );
     if (!check) {
-      toast.success("Thêm sản phẩm vào danh sách yêu thích thành công!");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Thêm sản phẩm vào danh sách yêu thích thành công!`,
+          status: "success",
+        })
+      );
       setWishlistItems([...wishlistItems, { id, type }]);
     } else {
-      toast.error("Sản phẩm này đã có trong danh sách yêu thích!");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Sản phẩm này đã có trong danh sách yêu thích!`,
+          status: "error",
+        })
+      );
     }
   };
 
@@ -44,7 +59,13 @@ export const Provider = (props) => {
   const removeFromWish = (id, type) => {
     const newWishList = wishlistItems.filter((e) => e?.type !== type);
     setWishlistItems(newWishList);
-    toast.error("Xóa sản phẩm khỏi danh sách yêu thích thành công!");
+    dispatch(
+      setToasterGlobal({
+        active: true,
+        mess: `Xóa sản phẩm khỏi danh sách yêu thích thành công!`,
+        status: "error",
+      })
+    );
   };
 
   // const {value} = props

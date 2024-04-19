@@ -6,8 +6,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { setLocal } from "../../../helpers/Local";
 import { useDispatch } from "react-redux";
-import { setID } from "../../../redux/reducers/common";
-import { toast } from "react-toastify";
+import { setID, setToasterGlobal } from "../../../redux/reducers/common";
 import { useRouter } from "next/router";
 import { add_users } from "../../../apis/apiServices/post";
 import moment from "moment/moment";
@@ -51,10 +50,22 @@ const Register = () => {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          toast.error(`${errorMessage}`);
+          dispatch(
+            setToasterGlobal({
+              active: true,
+              mess: `${errorMessage}`,
+              status: "error",
+            })
+          );
         });
     } else {
-      toast.error(`Mật khẩu không trùng khớp`);
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Mật khẩu không trùng khớp!`,
+          status: "error",
+        })
+      );
     }
   };
 

@@ -48,7 +48,7 @@ const SnackbarContent = styled("div")(
   max-width: 560px;
   min-width: 300px;
   background-color: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-  border-radius: 8px;
+  // border-radius: 8px;
   border: 1px solid ${theme.palette.mode === "dark" ? grey[700] : grey[200]};
   box-shadow: ${
     theme.palette.mode === "dark"
@@ -145,7 +145,7 @@ export default function ToasterGlobal() {
               }}
               ref={nodeRef}
             >
-              <div className="flex-row">
+              <div style={{ display: "flex" }}>
                 <SVG
                   src={Icons.check}
                   size={20}

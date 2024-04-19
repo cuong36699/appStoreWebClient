@@ -18,7 +18,14 @@ const SideBar = () => {
   const categoryDetail = useSelector((state) => state?.api?.detailAPI);
 
   const handleClick = (id, type, tab, category, detail) => {
-    setLocal("filter", { id: id, type: type, tab: tab + 1, category, detail });
+    setLocal("filter", {
+      id: id,
+      type: type,
+      tab: tab + 1,
+      category,
+      detail,
+      activeMenu: true,
+    });
     dispatch(changeBrand({ category, detail }));
     router.push({
       pathname: "/show-filter",

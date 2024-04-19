@@ -14,8 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLocal, setLocal } from "../../../helpers/Local";
 import { signOut } from "firebase/auth";
 import { auth } from "../../../pages/firebase-config";
-import { setUser } from "../../../redux/reducers/common";
-import { toast } from "react-toastify";
+import { setToasterGlobal, setUser } from "../../../redux/reducers/common";
 import { edit_profile } from "../../../apis/apiServices";
 import Icons from "../../../public/assets/svg/icon";
 import SVG from "../../SVG";
@@ -41,7 +40,13 @@ const TopBarDark = ({ topClass, fluid }) => {
         dispatch(setUser(null));
       })
       .catch((error) => {
-        toast.error(`${error}`);
+        dispatch(
+          setToasterGlobal({
+            active: true,
+            mess: `${error}`,
+            status: "error",
+          })
+        );
       });
   };
 
@@ -56,15 +61,33 @@ const TopBarDark = ({ topClass, fluid }) => {
       if (form?.pass === form?.passConfirm) {
         updatePassword(user, form?.passConfirm)
           .then(() => {
-            toast.success(`Thay đổi mật khẩu thành công`);
+            dispatch(
+              setToasterGlobal({
+                active: true,
+                mess: `Thay đổi mật khẩu thành công`,
+                status: "success",
+              })
+            );
             toggle();
             handleLogout();
           })
           .catch((error) => {
-            toast.error(`${error}`);
+            dispatch(
+              setToasterGlobal({
+                active: true,
+                mess: `${error}`,
+                status: "error",
+              })
+            );
           });
       } else {
-        toast.error(`Mật khẩu không trùng khớp`);
+        dispatch(
+          setToasterGlobal({
+            active: true,
+            mess: `Mật khẩu không trùng khớp`,
+            status: "error",
+          })
+        );
       }
     }
     if (userCurrent && Object.keys(userCurrent).length > 0) {

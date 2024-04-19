@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setToasterGlobal } from "../../redux/reducers/common";
 
 export const Context = createContext({
   compareItems: Function,
@@ -21,6 +22,8 @@ const getLocalCompareItems = () => {
 };
 
 export const Provider = (props) => {
+  const dispatch = useDispatch();
+
   const [compareItems, setcompareItems] = useState(getLocalCompareItems());
 
   useEffect(() => {
@@ -31,17 +34,35 @@ export const Provider = (props) => {
   const addToCompare = (item) => {
     const index = compareItems.findIndex((compare) => compare.id === item.id);
     if (index === -1) {
-      toast.success("Product Added Successfully !");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Đã thêm sản phẩm thành công`,
+          status: "success",
+        })
+      );
       setcompareItems([...compareItems, item]);
     } else {
-      toast.error("This Product Already Added !");
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Sản phẩm này đã được thêm vào`,
+          status: "error",
+        })
+      );
     }
   };
 
   // Remove Product From compare
   const removeFromComapre = (item) => {
     setcompareItems(compareItems.filter((e) => e.id !== item.id));
-    toast.error("Product Removed Successfully !");
+    dispatch(
+      setToasterGlobal({
+        active: true,
+        mess: `Đã xóa sản phẩm thành công`,
+        status: "error",
+      })
+    );
   };
 
   return (

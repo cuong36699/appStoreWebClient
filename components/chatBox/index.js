@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import SVG from "../SVG";
 import Icons from "../../public/assets/svg/icon";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { child, onValue, push, ref, set } from "firebase/database";
 import { database, storage } from "../../pages/firebase-config";
-import { toast } from "react-toastify";
 import moment from "moment";
 import {
   getDownloadURL,
@@ -12,9 +11,11 @@ import {
   ref as storageRef,
 } from "firebase/storage";
 import EmojiPicker from "emoji-picker-react";
+import { setToasterGlobal } from "../../redux/reducers/common";
 
 export default function ChatBox() {
   const inputRef = useRef();
+  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
   const [valueChat, setValueChat] = useState("");
@@ -22,8 +23,6 @@ export default function ChatBox() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [openEmoji, setOpenEmoji] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState(null);
-
-  console.log(valueChat, "zzzzzzzzzzzzzzz");
 
   const theme = useSelector((state) => state?.common?.theme);
   const user = useSelector((state) => state?.common?.user);
@@ -59,7 +58,13 @@ export default function ChatBox() {
     if (user?.id) {
       setOpen(!open);
     } else {
-      toast.error(`Vui lòng đăng nhập để sử dụng chức năng này`);
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Vui lòng đăng nhập để sử dụng chức năng này`,
+          status: "error",
+        })
+      );
     }
   };
 
@@ -84,6 +89,13 @@ export default function ChatBox() {
         return image;
       })
       .catch((error) => {
+        dispatch(
+          setToasterGlobal({
+            active: true,
+            mess: `${error}`,
+            status: "error",
+          })
+        );
         return false;
       });
   };
@@ -109,7 +121,13 @@ export default function ChatBox() {
           handleSentLastMess({ ...paramsChat, isNew: true });
         })
         .catch((error) => {
-          toast.error(`${error}`);
+          dispatch(
+            setToasterGlobal({
+              active: true,
+              mess: `${error}`,
+              status: "error",
+            })
+          );
         });
     }
     setValueChat("");
@@ -136,10 +154,7 @@ export default function ChatBox() {
   const handleEmojiClick = (event, emojiObject) => {
     // setChosenEmoji(emojiObject);
     setValueChat(valueChat + event.emoji);
-    // console.log(event, "444444444");
   };
-
-  console.log(dataChatBox, "1111");
 
   return (
     <div className="chat-box-custom">

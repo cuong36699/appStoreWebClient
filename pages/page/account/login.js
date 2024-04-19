@@ -5,12 +5,14 @@ import { setLocal } from "../../../helpers/Local";
 import { useRouter } from "next/router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
-import { toast } from "react-toastify";
 import SVG from "../../../components/SVG";
 import Icons from "../../../public/assets/svg/icon";
+import { useDispatch } from "react-redux";
+import { setToasterGlobal } from "../../../redux/reducers/common";
 
 const Login = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [seen, setSeen] = useState(false);
   const [loginForm, setLoginForm] = useState({
@@ -28,7 +30,13 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        toast.error(`Tài khoản không tồn tại`);
+        dispatch(
+          setToasterGlobal({
+            active: true,
+            mess: `Tài khoản không tồn tại!`,
+            status: "error",
+          })
+        );
       });
   };
 
