@@ -23,6 +23,8 @@ const CheckoutPage = () => {
   const curContext = useContext(CurrencyContext);
   const symbol = curContext.state.symbol;
   const router = useRouter();
+  const lastPrice = cartContext.priceLast;
+  const priceSale = cartContext.salePrice;
 
   const [obj, setObj] = useState({});
   const [payment, setPayment] = useState("cod");
@@ -42,11 +44,14 @@ const CheckoutPage = () => {
     if (data !== "") {
       let params = {
         ...data,
-        create_at: moment().format("DD/MM/YYYY hh:mm"),
         items: cartItems,
         orderTotal: cartTotal,
+        price_total: cartTotal,
+        price_sale: priceSale,
+        price_last: lastPrice,
         isNew: true,
         status: "waiting for progressing",
+        create_at: moment().format("DD/MM/YYYY hh:mm"),
       };
       const success = await add_bills(params);
       if (success) {
@@ -232,10 +237,19 @@ const CheckoutPage = () => {
                         <ul className="qty">
                           {cartItems.map((item, index) => (
                             <li key={index}>
-                              {item.title} × {item.qty}{" "}
+                              <div
+                                style={{
+                                  wordWrap: "break-word",
+                                  maxWidth: "56%",
+                                  alignItems: "center",
+                                }}
+                              >
+                                {item.name}
+                              </div>
+                              (× {item.qty} )
                               <span>
+                                {item?.total}
                                 {symbol}
-                                {item.total}
                               </span>
                             </li>
                           ))}
@@ -276,10 +290,24 @@ const CheckoutPage = () => {
                         </ul> */}
                         <ul className="total">
                           <li>
+                            Ước tính{" "}
+                            <span className="count">
+                              {cartTotal}
+                              {symbol}
+                            </span>
+                          </li>
+                          <li>
+                            Giảm giá{" "}
+                            <span className="count">
+                              {priceSale}
+                              {symbol}
+                            </span>
+                          </li>
+                          <li>
                             Tổng thanh toán{" "}
                             <span className="count">
+                              {lastPrice}
                               {symbol}
-                              {cartTotal}
                             </span>
                           </li>
                         </ul>

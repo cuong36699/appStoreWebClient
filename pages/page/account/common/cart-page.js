@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Link from "next/link";
 import CartContext from "../../../../helpers/cart";
 import { Container, Row, Col, Media, Input } from "reactstrap";
@@ -16,10 +16,15 @@ const CartPage = () => {
   const symbol = curContext.state.symbol;
   const total = context.cartTotal;
   const removeFromCart = context.removeFromCart;
+  const updateQty = context.updateQty;
+  const lastPrice = context.priceLast;
+  const priceSale = context.salePrice;
+
+  const isLogin = getLocal("isLogin");
+
   const [quantity, setQty] = useState(1);
   const [quantityError, setQuantityError] = useState(false);
-  const updateQty = context.updateQty;
-  const isLogin = getLocal("isLogin");
+
   const user = useSelector((state) => state?.common?.user);
 
   const handleQtyUpdate = (item, quantity) => {
@@ -214,7 +219,7 @@ const CartPage = () => {
                       <td>giảm giá:</td>
                       <td>
                         <h4>
-                          {total}
+                          {priceSale}
                           {symbol}
                         </h4>
                       </td>
@@ -223,7 +228,7 @@ const CartPage = () => {
                       <td>tổng thanh toán:</td>
                       <td>
                         <h2>
-                          {total}
+                          {lastPrice}
                           {symbol}
                         </h2>
                       </td>

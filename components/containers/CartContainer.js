@@ -45,10 +45,10 @@ const CartContainer = ({ icon }) => {
               <li>
                 <div className="total">
                   <h5>
-                    subtotal :{" "}
+                    Ước tính :{" "}
                     <span>
-                      {symbol}
                       {total}
+                      {symbol}
                     </span>
                   </h5>
                 </div>

@@ -1228,9 +1228,11 @@ body {
             td {
               background: $dark-top;
               border-color: $dark-border;
+              color: $white-5;
             }
             th {
               border-color: $dark-border;
+              background: $dark-top;
               .remove-compare {
                 color: $white-5;
               }
@@ -1242,9 +1244,12 @@ body {
             th {
               border-color: $dark-border;
               background: $dark-top;
+              color: $white-5;
             }
             td {
+              background: $dark-top;
               border-color: $dark-border;
+              color: $white-5;
             }
             p {
               color: $white-5;

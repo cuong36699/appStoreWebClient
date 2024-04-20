@@ -78,10 +78,10 @@ const TabContent = ({
               key={i}
               product={product}
               symbol={currency.symbol}
-              addCompare={() => compareContext.addToCompare(product)}
+              addCompare={(type) => compareContext.addToCompare(product, type)}
               addCart={(type) => context.addToCart(product, type)}
               addWishlist={(type) =>
-                wishListContext.addToWish(product?.id, type)
+                wishListContext.addToWish(product?.id, type?.id)
               }
               cartClass={cartClass}
               backImage={backImage}

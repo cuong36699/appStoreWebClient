@@ -31,18 +31,14 @@ export const Provider = (props) => {
   }, [compareItems]);
 
   // Add Product To Wishlist
-  const addToCompare = (item) => {
-    const index = compareItems.findIndex((compare) => compare.id === item.id);
-    if (index === -1) {
-      dispatch(
-        setToasterGlobal({
-          active: true,
-          mess: `Đã thêm sản phẩm thành công`,
-          status: "success",
-        })
-      );
-      setcompareItems([...compareItems, item]);
-    } else {
+  const addToCompare = (item, type) => {
+    let data = compareItems;
+
+    const check = data.some(
+      (compare) => compare.id === item.id && compare?.typeID === type?.id
+    );
+
+    if (check) {
       dispatch(
         setToasterGlobal({
           active: true,
@@ -50,17 +46,63 @@ export const Provider = (props) => {
           status: "error",
         })
       );
+      return;
     }
+
+    if (compareItems.length > 2) {
+      data = compareItems.filter((r, index) => index > 0);
+    }
+
+    const index = data.findIndex(
+      (compare) => compare.id === item.id && compare?.typeID === type?.id
+    );
+
+    if (index === -1) {
+      const price = type?.price?.replaceAll(",", "") || 0;
+      const priceOff = price - (price * (item?.sale || 0)) / 100;
+      const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+      const param = {
+        id: item?.id,
+        name: item?.name,
+        typeName: type?.name,
+        typeID: type?.id,
+        image: type?.image,
+        price: valuePrice,
+        category: item?.category_id,
+        detail: item?.category_detail_id,
+        description: item?.description,
+        type,
+      };
+
+      setcompareItems([...data, param]);
+      dispatch(
+        setToasterGlobal({
+          active: true,
+          mess: `Đã thêm sản phẩm thành công`,
+          status: "success",
+        })
+      );
+    }
+    // else {
+    //   dispatch(
+    //     setToasterGlobal({
+    //       active: true,
+    //       mess: `Sản phẩm này đã được thêm vào`,
+    //       status: "error",
+    //     })
+    //   );
+    // }
   };
 
   // Remove Product From compare
   const removeFromComapre = (item) => {
-    setcompareItems(compareItems.filter((e) => e.id !== item.id));
+    setcompareItems(compareItems.filter((e) => e.typeID !== item.typeID));
     dispatch(
       setToasterGlobal({
         active: true,
         mess: `Đã xóa sản phẩm thành công`,
-        status: "error",
+        status: "success",
       })
     );
   };

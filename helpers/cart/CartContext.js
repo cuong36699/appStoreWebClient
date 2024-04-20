@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Context from "./index";
 import { removeLocal } from "../Local";
 import { setToasterGlobal } from "../../redux/reducers/common";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const getLocalCartItems = () => {
   try {
@@ -24,6 +24,10 @@ const CartProvider = (props) => {
   const [cartTotal, setCartTotal] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [stock, setStock] = useState("Còn hàng");
+  const [priceLast, setPriceLast] = useState(0);
+  const [salePrice, setSalePrice] = useState(0);
+
+  const voucher = useSelector((state) => state?.common?.voucher);
 
   useEffect(() => {
     const Total = cartItems.reduce(
@@ -33,8 +37,54 @@ const CartProvider = (props) => {
     const mixTotal = `${Total}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     setCartTotal(mixTotal);
 
+    if (voucher?.length > 0) {
+      let sale = 0;
+      voucher?.forEach((r) => {
+        const check = (Total * (r?.sale || 0)) / 100;
+        if (!r?.min_price || r?.min_price == 0) {
+          if (r?.max_sale && r?.max_sale != 0) {
+            const maxSale = r?.max_sale;
+            if (check < maxSale && check > sale) {
+              sale = check;
+            } else if (maxSale > sale) {
+              sale = maxSale;
+            }
+          } else {
+            if (check > sale) {
+              sale = check;
+            }
+          }
+        } else {
+          const minPrice = r?.min_price?.replaceAll(",", "");
+          const checkPrice = Total;
+          if (checkPrice >= minPrice) {
+            if (r?.max_sale && r?.max_sale != 0) {
+              const maxSale = r?.max_sale;
+              if (check < maxSale && check > sale) {
+                sale = check;
+              } else if (maxSale > sale) {
+                sale = maxSale;
+              }
+            } else {
+              if (check > sale) {
+                sale = check;
+              }
+            }
+          }
+        }
+      });
+      const mixSale = (`${sale}` || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      setSalePrice(mixSale);
+      const lastPrice = Total - sale;
+      const mixLastPrice = (`${lastPrice}` || 0).replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        ","
+      );
+      setPriceLast(mixLastPrice);
+    }
+
     localStorage.setItem("cartList", JSON.stringify(cartItems));
-  }, [cartItems]);
+  }, [cartItems, voucher]);
 
   // Add Product To Cart
   const addToCart = (product, type) => {
@@ -52,24 +102,6 @@ const CartProvider = (props) => {
     const index = cartItems.findIndex(
       (item) => item.id === product?.id && item?.typeId === type?.id
     );
-    const price = type?.price?.replaceAll(",", "");
-    const priceOff = price - (price * (product?.sale || 0)) / 100;
-    const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    const priceTotal = priceOff * quantity;
-    const valueTotal = `${priceTotal}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    const param = {
-      id: product?.id,
-      name: product?.name,
-      typeName: type?.name,
-      typeId: type?.id,
-      image: type?.image,
-      price: valuePrice,
-      total: valueTotal,
-      qty: quantity,
-      category: product?.category_id,
-      detail: product?.category_detail_id,
-    };
 
     if (index !== -1) {
       dispatch(
@@ -80,6 +112,25 @@ const CartProvider = (props) => {
         })
       );
     } else {
+      const price = type?.price?.replaceAll(",", "");
+      const priceOff = price - (price * (product?.sale || 0)) / 100;
+      const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const priceTotal = priceOff * quantity;
+      const valueTotal = `${priceTotal}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+      const param = {
+        id: product?.id,
+        name: product?.name,
+        typeName: type?.name,
+        typeId: type?.id,
+        image: type?.image,
+        price: valuePrice,
+        total: valueTotal,
+        qty: quantity,
+        category: product?.category_id,
+        detail: product?.category_detail_id,
+      };
+
       setCartItems([...cartItems, param]);
       dispatch(
         setToasterGlobal({
@@ -168,6 +219,8 @@ const CartProvider = (props) => {
         minusQty: minusQty,
         updateQty: updateQty,
         removeAllCart: removeAllCart,
+        priceLast,
+        salePrice,
       }}
     >
       {props.children}

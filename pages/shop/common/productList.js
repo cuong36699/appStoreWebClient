@@ -349,7 +349,7 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                     </Tabs>
                   </Box>
                 </div>
-                {/*  */}
+                {/* search */}
                 <Row>
                   <Col xs="12">
                     <div className="filter-search">

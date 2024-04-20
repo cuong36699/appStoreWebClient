@@ -163,7 +163,7 @@ const ProductItem = ({
           <a
             href={null}
             title="Add to Wishlist"
-            onClick={() => addWishlist(product?.type?.[active]?.id)}
+            onClick={() => addWishlist(product?.type?.[active])}
           >
             <i
               className="fa fa-heart"
@@ -199,25 +199,25 @@ const ProductItem = ({
                       src={`${
                         product?.type && image
                           ? image
-                          : product?.type?.[0]?.image?.url
+                          : product?.type?.[active]?.image?.url
                       }`}
                       alt=""
                       className="img-fluid"
                     />
                     <div className="media-body align-self-center text-center">
                       <h5>
-                        <i className="fa fa-check"></i>Item{" "}
-                        <span>{product.name} </span>
+                        <i className="fa fa-check"></i>Sản phẩm{" "}
+                        <span>{product.name}</span>
                         {/* <span> Đã được thêm vào danh sách so sánh</span> */}
                       </h5>
                       <div
                         className="buttons d-flex justify-content-center"
-                        style={{ gap: 20 }}
+                        style={{ gap: 20, marginLeft: 16, marginTop: 40 }}
                       >
                         <a
                           href={null}
                           className="btn-sm btn-solid"
-                          onClick={addCompare}
+                          onClick={() => addCompare(product?.type?.[active])}
                         >
                           Thêm vào danh sách so sánh
                         </a>

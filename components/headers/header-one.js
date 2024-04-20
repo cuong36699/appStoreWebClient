@@ -35,7 +35,11 @@ const HeaderOne = ({
   const checkPage = () => {
     const check1 = pathname.includes("product-details");
     const check2 = pathname.includes("show-filter");
-    if (check1 || check2) {
+    const check3 = pathname.includes("/compare");
+    const check4 = pathname.includes("/wishlist");
+    const check5 = pathname.includes("/cart");
+
+    if (check1 || check2 || check3 || check4 || check5) {
       return true;
     } else {
       return false;
