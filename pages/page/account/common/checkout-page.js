@@ -6,7 +6,7 @@ import { PayPalButton } from "react-paypal-button-v2";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { CurrencyContext } from "../../../../helpers/Currency/CurrencyContext";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setBillDetail,
   setToasterGlobal,
@@ -22,6 +22,8 @@ const CheckoutPage = () => {
   const cartTotal = cartContext.cartTotal;
   const curContext = useContext(CurrencyContext);
   const symbol = curContext.state.symbol;
+  const router = useRouter();
+
   const [obj, setObj] = useState({});
   const [payment, setPayment] = useState("cod");
   const {
@@ -29,7 +31,8 @@ const CheckoutPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm(); // initialise the hook
-  const router = useRouter();
+
+  const user = useSelector((state) => state?.common?.user);
 
   const checkhandle = (value) => {
     setPayment(value);
@@ -94,6 +97,7 @@ const CheckoutPage = () => {
                         className={`${errors.firstName ? "error_border" : ""}`}
                         name="first_name"
                         {...register("first_name", { required: true })}
+                        value={user?.first_name || ""}
                       />
                       <span className="error-message">
                         {errors.firstName && "First name is required"}
@@ -106,6 +110,7 @@ const CheckoutPage = () => {
                         className={`${errors.last_name ? "error_border" : ""}`}
                         name="last_name"
                         {...register("last_name", { required: true })}
+                        value={user?.last_name || ""}
                       />
                       <span className="error-message">
                         {errors.last_name && "Last name is required"}
@@ -118,6 +123,7 @@ const CheckoutPage = () => {
                         name="phone"
                         className={`${errors.phone ? "error_border" : ""}`}
                         {...register("phone", { pattern: /\d+/ })}
+                        value={user?.phone || ""}
                       />
                       <span className="error-message">
                         {errors.phone && "Please enter number for phone."}
@@ -134,6 +140,8 @@ const CheckoutPage = () => {
                           required: true,
                           pattern: /^\S+@\S+$/i,
                         })}
+                        value={user?.email || ""}
+                        disabled
                       />
                       <span className="error-message">
                         {errors.email && "Please enter proper email address ."}
@@ -152,6 +160,7 @@ const CheckoutPage = () => {
                           max: 120,
                         })}
                         placeholder="Street address"
+                        value={user?.address || ""}
                       />
                       <span className="error-message">
                         {errors.address && "Please right your address ."}
@@ -166,6 +175,7 @@ const CheckoutPage = () => {
                         name="city"
                         {...register("city", { required: true })}
                         onChange={setStateFromInput}
+                        value={user?.city || ""}
                       />
                       <span className="error-message">
                         {errors.city && "select one city"}
@@ -180,6 +190,7 @@ const CheckoutPage = () => {
                         name="state"
                         {...register("state", { required: true })}
                         onChange={setStateFromInput}
+                        value={user?.state || ""}
                       />
                       <span className="error-message">
                         {errors.state && "select one state"}

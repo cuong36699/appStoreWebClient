@@ -152,7 +152,7 @@ export default function ToasterGlobal() {
                   color={
                     toasterGlobal?.status == "error"
                       ? "red"
-                      : toasterGlobal?.status == "suscess"
+                      : toasterGlobal?.status == "success"
                       ? "#4AE261"
                       : "#FFD266"
                   }

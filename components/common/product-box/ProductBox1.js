@@ -191,7 +191,7 @@ const ProductItem = ({
             size="lg"
             centered
           >
-            <ModalBody>
+            <ModalBody style={{ padding: 18 }}>
               <Row className="compare-modal">
                 <Col lg="12">
                   <div className="media">
@@ -207,16 +207,22 @@ const ProductItem = ({
                     <div className="media-body align-self-center text-center">
                       <h5>
                         <i className="fa fa-check"></i>Item{" "}
-                        <span>{product.title} </span>
-                        <span> Đã được thêm vào danh sách so sánh</span>
+                        <span>{product.name} </span>
+                        {/* <span> Đã được thêm vào danh sách so sánh</span> */}
                       </h5>
-                      <div className="buttons d-flex justify-content-center">
+                      <div
+                        className="buttons d-flex justify-content-center"
+                        style={{ gap: 20 }}
+                      >
+                        <a
+                          href={null}
+                          className="btn-sm btn-solid"
+                          onClick={addCompare}
+                        >
+                          Thêm vào danh sách so sánh
+                        </a>
                         <Link href="/page/compare">
-                          <a
-                            href={null}
-                            className="btn-sm btn-solid"
-                            onClick={addCompare}
-                          >
+                          <a href={null} className="btn-sm btn-solid">
                             Xem danh sách so sánh
                           </a>
                         </Link>

@@ -32,8 +32,6 @@ const HeaderOne = ({
   const theme = useSelector((state) => state?.common?.theme);
   const pathname = window.location.pathname;
 
-  console.log(data, "zzzzzzzzzzz");
-
   const checkPage = () => {
     const check1 = pathname.includes("product-details");
     const check2 = pathname.includes("show-filter");

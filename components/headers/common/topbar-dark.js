@@ -59,6 +59,9 @@ const TopBarDark = ({ topClass, fluid }) => {
   const handleClick = async () => {
     if (form?.pass || form?.passConfirm) {
       if (form?.pass === form?.passConfirm) {
+        if (userCurrent && Object.keys(userCurrent).length > 0) {
+          await edit_profile(userCurrent, userCurrent?.id);
+        }
         updatePassword(user, form?.passConfirm)
           .then(() => {
             dispatch(
@@ -89,10 +92,11 @@ const TopBarDark = ({ topClass, fluid }) => {
           })
         );
       }
-    }
-    if (userCurrent && Object.keys(userCurrent).length > 0) {
-      await edit_profile(userCurrent, userCurrent?.id);
-      toggle();
+    } else {
+      if (userCurrent && Object.keys(userCurrent).length > 0) {
+        await edit_profile(userCurrent, userCurrent?.id);
+        toggle();
+      }
     }
   };
 
@@ -275,6 +279,24 @@ const TopBarDark = ({ topClass, fluid }) => {
                   </Col>
                 </Row>
                 <Row className="content-input">
+                  <Col>
+                    <Label className="form-label" for="phone">
+                      Phone
+                    </Label>
+                    <Input
+                      type="number"
+                      className="form-control"
+                      id="phone"
+                      placeholder="Phone"
+                      required=""
+                      value={user?.phone}
+                      onChange={(e) => {
+                        setForm({ ...form, phone: e.target.value });
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <Row className="content-input">
                   <Col md="6" style={{ position: "relative" }}>
                     <Label className="form-label" for="password">
                       Mật khẩu
@@ -341,7 +363,18 @@ const TopBarDark = ({ topClass, fluid }) => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col md="12">
+                  <Col md="9">
+                    <a
+                      href="#"
+                      className="btn btn-solid w-auto"
+                      onClick={() => {
+                        setModal(false);
+                      }}
+                    >
+                      Đóng
+                    </a>
+                  </Col>
+                  <Col md="3">
                     <a
                       href="#"
                       className="btn btn-solid w-auto"
