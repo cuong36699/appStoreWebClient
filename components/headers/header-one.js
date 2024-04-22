@@ -240,10 +240,11 @@ const HeaderOne = ({
               width: "30%",
               maxHeight: 500,
               minHeight: 80,
-              backgroundColor: "#fff",
+              backgroundColor: !theme ? "#fff" : "#2b2b2b",
               zIndex: 50,
               right: "17%",
               boxShadow: "0px 2px 3px gray",
+              paddingBlock: 7,
             }}
           >
             {value && dataSearch && dataSearch.length > 0 ? (
@@ -279,11 +280,16 @@ const HeaderOne = ({
                       gap: -10,
                     }}
                   >
-                    <b style={{ color: "#2b2b2b" }}>{item?.name}</b>
+                    <b style={{ color: theme ? "#f2f2f2" : "#2b2b2b" }}>
+                      {item?.name}
+                    </b>
                     {item?.description ? (
                       <b
                         className="header-search-description"
-                        style={{ fontWeight: "400", color: "gray" }}
+                        style={{
+                          fontWeight: "400",
+                          color: "gray",
+                        }}
                       >
                         {item?.description}
                       </b>

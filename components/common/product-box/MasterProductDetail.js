@@ -74,10 +74,10 @@ const MasterProductDetail = ({
                           }
                         }}
                         style={{
-                          maxWidth: 40,
+                          width: 40,
                           objectFit: "cover",
                           minHeight: 40,
-                          maxHeight: 80,
+                          height: 70,
                           opacity: active === i ? 1 : 0.5,
                           cursor: "pointer",
                         }}

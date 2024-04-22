@@ -15,6 +15,8 @@ import { setToasterGlobal } from "../../redux/reducers/common";
 
 export default function ChatBox() {
   const inputRef = useRef();
+  const emojiRef = useRef();
+
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
@@ -151,10 +153,25 @@ export default function ChatBox() {
     inputRef.current.click();
   };
 
-  const handleEmojiClick = (event, emojiObject) => {
+  const handleEmojiClick = (emojiObject) => {
+    const emoji = emojiObject.emoji;
     // setChosenEmoji(emojiObject);
-    setValueChat(valueChat + event.emoji);
+    setValueChat(valueChat + emoji);
   };
+
+  // useEffect(() => {
+  //   let handler = () => {
+  // if (!emojiRef?.current?.contains(e.target)) {
+  //   setOpenEmoji(false);
+  // }
+  //   };
+
+  //   document.addEventListener("mousedown", handler);
+
+  //   return () => {
+  //     document.addEventListener("mousedown", handler);
+  //   };
+  // });
 
   return (
     <div className="chat-box-custom">
@@ -182,6 +199,8 @@ export default function ChatBox() {
                 height: 100,
                 bottom: 252,
               }}
+              ref={emojiRef}
+              className="emoji-contain"
             >
               <EmojiPicker
                 open={openEmoji}
@@ -215,6 +234,8 @@ export default function ChatBox() {
               width: "100%",
               height: !selectedFile ? 378 : 278,
               padding: 16,
+              backgroundColor: theme ? "#2b2b2b" : "",
+              borderLeft: theme ? "1px solid gray" : "",
             }}
             className="chat-body scrollbar"
           >
@@ -338,15 +359,17 @@ export default function ChatBox() {
 
           <div
             style={{
+              border: theme ? "1px solid gray" : "",
               borderTop: !selectedFile ? "1px solid gray" : "",
               display: "flex",
               alignItems: "center",
+              backgroundColor: theme ? "#2b2b2b" : "",
             }}
           >
-            <div className={`input-custom ${theme ? "is-theme" : ""}`}>
+            <div className={`input-chat-box-custom ${theme ? "is-theme" : ""}`}>
               <input
                 type="text"
-                className={`input-search ${theme ? "is-theme" : ""}`}
+                className={`input-chat ${theme ? "is-theme" : ""}`}
                 onChange={(e) => {
                   setValueChat(e.target.value);
                 }}

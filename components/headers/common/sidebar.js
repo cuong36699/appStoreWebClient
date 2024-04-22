@@ -5,14 +5,13 @@ import { setLocal } from "../../../helpers/Local";
 import { changeBrand } from "../../../redux/reducers/common";
 
 const SideBar = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const closeNav = () => {
     var closemyslide = document.getElementById("mySidenav");
     if (closemyslide) closemyslide.classList.remove("open-side");
   };
-
-  const router = useRouter();
 
   const category = useSelector((state) => state?.common?.category);
   const categoryDetail = useSelector((state) => state?.api?.detailAPI);

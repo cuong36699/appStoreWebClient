@@ -33,7 +33,7 @@ const StyledSnackbar = styled(Snackbar)`
   position: fixed;
   z-index: 5500;
   display: flex;
-  bottom: 16px;
+  top: 16px;
   right: 16px;
 `;
 
@@ -100,6 +100,7 @@ export default function ToasterGlobal() {
   const [exited, setExited] = useState(true);
 
   const toasterGlobal = useSelector((state) => state?.common?.toasterGlobal);
+  const theme = useSelector((state) => state?.common?.theme);
 
   const handleClose = (_, reason) => {
     if (reason === "clickaway") {
@@ -142,6 +143,7 @@ export default function ToasterGlobal() {
               style={{
                 transform: positioningStyles[status],
                 transition: "transform 300ms ease",
+                backgroundColor: theme ? "#f2f2f2" : "",
               }}
               ref={nodeRef}
             >
@@ -158,7 +160,18 @@ export default function ToasterGlobal() {
                   }
                 />
                 <div className="snackbar-message">
-                  <p className="snackbar-title" style={{ marginLeft: 7 }}>
+                  <p
+                    className="snackbar-title"
+                    style={{
+                      marginLeft: 7,
+                      color:
+                        toasterGlobal?.status == "error"
+                          ? "red"
+                          : toasterGlobal?.status == "success"
+                          ? "#4AE261"
+                          : "#FFD266",
+                    }}
+                  >
                     {toasterGlobal?.status &&
                       toasterGlobal?.status.toUpperCase()}
                   </p>

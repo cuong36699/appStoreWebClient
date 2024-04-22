@@ -13,18 +13,22 @@ import {
 } from "../../../../redux/reducers/common";
 import moment from "moment";
 import { add_bills } from "../../../../apis/apiServices";
-import { removeLocal } from "../../../../helpers/Local";
+import { getLocal, removeLocal } from "../../../../helpers/Local";
 
 const CheckoutPage = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const cartContext = useContext(CartContext);
   const cartItems = cartContext.state;
   const cartTotal = cartContext.cartTotal;
   const curContext = useContext(CurrencyContext);
   const symbol = curContext.state.symbol;
-  const router = useRouter();
   const lastPrice = cartContext.priceLast;
   const priceSale = cartContext.salePrice;
+
+  const buyNow = getLocal("buyNow");
+
+  const isBuyNow = router?.query?.buyNow;
 
   const [obj, setObj] = useState({});
   const [payment, setPayment] = useState("cod");
@@ -44,11 +48,10 @@ const CheckoutPage = () => {
     if (data !== "") {
       let params = {
         ...data,
-        items: cartItems,
-        orderTotal: cartTotal,
-        price_total: cartTotal,
-        price_sale: priceSale,
-        price_last: lastPrice,
+        items: isBuyNow ? buyNow : cartItems,
+        price_total: isBuyNow ? buyNow?.total : cartTotal,
+        price_sale: isBuyNow ? buyNow?.salePrice : priceSale,
+        price_last: isBuyNow ? buyNow?.lastPrice : lastPrice,
         isNew: true,
         status: "waiting for progressing",
         create_at: moment().format("DD/MM/YYYY hh:mm"),
@@ -226,7 +229,7 @@ const CheckoutPage = () => {
                   </div>
                 </Col>
                 <Col lg="6" sm="12" xs="12">
-                  {cartItems && cartItems.length > 0 > 0 ? (
+                  {(cartItems && cartItems.length > 0) || isBuyNow ? (
                     <div className="checkout-details">
                       <div className="order-box">
                         <div className="title-box">
@@ -234,79 +237,81 @@ const CheckoutPage = () => {
                             Sản phẩm <span>Tổng</span>
                           </div>
                         </div>
-                        <ul className="qty">
-                          {cartItems.map((item, index) => (
-                            <li key={index}>
-                              <div
-                                style={{
-                                  wordWrap: "break-word",
-                                  maxWidth: "56%",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {item.name}
+                        {isBuyNow ? (
+                          <ul className="qty">
+                            <li>
+                              <div style={{ display: "flex" }}>
+                                <div
+                                  style={{
+                                    wordWrap: "break-word",
+                                    width: "56%",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {buyNow.name} ({buyNow?.typeName}) ×{" "}
+                                  {buyNow.qty}
+                                </div>
+                                <div
+                                  style={{
+                                    width: "44%",
+                                    display: "flex",
+                                    paddingLeft: "9%",
+                                  }}
+                                >
+                                  <span>
+                                    {buyNow?.total}
+                                    {symbol}
+                                  </span>
+                                </div>
                               </div>
-                              (× {item.qty} )
-                              <span>
-                                {item?.total}
-                                {symbol}
-                              </span>
                             </li>
-                          ))}
-                        </ul>
-                        {/* <ul className="sub-total">
-                          <li>
-                            Subtotal{" "}
-                            <span className="count">
-                              {symbol}
-                              {cartTotal}
-                            </span>
-                          </li>
-                          <li>
-                            Shipping
-                            <div className="shipping">
-                              <div className="shopping-option">
-                                <input
-                                  type="checkbox"
-                                  name="free-shipping"
-                                  id="free-shipping"
-                                />
-                                <label htmlFor="free-shipping">
-                                  Free Shipping
-                                </label>
-                              </div>
-                              <div className="shopping-option">
-                                <input
-                                  type="checkbox"
-                                  name="local-pickup"
-                                  id="local-pickup"
-                                />
-                                <label htmlFor="local-pickup">
-                                  Local Pickup
-                                </label>
-                              </div>
-                            </div>
-                          </li>
-                        </ul> */}
+                          </ul>
+                        ) : (
+                          <ul className="qty">
+                            {cartItems.map((item, index) => (
+                              <li key={index}>
+                                <div
+                                  style={{
+                                    wordWrap: "break-word",
+                                    maxWidth: "56%",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  {item.name} ({item?.typeName})
+                                </div>
+                                (× {item.qty} )
+                                <span>
+                                  {item?.total}
+                                  {symbol}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
                         <ul className="total">
                           <li>
                             Ước tính{" "}
                             <span className="count">
-                              {cartTotal}
+                              {isBuyNow ? `${buyNow?.total}` : `${cartTotal}`}
                               {symbol}
                             </span>
                           </li>
                           <li>
                             Giảm giá{" "}
                             <span className="count">
-                              {priceSale}
+                              {isBuyNow
+                                ? `${buyNow?.salePrice}`
+                                : `${priceSale}`}
                               {symbol}
                             </span>
                           </li>
                           <li>
                             Tổng thanh toán{" "}
                             <span className="count">
-                              {lastPrice}
+                              {isBuyNow
+                                ? `${buyNow?.priceLast}`
+                                : `${lastPrice}`}
                               {symbol}
                             </span>
                           </li>

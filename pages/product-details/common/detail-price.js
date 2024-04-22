@@ -6,10 +6,13 @@ import { CurrencyContext } from "../../../helpers/Currency/CurrencyContext";
 import CartContext from "../../../helpers/cart";
 import CountdownComponent from "../../../components/common/widgets/countdownComponent";
 import MasterSocial from "./master_social";
-import { getLocal, updateLocal } from "../../../helpers/Local";
+import { getLocal, setLocal, updateLocal } from "../../../helpers/Local";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
+  const router = useRouter();
+
   const [modal, setModal] = useState(false);
   const [active, setActive] = useState(0);
 
@@ -32,6 +35,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
     : null;
 
   const theme = useSelector((state) => state?.common?.theme);
+  const voucher = useSelector((state) => state?.common?.voucher);
 
   const changeQty = (e) => {
     if (e > 10) {
@@ -78,6 +82,86 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
     return (cartItems || []).some(
       (r) => r?.typeId === product?.type?.[active]?.id
     );
+  };
+
+  const handleBuyNow = () => {
+    const type = product?.type?.[active];
+
+    const price = type?.price?.replaceAll(",", "") || 0;
+    const priceOff = price - (price * (product?.sale || 0)) / 100;
+    const valuePrice = `${priceOff}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") || 0;
+    const priceTotal = priceOff * quantity;
+    const valueTotal = `${priceTotal}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    let priceLast = 0;
+    let salePrice = 0;
+
+    if (voucher?.length > 0) {
+      let sale = 0;
+      voucher?.forEach((r) => {
+        const check = (priceTotal * (r?.sale || 0)) / 100;
+        if (!r?.min_price || r?.min_price == 0) {
+          if (r?.max_sale && r?.max_sale != 0) {
+            const maxSale = r?.max_sale;
+            if (check < maxSale && check > sale) {
+              sale = check;
+            } else if (maxSale > sale) {
+              sale = maxSale;
+            }
+          } else {
+            if (check > sale) {
+              sale = check;
+            }
+          }
+        } else {
+          const minPrice = r?.min_price?.replaceAll(",", "");
+          const checkPrice = priceTotal;
+          if (checkPrice >= minPrice) {
+            if (r?.max_sale && r?.max_sale != 0) {
+              const maxSale = r?.max_sale;
+              if (check < maxSale && check > sale) {
+                sale = check;
+              } else if (maxSale > sale) {
+                sale = maxSale;
+              }
+            } else {
+              if (check > sale) {
+                sale = check;
+              }
+            }
+          }
+        }
+      });
+      const mixSale = (`${sale}` || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      salePrice = mixSale;
+      const lastPrice = priceOff - sale;
+      const mixLastPrice = (`${lastPrice}` || 0).replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        ","
+      );
+      priceLast = mixLastPrice;
+    }
+
+    const param = {
+      id: product?.id,
+      name: product?.name,
+      typeName: type?.name,
+      typeId: type?.id,
+      image: type?.image,
+      price: valuePrice,
+      total: valueTotal,
+      qty: quantity,
+      category: product?.category_id,
+      detail: product?.category_detail_id,
+      priceLast,
+      salePrice,
+    };
+
+    setLocal("buyNow", param);
+    router.push({
+      pathname: "/page/account/checkout",
+      query: { buyNow: true },
+    });
   };
 
   return (
@@ -192,7 +276,9 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
               thêm vào giỏ hàng
             </p>
           </a>
-          <a className="btn btn-solid">mua ngay</a>
+          <a className="btn btn-solid" onClick={handleBuyNow}>
+            mua ngay
+          </a>
         </div>
         <div className="border-product">
           <h6 className="product-title">Thông số kỹ thuật</h6>
@@ -262,7 +348,9 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
         </div>
         <div className="border-product">
           <h6 className="product-title">mô tả</h6>
-          <div className="product-icon">{product?.description}</div>
+          <div className="product-icon" style={{ wordBreak: "break-word" }}>
+            {product?.description}
+          </div>
         </div>
         <div className="border-product">
           <h6 className="product-title">chia sẻ</h6>
@@ -272,7 +360,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
         </div>
         {product?.sale ? (
           <div className="border-product">
-            <h6 className="product-title">Time Reminder</h6>
+            <h6 className="product-title">Thời gian còn lại</h6>
             <CountdownComponent endDate={product?.end_date} />
           </div>
         ) : null}
