@@ -57,7 +57,9 @@ export const Provider = (props) => {
 
   // Remove Product From Wishlist
   const removeFromWish = (id, type) => {
-    const newWishList = wishlistItems.filter((e) => e?.type !== type);
+    const newWishList = (wishlistItems || []).filter(
+      (e) => !(e?.type === type && e?.id === id)
+    );
     setWishlistItems(newWishList);
     dispatch(
       setToasterGlobal({

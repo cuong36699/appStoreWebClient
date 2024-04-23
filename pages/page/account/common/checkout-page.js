@@ -52,7 +52,7 @@ const CheckoutPage = () => {
         price_total: isBuyNow ? buyNow?.total : cartTotal,
         price_sale: isBuyNow ? buyNow?.salePrice : priceSale,
         price_last: isBuyNow ? buyNow?.lastPrice : lastPrice,
-        isNew: true,
+        is_new: true,
         status: "waiting for progressing",
         create_at: moment().format("DD/MM/YYYY hh:mm"),
       };

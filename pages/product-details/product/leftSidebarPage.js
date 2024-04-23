@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import NewProduct from "../../shop/common/newProduct";
-import ImageZoom from "../common/image-zoom";
 import Service from "../common/service";
-// import DetailsWithPrice from "../common/detail-price";
-import { Col, Container, Media, Row } from "reactstrap";
+import { useSelector } from "react-redux";
+import { Col, Container, Row } from "reactstrap";
 import DetailsWithPrice from "../common/detail-price";
 import Filter from "../common/filter";
-import { getLocal } from "../../../helpers/Local";
-import { useSelector } from "react-redux";
 
-const LeftSidebarPage = ({}) => {
+const LeftSidebarPage = ({ pathId, typeId }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
@@ -19,20 +16,19 @@ const LeftSidebarPage = ({}) => {
 
   const slider1 = useRef(null);
   const slider2 = useRef(null);
-  const productSelect = getLocal("product");
 
   const products = useSelector((state) => state?.common?.products);
 
   const getData = async () => {
     setLoading(true);
-    const newData = (products || []).find((r) => r?.id === productSelect?.id);
+    const newData = (products || []).find((r) => r?.id === pathId);
     setData(newData);
     setLoading(false);
   };
 
   useEffect(() => {
     getData();
-  }, [products, productSelect]);
+  }, [products, pathId]);
 
   var productSlider = {
     slidesToShow: 1,
@@ -139,7 +135,7 @@ const LeftSidebarPage = ({}) => {
                                 (vari, index) => (
                                   <div key={`${vari?.id}-${index}`}>
                                     <img
-                                      src={`${vari.url}`}
+                                      src={`${vari?.url}`}
                                       key={`${vari?.id}-${index}`}
                                       alt={vari.alt}
                                       className="img-fluid"
@@ -159,12 +155,12 @@ const LeftSidebarPage = ({}) => {
                         setTab={(i) => {
                           setActiveTab(i);
                         }}
+                        typeId={typeId}
                       />
                     </Col>
                   </Row>
                 )}
               </Container>
-              {/* <ProductTab /> */}
             </Col>
           </Row>
         </Container>

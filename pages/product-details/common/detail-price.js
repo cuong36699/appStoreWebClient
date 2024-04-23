@@ -10,7 +10,7 @@ import { getLocal, setLocal, updateLocal } from "../../../helpers/Local";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
-const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
+const DetailsWithPrice = ({ item, stickyClass, setTab, typeId }) => {
   const router = useRouter();
 
   const [modal, setModal] = useState(false);
@@ -59,10 +59,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
   };
 
   useEffect(() => {
-    const productSelect = getLocal("product");
-    const index = product?.type?.findIndex(
-      (r) => r?.id === productSelect?.type
-    );
+    const index = product?.type?.findIndex((r) => r?.id === typeId);
     if (index != -1) {
       setActive(index);
       setTab(index);
@@ -70,12 +67,13 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
       setActive(0);
       setTab(0);
     }
-  }, [product]);
+  }, [typeId, product]);
 
-  const handleClick = (index, type) => {
-    updateLocal("product", { type });
-    setActive(index);
-    setTab(index);
+  const handleClick = (type) => {
+    router.push({
+      pathname: `/product-details/${product?.id}`,
+      query: { type },
+    });
   };
 
   const checkAddCard = () => {
@@ -206,7 +204,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
                 alignItems: "center",
                 cursor: "pointer",
               }}
-              onClick={() => handleClick(index, r?.id)}
+              onClick={() => handleClick(r?.id)}
             >
               <img
                 src={r?.image?.url}
@@ -273,7 +271,7 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
                 color: checkAddCard() ? "#000000" : "white",
               }}
             >
-              thêm vào giỏ hàng
+              {checkAddCard() ? "đã" : null} thêm vào giỏ hàng
             </p>
           </a>
           <a className="btn btn-solid" onClick={handleBuyNow}>
@@ -346,18 +344,35 @@ const DetailsWithPrice = ({ item, stickyClass, changeColorVar, setTab }) => {
             <div>Không có thông tin</div>
           )}
         </div>
-        <div className="border-product">
-          <h6 className="product-title">mô tả</h6>
-          <div className="product-icon" style={{ wordBreak: "break-word" }}>
-            {product?.description}
+        {product?.description ? (
+          <div className="border-product">
+            <h6 className="product-title">mô tả</h6>
+            <div className="product-icon" style={{ wordBreak: "break-word" }}>
+              {product?.description}
+            </div>
           </div>
-        </div>
-        <div className="border-product">
+        ) : null}
+
+        {/* <div className="border-product">
           <h6 className="product-title">chia sẻ</h6>
           <div className="product-icon">
-            <MasterSocial />
+            <MasterSocial name={product?.name} />
           </div>
-        </div>
+        </div> */}
+        {product?.hash_tags ? (
+          <div className="border-product">
+            <h6 className="product-title">mô tả</h6>
+            {(product?.hash_tags || []).map((r, index) => (
+              <div
+                key={index}
+                className="product-icon"
+                style={{ wordBreak: "break-word" }}
+              >
+                {r}
+              </div>
+            ))}
+          </div>
+        ) : null}
         {product?.sale ? (
           <div className="border-product">
             <h6 className="product-title">Thời gian còn lại</h6>

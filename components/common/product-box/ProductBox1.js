@@ -48,12 +48,13 @@ const ProductItem = ({
 
   const clickProductDetail = () => {
     setLocal("product", {
-      id: product?.id,
-      type: product?.type?.[active]?.id,
       category: product?.category_id,
       detail: product?.category_detail_id,
     });
-    router.push(`/product-details/product`);
+    router.push({
+      pathname: `/product-details/${product?.id}`,
+      query: { type: product?.type?.[active]?.id },
+    });
   };
 
   const changeByType = (item, index) => {

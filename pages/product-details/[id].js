@@ -8,11 +8,12 @@ import LeftSidebarPage from "./product/leftSidebarPage";
 const LeftSidebar = () => {
   const router = useRouter();
   const id = router.query.id;
+  const typeId = router.query.type;
 
   return (
     <CommonLayout parent="Trang chủ" title="Sản phẩm">
-      <LeftSidebarPage />
-      <ProductSection />
+      <LeftSidebarPage pathId={id} typeId={typeId} />
+      <ProductSection pathId={id} typeId={typeId} />
     </CommonLayout>
   );
 };

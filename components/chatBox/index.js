@@ -12,10 +12,12 @@ import {
 } from "firebase/storage";
 import EmojiPicker from "emoji-picker-react";
 import { setToasterGlobal } from "../../redux/reducers/common";
+import TooltipCustom from "../tooltipCustom";
 
 export default function ChatBox() {
   const inputRef = useRef();
   const emojiRef = useRef();
+  const messEndRef = useRef();
 
   const dispatch = useDispatch();
 
@@ -132,10 +134,11 @@ export default function ChatBox() {
           );
         });
     }
-    setValueChat("");
     inputRef.current.value = null;
     setSelectedFile(null);
     setOpenEmoji(false);
+    setValueChat("");
+    // document.getElementById("text").value = "";
   };
 
   const handleSelectFile = (event) => {
@@ -159,22 +162,27 @@ export default function ChatBox() {
     setValueChat(valueChat + emoji);
   };
 
-  // useEffect(() => {
-  //   let handler = () => {
-  // if (!emojiRef?.current?.contains(e.target)) {
-  //   setOpenEmoji(false);
-  // }
-  //   };
+  useEffect(() => {
+    if (open) {
+      messEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [open]);
 
-  //   document.addEventListener("mousedown", handler);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setOpenEmoji(false);
+      }
+    }
 
-  //   return () => {
-  //     document.addEventListener("mousedown", handler);
-  //   };
-  // });
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [emojiRef]);
 
   return (
-    <div className="chat-box-custom">
+    <div className="chat-box-custom" style={{ zIndex: 1000 }}>
       <div className="chat-box-icon" onClick={handleClick}>
         <div>
           <SVG src={Icons.chat} size={32} color={"#f8f8f8"} />
@@ -250,71 +258,69 @@ export default function ChatBox() {
                   color: r?.id == user?.id ? "white" : "black",
                 }}
               >
-                {r?.image ? (
-                  <div
-                    style={{
-                      marginBottom: r?.chat ? 5 : "",
-                    }}
-                  >
-                    <img
-                      src={r?.image?.url}
-                      // width={"50%"}
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          "https://www.facoelche.com/images/placeholder-noimage.jpg";
-                      }}
-                      style={{ width: "100%", objectFit: "contain" }}
-                      loading="lazy"
-                    />
-                  </div>
-                ) : null}
-                {r?.chat ? (
-                  <div
-                    style={{
-                      backgroundColor:
-                        r?.id == user?.id ? "#ff4c3b" : "#ffffff",
-                      borderRadius: 8,
-                      padding: 12,
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    <span
-                      className="text-chat"
-                      style={{ wordWrap: "break-word" }}
-                    >
-                      {r?.chat}
-                    </span>
-                  </div>
-                ) : null}
-
-                <div
-                  style={{
-                    position: "absolute",
-                    left: r?.id == user?.id ? -90 : "",
-                    right: r?.id !== user?.id ? -90 : "",
-                    top: 5,
-                    color: "gray",
-                    fontSize: 12,
-                  }}
-                >
-                  <span>{moment(r?.createAt).format("L")}</span>
-                  <p
-                    style={{
-                      fontSize: 12,
-                    }}
-                  >
-                    {moment(r?.createAt).format("LTS")}
-                  </p>
-                  {/* <span
-                    style={{
-                      fontSize: 12,
-                    }}
-                  >
-                    {r?.create_at}
-                  </span> */}
-                </div>
+                <TooltipCustom
+                  placement={r?.id == user?.id ? "left" : "right"}
+                  margin={r?.id == user?.id ? "left" : "right"}
+                  title={moment(r?.createAt).format("DD/MM/YYYY hh:mm")}
+                  contentRender={() => (
+                    <div>
+                      {r?.image ? (
+                        <div
+                          style={{
+                            marginBottom: r?.chat ? 5 : "",
+                          }}
+                        >
+                          <img
+                            src={r?.image?.url}
+                            // width={"50%"}
+                            onError={(e) => {
+                              e.currentTarget.src =
+                                "https://www.facoelche.com/images/placeholder-noimage.jpg";
+                            }}
+                            style={{ width: "100%", objectFit: "contain" }}
+                            loading="lazy"
+                          />
+                        </div>
+                      ) : null}
+                      {r?.chat ? (
+                        <div
+                          id=""
+                          style={{
+                            backgroundColor:
+                              r?.id == user?.id ? "#ff4c3b" : "#ffffff",
+                            borderRadius: 8,
+                            padding: 12,
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          {r?.chat?.includes("\n") ? (
+                            (r?.chat?.split("\n") || []).map(
+                              (mess, indexMess) => (
+                                <div
+                                  key={indexMess}
+                                  className="text-chat"
+                                  style={{ wordWrap: "break-word" }}
+                                >
+                                  {mess}
+                                </div>
+                              )
+                            )
+                          ) : (
+                            <span
+                              className="text-chat"
+                              style={{ wordWrap: "break-word" }}
+                            >
+                              {r?.chat}
+                            </span>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                />
               </div>
             ))}
+            <div ref={messEndRef} />
           </div>
           {selectedFile ? (
             <div
@@ -367,7 +373,8 @@ export default function ChatBox() {
             }}
           >
             <div className={`input-chat-box-custom ${theme ? "is-theme" : ""}`}>
-              <input
+              <textarea
+                id="text-area"
                 type="text"
                 className={`input-chat ${theme ? "is-theme" : ""}`}
                 onChange={(e) => {
@@ -377,10 +384,20 @@ export default function ChatBox() {
                 value={valueChat}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    handleSend();
+                    if (!e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
                   }
                 }}
-              />
+                style={{
+                  height: 40,
+                  paddingTop: 10,
+                  borderRadius: 0,
+                  resize: "none",
+                }}
+                rows={2}
+              ></textarea>
             </div>
             <div
               style={{ width: "7%", cursor: "pointer" }}

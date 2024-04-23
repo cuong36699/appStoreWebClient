@@ -1,43 +1,34 @@
-import React from "react";
-import { FacebookShareButton, FacebookIcon } from "react-share";
-const MasterSocial = () => {
-  const shareUrl = "https://banhangonline.netlify.app/"; // URL to share
-  const title = "Check out this website!";
+// import React from "react";
+// import {
+//   FacebookShareButton,
+//   FacebookIcon,
+//   TwitterShareButton,
+//   TwitterIcon,
+// } from "react-share";
 
-  return (
-    <div style={{ marginTop: 10 }}>
-      <FacebookShareButton url={shareUrl} hashtag="#test">
-        <FacebookIcon size={32} round />
-      </FacebookShareButton>
-    </div>
-    // <ul className="product-social">
-    //   <li>
-    //     <a href="https://www.facebook.com" target="_blank">
-    //       <i className="fa fa-facebook"></i>
-    //     </a>
-    //   </li>
-    //   <li>
-    //     <a href="https://plus.google.com" target="_blank">
-    //       <i className="fa fa-google-plus"></i>
-    //     </a>
-    //   </li>
-    //   <li>
-    //     <a href="https://twitter.com" target="_blank">
-    //       <i className="fa fa-twitter"></i>
-    //     </a>
-    //   </li>
-    //   <li>
-    //     <a href="https://www.instagram.com" target="_blank">
-    //       <i className="fa fa-instagram"></i>
-    //     </a>
-    //   </li>
-    //   <li>
-    //     <a href="https://rss.com" target="_blank">
-    //       <i className="fa fa-rss"></i>
-    //     </a>
-    //   </li>
-    // </ul>
-  );
-};
+// const MasterSocial = ({ name }) => {
+//   const shareUrl = window.location.href; // URL to share
+//   const title = name;
+//   const hashtags = "#NextJs #React #WebDevelopment";
+//   const description = "This is an awesome site for learning new tech!";
 
-export default MasterSocial;
+//   console.log(shareUrl, "ljlkj");
+
+//   return (
+//     <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+//       <FacebookShareButton
+//         url={shareUrl}
+//         // title={`${title} ${description} ${hashtags}`}
+//         hashtag="#adasd #kjklj"
+//       >
+//         <FacebookIcon size={32} round />
+//       </FacebookShareButton>
+
+//       <TwitterShareButton url={shareUrl} title={title} className="share-button">
+//         <TwitterIcon size={32} round />
+//       </TwitterShareButton>
+//     </div>
+//   );
+// };
+
+// export default MasterSocial;

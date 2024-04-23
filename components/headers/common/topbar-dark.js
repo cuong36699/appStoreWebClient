@@ -19,6 +19,8 @@ import { edit_profile } from "../../../apis/apiServices";
 import Icons from "../../../public/assets/svg/icon";
 import SVG from "../../SVG";
 
+let timer = null;
+
 const TopBarDark = ({ topClass, fluid }) => {
   const router = useRouter();
   const isLogin = getLocal("isLogin");
@@ -101,7 +103,10 @@ const TopBarDark = ({ topClass, fluid }) => {
   };
 
   const handleChange = (value, type) => {
-    dispatch(setUser({ ...userCurrent, [type]: value }));
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      dispatch(setUser({ ...userCurrent, [type]: value }));
+    }, 150);
   };
 
   return (
@@ -291,7 +296,7 @@ const TopBarDark = ({ topClass, fluid }) => {
                       required=""
                       value={user?.phone}
                       onChange={(e) => {
-                        setForm({ ...form, phone: e.target.value });
+                        handleChange(e.target.value, "phone");
                       }}
                     />
                   </Col>

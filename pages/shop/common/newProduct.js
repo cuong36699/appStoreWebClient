@@ -34,7 +34,10 @@ const NewProduct = () => {
       category: product?.category_id,
       detail: product?.category_detail_id,
     });
-    router.push(`/product-details/product`, undefined, { shallow: true });
+    router.push({
+      pathname: `/product-details/${product?.id}`,
+      query: { type },
+    });
   };
 
   return (
