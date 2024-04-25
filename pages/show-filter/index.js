@@ -8,16 +8,15 @@ import { getLocal } from "../../helpers/Local";
 
 export default function ShowFilter() {
   const router = useRouter();
-  const { category } = router?.query;
-  const { detail } = router?.query;
-  const filter = getLocal("filter");
+  const { category, detail, id, tab, type } = router?.query;
+
   const brand = useSelector((state) => state?.common?.brand);
 
   return (
     <CommonLayout
       parent="Trang chủ"
-      title={brand?.category || category || filter?.category}
-      subTitle={brand?.detail || detail || filter?.detail}
+      title={brand?.category || category}
+      subTitle={brand?.detail || detail}
     >
       <section className="section-b-space ratio_asos">
         <div className="collection-wrapper">
@@ -26,6 +25,9 @@ export default function ShowFilter() {
               <ProductList
                 colClass="col-xl-3 col-6 col-grid-box"
                 noSidebar={true}
+                pathId={id}
+                tab={tab}
+                selectType={type}
               />
             </Row>
           </Container>

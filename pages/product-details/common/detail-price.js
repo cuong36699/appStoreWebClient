@@ -36,6 +36,9 @@ const DetailsWithPrice = ({ item, stickyClass, setTab, typeId }) => {
 
   const theme = useSelector((state) => state?.common?.theme);
   const voucher = useSelector((state) => state?.common?.voucher);
+  const hashTagsAPI = useSelector((state) => state?.api?.hashTagsAPI);
+
+  console.log(hashTagsAPI, "zx");
 
   const changeQty = (e) => {
     if (e > 10) {
@@ -160,6 +163,11 @@ const DetailsWithPrice = ({ item, stickyClass, setTab, typeId }) => {
       pathname: "/page/account/checkout",
       query: { buyNow: true },
     });
+  };
+
+  const getHashTag = (id) => {
+    const data = hashTagsAPI.find((r) => r?.id === id)?.name;
+    return data;
   };
 
   return (
@@ -361,14 +369,23 @@ const DetailsWithPrice = ({ item, stickyClass, setTab, typeId }) => {
         </div> */}
         {product?.hash_tags ? (
           <div className="border-product">
-            <h6 className="product-title">mô tả</h6>
+            <h6 className="product-title" style={{ marginBottom: 5 }}>
+              Thẻ
+            </h6>
             {(product?.hash_tags || []).map((r, index) => (
               <div
                 key={index}
                 className="product-icon"
-                style={{ wordBreak: "break-word" }}
+                style={{
+                  wordBreak: "break-word",
+                  backgroundColor: theme ? "#232323" : "#f7f7f7",
+                  width: "fit-content",
+                  padding: 5,
+                  cursor: "pointer",
+                }}
+                onClick={() => {}}
               >
-                {r}
+                {getHashTag(r)}
               </div>
             ))}
           </div>

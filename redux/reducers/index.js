@@ -5,6 +5,7 @@ import {
   get_campaign,
   get_category,
   get_category_detail,
+  get_hash_tags,
   get_notification,
   get_products,
   get_services,
@@ -24,6 +25,7 @@ const initialState = {
   status: null,
   error: null,
   loading: false,
+  hashTagsAPI: [],
 };
 
 export const fetchProduct = createAsyncThunk(
@@ -134,6 +136,18 @@ export const fetchNotification = createAsyncThunk(
   }
 );
 
+export const fetchHashTags = createAsyncThunk(
+  "api/fetchHash_tags",
+  async (id, { rejectWithValue }) => {
+    try {
+      const data = await get_hash_tags();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const api = createSlice({
   name: "api",
   initialState,
@@ -235,7 +249,7 @@ const api = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
-      // fetch banner
+      // fetch notification
       .addCase(fetchNotification.pending, (state) => {
         state.status = "loading";
       })
@@ -244,6 +258,18 @@ const api = createSlice({
         state.notificationAPI = action.payload;
       })
       .addCase(fetchNotification.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      // fetch banner
+      .addCase(fetchHashTags.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchHashTags.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.hashTagsAPI = action.payload;
+      })
+      .addCase(fetchHashTags.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

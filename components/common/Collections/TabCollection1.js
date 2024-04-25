@@ -121,6 +121,7 @@ const SpecialProducts = ({
   const statusAPI = useSelector((state) => state?.api?.status);
   const products = useSelector((state) => state?.common?.products);
   const category = useSelector((state) => state?.common?.category);
+  const theme = useSelector((state) => state?.common?.theme);
 
   useEffect(() => {
     if (statusAPI === "loading") {
@@ -169,16 +170,18 @@ const SpecialProducts = ({
               justifyItems: "center",
               width: "100%",
               height: "auto",
+              marginBottom: 16,
             }}
           >
             <Box
               sx={{
-                width: "95%",
-                maxWidth: { xs: 320, sm: 1200 },
-                bgcolor: "background.paper",
-                flexGrow: 1,
-                marginBottom: 2,
+                bgcolor: theme ? "#232323" : "background.paper",
               }}
+              width={200}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width={"100%"}
             >
               <Tabs
                 value={activeTab}
@@ -188,6 +191,7 @@ const SpecialProducts = ({
                 variant="scrollable"
                 scrollButtons="auto"
                 aria-label="scrollable auto tabs example"
+                textColor={theme ? "#f7f7f7" : "primary"}
               >
                 <Tab
                   label="All"

@@ -194,7 +194,6 @@ const HeaderOne = ({
                                   theme ? "is-theme" : ""
                                 }`}
                                 onBlur={() => {
-                                  console.log("11111111111111");
                                   setTimeout(() => {
                                     setOpen(false);
                                   }, 150);

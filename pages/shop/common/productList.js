@@ -16,8 +16,15 @@ import { getLocal, updateLocal } from "../../../helpers/Local";
 import { changeBrand } from "../../../redux/reducers/common";
 import search from "../../../public/assets/images/icon/search.png";
 
-const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
-  const router = useRouter();
+const ProductList = ({
+  colClass,
+  layoutList,
+  openSidebar,
+  noSidebar,
+  pathId,
+  tab,
+  selectType,
+}) => {
   const dispatch = useDispatch();
 
   const [data, setData] = useState([]);
@@ -32,14 +39,12 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   const [layout, setLayout] = useState(layoutList);
   const [url, setUrl] = useState();
   const [search, setSearch] = useState("");
+  const [block, setBlock] = useState(true);
 
   const products = useSelector((state) => state?.common?.products);
   const category = useSelector((state) => state?.common?.category);
   const theme = useSelector((state) => state?.common?.theme);
 
-  const filter = getLocal("filter");
-  const checkCategory = router?.query?.category;
-  const checkDetail = router?.query?.detail;
   const cartContext = useContext(CartContext);
   const quantity = cartContext.quantity;
   const wishlistContext = useContext(WishlistContext);
@@ -47,43 +52,27 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
   const curContext = useContext(CurrencyContext);
   const symbol = curContext.state.symbol;
   const filterContext = useContext(FilterContext);
-  const selectedBrands = filterContext.selectedBrands;
-  const selectedColor = filterContext.selectedColor;
-  const selectedPrice = filterContext.selectedPrice;
-  const selectedCategory = filterContext.state;
-  const selectedSize = filterContext.selectedSize;
-
-  // useEffect(() => {
-  //   const pathname = window.location.pathname;
-  //   setUrl(pathname);
-  //   router.push(
-  //     `${pathname}?${filterContext.state}&brand=${selectedBrands}&color=${selectedColor}&size=${selectedSize}&minPrice=${selectedPrice.min}&maxPrice=${selectedPrice.max}`,
-  //     undefined,
-  //     { shallow: true }
-  //   );
-  // }, [selectedBrands, selectedColor, selectedSize, selectedPrice]);
 
   useEffect(() => {
-    const { id, type, tab } = filter;
     setTimeout(() => {
-      setActiveTab(tab);
-    }, 500);
-    if (id === "all") {
+      setActiveTab(Number(tab));
+    }, 300);
+    if (pathId === "all") {
       setData(products);
     } else {
-      if (type === "category") {
-        const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+      if (selectType === "category") {
+        const dataNew = (products || [])?.filter(
+          (r) => r?.category_id === pathId
+        );
         setData(dataNew || []);
       } else {
         const dataNew = (products || [])?.filter(
-          (r) => r?.category_detail_id === id
+          (r) => r?.category_detail_id === pathId
         );
         setData(dataNew || []);
       }
     }
-  }, [products, checkCategory, checkDetail]);
-
-  const handlePagination = () => {};
+  }, [products, pathId]);
 
   const sortData = (sort, data) => {
     setSortBy(sort);
@@ -123,34 +112,13 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
     }
   };
 
-  // const handleClickTab = (id, name) => {
-  //   if (!id) {
-  //     sortData(sortBy, products || []);
-  //     dispatch(changeBrand({ category: "all", detail: "none" }));
-  //   } else {
-  //     const dataNew = (products || [])?.filter((r) => r?.category_id === id);
-  //     sortData(sortBy, dataNew || []);
-  //     dispatch(changeBrand({ category: name, detail: "none" }));
-  //   }
-  // };
-
-  useEffect(() => {
-    const { activeMenu } = filter;
-    if (activeMenu) {
-      return;
-    }
-    if (activeTab === 0) {
+  const handleClickTab = (id, name) => {
+    if (!id) {
       sortData(sortBy, products || []);
       dispatch(changeBrand({ category: "all", detail: "none" }));
     } else {
-      const dataNew = (products || [])?.filter(
-        (r) => r?.category_id === category?.[activeTab - 1]?.id
-      );
-      const dataSearch = (dataNew || []).filter(
-        (r) => r?.name && (r?.name).toLowerCase().includes(search.toLowerCase())
-      );
-      // setData(dataSearch);
-      sortData(sortBy, dataSearch || []);
+      const dataNew = (products || [])?.filter((r) => r?.category_id === id);
+      sortData(sortBy, dataNew || []);
       dispatch(
         changeBrand({
           category: category?.[activeTab - 1]?.name,
@@ -158,7 +126,26 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
         })
       );
     }
-  }, [search, activeTab, products, sortBy]);
+    setSearch("");
+  };
+
+  const handleSearch = (value) => {
+    if (activeTab === 0) {
+      const dataSearch = (products || []).filter(
+        (r) => r?.name && (r?.name).toLowerCase().includes(value.toLowerCase())
+      );
+      sortData(sortBy, dataSearch || []);
+    } else {
+      const dataNew = (products || [])?.filter(
+        (r) => r?.category_id === category?.[activeTab - 1]?.id
+      );
+      const dataSearch = (dataNew || []).filter(
+        (r) => r?.name && (r?.name).toLowerCase().includes(value.toLowerCase())
+      );
+      // setData(dataSearch);
+      sortData(sortBy, dataSearch || []);
+    }
+  };
 
   return (
     <Col className="collection-content">
@@ -298,17 +285,19 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                     display: "flex",
                     justifyItems: "center",
                     width: "100%",
-                    height: "auto",
+                    marginBottom: 10,
+                    marginTop: 10,
                   }}
                 >
                   <Box
                     sx={{
-                      width: "95%",
-                      maxWidth: { xs: 320, sm: 1200 },
-                      bgcolor: "background.paper",
-                      flexGrow: 1,
-                      marginBottom: 2,
+                      bgcolor: theme ? "#232323" : "background.paper",
                     }}
+                    width={200}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    width={"100%"}
                   >
                     <Tabs
                       value={activeTab}
@@ -318,11 +307,12 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                       variant="scrollable"
                       scrollButtons="auto"
                       aria-label="scrollable auto tabs example"
+                      textColor={theme ? "#f7f7f7" : "primary"}
                     >
                       <Tab
                         label="All"
                         onClick={() => {
-                          // handleClickTab(null);
+                          handleClickTab(null);
                           updateLocal("filter", {
                             tab: 0,
                             id: "all",
@@ -336,11 +326,10 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                           key={`${r?.id}`}
                           label={r?.name}
                           onClick={() => {
-                            // handleClickTab(r?.id, r?.name);
+                            handleClickTab(r?.id, r?.name);
                             updateLocal("filter", {
                               tab: index + 1,
                               id: r?.id,
-                              activeMenu: false,
                             });
                           }}
                           style={{ fontSize: 16, fontWeight: 600 }}
@@ -362,8 +351,10 @@ const ProductList = ({ colClass, layoutList, openSidebar, noSidebar }) => {
                           className={`input-search ${theme ? "is-theme" : ""}`}
                           onChange={(e) => {
                             setSearch(e.target.value);
+                            handleSearch(e.target.value);
                           }}
                           placeholder="Bạn cần tìm gì?"
+                          value={search}
                         />
                       </div>
                       <i

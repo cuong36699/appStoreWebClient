@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLocal } from "../../../helpers/Local";
 import { changeBrand } from "../../../redux/reducers/common";
 
 const SideBar = () => {
@@ -16,24 +15,17 @@ const SideBar = () => {
   const category = useSelector((state) => state?.common?.category);
   const categoryDetail = useSelector((state) => state?.api?.detailAPI);
 
-  const handleClick = (id, type, tab, category, detail) => {
-    setLocal("filter", {
-      id: id,
-      type: type,
-      tab: tab + 1,
-      category,
-      detail,
-      activeMenu: true,
-    });
-    dispatch(changeBrand({ category, detail }));
+  const handleClick = (id, type, tab, category, detailId) => {
+    const detailName = getDetail(detailId);
     router.push({
       pathname: "/show-filter",
-      query: { category, detail },
+      query: { category, detailName, type, tab: tab + 1, id },
     });
+    dispatch(changeBrand({ category, detailName }));
   };
 
   const getDetail = (id) => {
-    const find = (categoryDetail || []).find((data) => data?.id === id).name;
+    const find = (categoryDetail || []).find((data) => data?.id === id)?.name;
     return find;
   };
 
@@ -83,7 +75,7 @@ const SideBar = () => {
                                       "category_detail",
                                       index,
                                       r?.name,
-                                      getDetail(detail?.id)
+                                      detail?.id
                                     );
                                   }}
                                 >

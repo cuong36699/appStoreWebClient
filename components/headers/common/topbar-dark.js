@@ -18,6 +18,7 @@ import { setToasterGlobal, setUser } from "../../../redux/reducers/common";
 import { edit_profile } from "../../../apis/apiServices";
 import Icons from "../../../public/assets/svg/icon";
 import SVG from "../../SVG";
+import { Box, Tab, Tabs } from "@mui/material";
 
 let timer = null;
 
@@ -28,11 +29,16 @@ const TopBarDark = ({ topClass, fluid }) => {
   const dispatch = useDispatch();
 
   const [seen, setSeen] = useState(false);
+  const [seenOld, setSeenOld] = useState(false);
   const [modal, setModal] = useState(false);
   const [form, setForm] = useState({ pass: "", passConfirm: "" });
+  const [activeTab, setActiveTab] = useState(0);
 
   const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
   const userCurrent = useSelector((state) => state?.common?.user);
+  const theme = useSelector((state) => state?.common?.theme);
+
+  console.log(userCurrent, "111111111");
 
   const handleLogout = () => {
     signOut(auth)
@@ -97,7 +103,15 @@ const TopBarDark = ({ topClass, fluid }) => {
     } else {
       if (userCurrent && Object.keys(userCurrent).length > 0) {
         await edit_profile(userCurrent, userCurrent?.id);
+        dispatch(setUser(userCurrent));
         toggle();
+        dispatch(
+          setToasterGlobal({
+            active: true,
+            mess: `Cập nhật hồ sơ thành công`,
+            status: "success",
+          })
+        );
       }
     }
   };
@@ -187,186 +201,273 @@ const TopBarDark = ({ topClass, fluid }) => {
             <div style={{ display: "flex", gap: 20 }} className="modal-custom">
               <Col lg="12">
                 <Row className="content-input">
-                  <Col>
-                    <Label className="form-label" for="firstName">
-                      Họ
-                    </Label>
-                    <Input
-                      className="form-control"
-                      id="first_name"
-                      placeholder="Họ"
-                      required=""
-                      value={userCurrent?.first_name || ""}
-                      onChange={(e) => {
-                        handleChange(e.target.value, "first_name");
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyItems: "center",
+                      width: "100%",
+                      height: "auto",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        bgcolor: theme ? "#232323" : "background.paper",
                       }}
-                    />
-                  </Col>
-                  <Col>
-                    <Label className="form-label" for="lastName">
-                      Tên
-                    </Label>
-                    <Input
-                      className="form-control"
-                      id="last_name"
-                      placeholder="Tên"
-                      required=""
-                      value={userCurrent?.last_name || ""}
-                      onChange={(e) => {
-                        handleChange(e.target.value, "last_name");
-                      }}
-                    />
-                  </Col>
-                </Row>
-                <Row className="content-input">
-                  <Col>
-                    <Label className="form-label" for="state">
-                      Quận / Huyện
-                    </Label>
-                    <Input
-                      className="form-control"
-                      id="state"
-                      placeholder="Quận / Huyện"
-                      required=""
-                      value={userCurrent?.state || ""}
-                      onChange={(e) => {
-                        handleChange(e.target.value, "state");
-                      }}
-                    />
-                  </Col>
-                  <Col>
-                    <Label className="form-label" for="city">
-                      Thành phố
-                    </Label>
-                    <Input
-                      className="form-control"
-                      id="city"
-                      placeholder="Thành phố"
-                      required=""
-                      value={userCurrent?.city || ""}
-                      onChange={(e) => {
-                        handleChange(e.target.value, "city");
-                      }}
-                    />
-                  </Col>
-                </Row>
-                <Row className="content-input">
-                  <Col>
-                    <Label className="form-label" for="address">
-                      Địa chỉ
-                    </Label>
-                    <Input
-                      className="form-control"
-                      id="address"
-                      placeholder="Địa chỉ"
-                      required=""
-                      value={userCurrent?.address || ""}
-                      onChange={(e) => {
-                        handleChange(e.target.value, "address");
-                      }}
-                    />
-                  </Col>
-                </Row>
-                <Row className="content-input">
-                  <Col>
-                    <Label className="form-label" for="email">
-                      Email
-                    </Label>
-                    <Input
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      placeholder="Email"
-                      required=""
-                      value={user?.email}
-                      disabled
-                    />
-                  </Col>
-                </Row>
-                <Row className="content-input">
-                  <Col>
-                    <Label className="form-label" for="phone">
-                      Phone
-                    </Label>
-                    <Input
-                      type="number"
-                      className="form-control"
-                      id="phone"
-                      placeholder="Phone"
-                      required=""
-                      value={user?.phone}
-                      onChange={(e) => {
-                        handleChange(e.target.value, "phone");
-                      }}
-                    />
-                  </Col>
-                </Row>
-                <Row className="content-input">
-                  <Col md="6" style={{ position: "relative" }}>
-                    <Label className="form-label" for="password">
-                      Mật khẩu
-                    </Label>
-                    <Input
-                      type={seen ? "text" : "password"}
-                      className="form-control"
-                      id="password"
-                      placeholder="Nhập mật khẩu"
-                      required=""
-                      value={form?.pass}
-                      onChange={(e) => {
-                        setForm({ ...form, pass: e.target.value });
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: 22,
-                        top: 40,
-                        cursor: "pointer",
-                      }}
-                      onMouseDown={() => {
-                        setSeen(true);
-                      }}
-                      onMouseUp={() => {
-                        setSeen(false);
-                      }}
+                      width={200}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      width={"100%"}
                     >
-                      <SVG src={Icons.eye} size={28} />
-                    </div>
-                  </Col>
-                  <Col md="6" style={{ position: "relative" }}>
-                    <Label className="form-label" for="password">
-                      Nhập lại mật khẩu
-                    </Label>
-                    <Input
-                      type={seen ? "text" : "password"}
-                      className="form-control"
-                      id="passwordConfirm"
-                      placeholder="Nhập mật khẩu"
-                      required=""
-                      value={form?.passConfirm}
-                      onChange={(e) => {
-                        setForm({ ...form, passConfirm: e.target.value });
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: 22,
-                        top: 40,
-                        cursor: "pointer",
-                      }}
-                      onMouseDown={() => {
-                        setSeen(true);
-                      }}
-                      onMouseUp={() => {
-                        setSeen(false);
-                      }}
-                    >
-                      <SVG src={Icons.eye} size={28} />
-                    </div>
-                  </Col>
+                      <Tabs
+                        value={activeTab}
+                        onChange={(_, index) => {
+                          setActiveTab(index);
+                        }}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                        aria-label="scrollable auto tabs example"
+                        textColor={theme ? "#f7f7f7" : "primary"}
+                      >
+                        <Tab
+                          label="Hồ sơ"
+                          onClick={() => {}}
+                          style={{ fontSize: 16, fontWeight: 600 }}
+                        />
+                        <Tab
+                          label="Mật khẩu"
+                          onClick={() => {}}
+                          style={{ fontSize: 16, fontWeight: 600 }}
+                        />
+                      </Tabs>
+                    </Box>
+                  </div>
                 </Row>
+                {activeTab === 0 ? (
+                  <>
+                    <Row className="content-input">
+                      <Col>
+                        <Label className="form-label" for="firstName">
+                          Họ
+                        </Label>
+                        <Input
+                          className="form-control"
+                          id="first_name"
+                          placeholder="Họ"
+                          required=""
+                          value={userCurrent?.first_name || ""}
+                          onChange={(e) => {
+                            handleChange(e.target.value, "first_name");
+                          }}
+                        />
+                      </Col>
+                      <Col>
+                        <Label className="form-label" for="lastName">
+                          Tên
+                        </Label>
+                        <Input
+                          className="form-control"
+                          id="last_name"
+                          placeholder="Tên"
+                          required=""
+                          value={userCurrent?.last_name || ""}
+                          onChange={(e) => {
+                            handleChange(e.target.value, "last_name");
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="content-input">
+                      <Col>
+                        <Label className="form-label" for="state">
+                          Quận / Huyện
+                        </Label>
+                        <Input
+                          className="form-control"
+                          id="state"
+                          placeholder="Quận / Huyện"
+                          required=""
+                          value={userCurrent?.state || ""}
+                          onChange={(e) => {
+                            handleChange(e.target.value, "state");
+                          }}
+                        />
+                      </Col>
+                      <Col>
+                        <Label className="form-label" for="city">
+                          Thành phố
+                        </Label>
+                        <Input
+                          className="form-control"
+                          id="city"
+                          placeholder="Thành phố"
+                          required=""
+                          value={userCurrent?.city || ""}
+                          onChange={(e) => {
+                            handleChange(e.target.value, "city");
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="content-input">
+                      <Col>
+                        <Label className="form-label" for="address">
+                          Địa chỉ
+                        </Label>
+                        <Input
+                          className="form-control"
+                          id="address"
+                          placeholder="Địa chỉ"
+                          required=""
+                          value={userCurrent?.address || ""}
+                          onChange={(e) => {
+                            handleChange(e.target.value, "address");
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="content-input">
+                      <Col>
+                        <Label className="form-label" for="email">
+                          Email
+                        </Label>
+                        <Input
+                          type="email"
+                          className="form-control"
+                          id="email"
+                          placeholder="Email"
+                          required=""
+                          value={user?.email}
+                          disabled
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="content-input">
+                      <Col>
+                        <Label className="form-label" for="phone">
+                          Điện thoại
+                        </Label>
+                        <Input
+                          type="number"
+                          className="form-control"
+                          id="phone"
+                          placeholder="Phone"
+                          required=""
+                          value={userCurrent?.phone}
+                          onChange={(e) => {
+                            handleChange(e.target.value, "phone");
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+                {activeTab === 1 ? (
+                  <>
+                    <Row className="content-input">
+                      <Col md="12" style={{ position: "relative" }}>
+                        <Label className="form-label" for="password">
+                          Nhập lại mật khẩu cũ
+                        </Label>
+                        <Input
+                          type={seenOld ? "text" : "password"}
+                          className="form-control"
+                          id="passwordOld"
+                          placeholder="Nhập mật khẩu"
+                          required=""
+                          value={form?.passOld}
+                          onChange={(e) => {
+                            setForm({ ...form, passOld: e.target.value });
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 22,
+                            top: 40,
+                            cursor: "pointer",
+                          }}
+                          onMouseDown={() => {
+                            setSeenOld(true);
+                          }}
+                          onMouseUp={() => {
+                            setSeenOld(false);
+                          }}
+                        >
+                          <SVG src={Icons.eye} size={28} />
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row className="content-input">
+                      <Col md="6" style={{ position: "relative" }}>
+                        <Label className="form-label" for="password">
+                          Mật khẩu
+                        </Label>
+                        <Input
+                          type={seen ? "text" : "password"}
+                          className="form-control"
+                          id="password"
+                          placeholder="Nhập mật khẩu"
+                          required=""
+                          value={form?.pass}
+                          onChange={(e) => {
+                            setForm({ ...form, pass: e.target.value });
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 22,
+                            top: 40,
+                            cursor: "pointer",
+                          }}
+                          onMouseDown={() => {
+                            setSeen(true);
+                          }}
+                          onMouseUp={() => {
+                            setSeen(false);
+                          }}
+                        >
+                          <SVG src={Icons.eye} size={28} />
+                        </div>
+                      </Col>
+                      <Col md="6" style={{ position: "relative" }}>
+                        <Label className="form-label" for="password">
+                          Nhập lại mật khẩu
+                        </Label>
+                        <Input
+                          type={seen ? "text" : "password"}
+                          className="form-control"
+                          id="passwordConfirm"
+                          placeholder="Nhập mật khẩu"
+                          required=""
+                          value={form?.passConfirm}
+                          onChange={(e) => {
+                            setForm({ ...form, passConfirm: e.target.value });
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: 22,
+                            top: 40,
+                            cursor: "pointer",
+                          }}
+                          onMouseDown={() => {
+                            setSeen(true);
+                          }}
+                          onMouseUp={() => {
+                            setSeen(false);
+                          }}
+                        >
+                          <SVG src={Icons.eye} size={28} />
+                        </div>
+                      </Col>
+                    </Row>
+                  </>
+                ) : null}
+
                 <Row>
                   <Col md="9">
                     <a
