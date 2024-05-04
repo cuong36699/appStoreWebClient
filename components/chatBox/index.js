@@ -73,6 +73,12 @@ export default function ChatBox() {
   };
 
   const handleSentLastMess = (params) => {
+    // add list user chat
+    const userRef = ref(database, `chats/data_user/${user.id}`);
+    set(userRef, user)
+      .then(() => {})
+      .catch((error) => {});
+    //
     const dataRef = ref(database, `chats/last_mess/${user?.id}`);
     set(dataRef, params)
       .then(() => {})

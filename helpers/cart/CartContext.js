@@ -26,6 +26,10 @@ const CartProvider = (props) => {
   const [stock, setStock] = useState("Còn hàng");
   const [priceLast, setPriceLast] = useState(0);
   const [salePrice, setSalePrice] = useState(0);
+  const [valueSale, setValueSale] = useState({
+    name: "",
+    value: 0,
+  });
 
   const voucher = useSelector((state) => state?.common?.voucher);
 
@@ -39,6 +43,8 @@ const CartProvider = (props) => {
 
     if (voucher?.length > 0) {
       let sale = 0;
+      let name = "";
+      let value = 0;
       voucher?.forEach((r) => {
         const check = (Total * (r?.sale || 0)) / 100;
         if (!r?.min_price || r?.min_price == 0) {
@@ -46,12 +52,18 @@ const CartProvider = (props) => {
             const maxSale = r?.max_sale;
             if (check < maxSale && check > sale) {
               sale = check;
+              name = r?.name;
+              value = r?.sale;
             } else if (maxSale > sale) {
               sale = maxSale;
+              name = r?.name;
+              value = maxSale;
             }
           } else {
             if (check > sale) {
               sale = check;
+              name = r?.name;
+              value = r?.sale;
             }
           }
         } else {
@@ -62,12 +74,18 @@ const CartProvider = (props) => {
               const maxSale = r?.max_sale;
               if (check < maxSale && check > sale) {
                 sale = check;
+                name = r?.name;
+                value = r?.sale;
               } else if (maxSale > sale) {
                 sale = maxSale;
+                name = r?.name;
+                value = maxSale;
               }
             } else {
               if (check > sale) {
                 sale = check;
+                name = r?.name;
+                value = r?.sale;
               }
             }
           }
@@ -81,8 +99,13 @@ const CartProvider = (props) => {
         ","
       );
       setPriceLast(mixLastPrice);
+      setValueSale({
+        name: name,
+        value: value,
+      });
+    } else {
+      setPriceLast(cartTotal);
     }
-
     localStorage.setItem("cartList", JSON.stringify(cartItems));
   }, [cartItems, voucher]);
 

@@ -35,18 +35,21 @@ export const getFirebase = (key) => {
 
 export const getFirebaseHasID = async (key, id) => {
   const collectionRef = doc(firestore, key, id);
-  const docSnap = await getDoc(collectionRef);
-  if (docSnap.exists()) {
-    return docSnap.data();
-  } else {
-    useDispatch(
-      setToasterGlobal({
-        active: true,
-        mess: `${error}` || "error api! get",
-        status: "error",
-      })
-    );
-    return null;
+  const docSnap = await getDoc(collectionRef)
+    .then((result) => {
+      return result.data();
+    })
+    .catch(() => {
+      useDispatch(
+        setToasterGlobal({
+          active: true,
+          mess: "error api! get",
+          status: "error",
+        })
+      );
+    });
+  if (docSnap) {
+    return docSnap;
   }
 };
 

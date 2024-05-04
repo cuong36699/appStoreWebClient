@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Media, Container, Form, Row, Col } from "reactstrap";
 import CartContext from "../../../../helpers/cart";
 import paypal from "../../../../public/assets/images/paypal.png";
@@ -35,10 +35,20 @@ const CheckoutPage = () => {
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors },
-  } = useForm(); // initialise the hook
+  } = useForm({ defaultValues: {} }); // initialise the hook
 
   const user = useSelector((state) => state?.common?.user);
+
+  useEffect(() => {
+    if (user && Object.keys(user).length > 0) {
+      Object.keys(user).map((r) => {
+        setValue(r, user[r]);
+      });
+    }
+  }, [user]);
 
   const checkhandle = (value) => {
     setPayment(value);

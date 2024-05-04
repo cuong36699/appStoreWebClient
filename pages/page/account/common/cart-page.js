@@ -207,7 +207,7 @@ const CartPage = () => {
                 <table className="table cart-table table-responsive-md">
                   <tfoot>
                     <tr>
-                      <td>tổng số tiền:</td>
+                      <td>ước tính:</td>
                       <td>
                         <h4>
                           {total}
