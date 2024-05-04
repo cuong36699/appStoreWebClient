@@ -4,7 +4,7 @@ import { Container, Row, Form, Label, Input, Col } from "reactstrap";
 import { setLocal } from "../../../helpers/Local";
 import { useRouter } from "next/router";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { auth } from "../../../firebase-config";
 import SVG from "../../../components/SVG";
 import Icons from "../../../public/assets/svg/icon";
 import { useDispatch } from "react-redux";

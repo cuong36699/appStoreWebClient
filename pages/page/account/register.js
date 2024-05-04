@@ -3,7 +3,7 @@ import CommonLayout from "../../../components/shop/common-layout";
 import { Input, Container, Row, Form, Label, Col } from "reactstrap";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { auth } from "../../../firebase-config";
 import { setLocal } from "../../../helpers/Local";
 import { useDispatch } from "react-redux";
 import { setID, setToasterGlobal } from "../../../redux/reducers/common";
