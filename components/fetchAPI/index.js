@@ -22,7 +22,7 @@ import {
 import moment from "moment";
 import { getLocal, setLocal } from "../../helpers/Local";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../pages/firebase-config";
+import { auth } from "../../firebase-config";
 import { get_current_user } from "../../apis/apiServices";
 
 export default function FetchAPI() {

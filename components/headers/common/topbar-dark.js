@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { getLocal, setLocal } from "../../../helpers/Local";
 import { signOut } from "firebase/auth";
-import { auth } from "../../../pages/firebase-config";
+import { auth } from "../../../firebase-config";
 import { setToasterGlobal, setUser } from "../../../redux/reducers/common";
 import { edit_profile } from "../../../apis/apiServices";
 import Icons from "../../../public/assets/svg/icon";
@@ -37,8 +37,6 @@ const TopBarDark = ({ topClass, fluid }) => {
   const aboutAPI = useSelector((state) => state?.api?.aboutAPI[0]);
   const userCurrent = useSelector((state) => state?.common?.user);
   const theme = useSelector((state) => state?.common?.theme);
-
-  console.log(userCurrent, "111111111");
 
   const handleLogout = () => {
     signOut(auth)

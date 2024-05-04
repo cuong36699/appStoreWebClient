@@ -9,7 +9,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { firestore } from "../../pages/firebase-config";
+import { firestore } from "../../firebase-config";
 import { setToasterGlobal } from "../../redux/reducers/common";
 
 export const getFirebase = (key) => {

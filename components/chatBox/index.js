@@ -3,7 +3,7 @@ import SVG from "../SVG";
 import Icons from "../../public/assets/svg/icon";
 import { useDispatch, useSelector } from "react-redux";
 import { child, onValue, push, ref, set } from "firebase/database";
-import { database, storage } from "../../pages/firebase-config";
+import { database, storage } from "../../firebase-config";
 import moment from "moment";
 import {
   getDownloadURL,
