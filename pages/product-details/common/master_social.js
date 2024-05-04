@@ -32,3 +32,9 @@
 // };
 
 // export default MasterSocial;
+
+import React from "react";
+
+export default function MasterSocial() {
+  return null;
+}
