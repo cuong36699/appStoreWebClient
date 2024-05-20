@@ -78,7 +78,21 @@ const OrderSuccess = () => {
                     <li>
                       ước tính{" "}
                       <span>
-                        {billDetail?.orderTotal}
+                        {billDetail?.price_total}
+                        {symbol}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div
+                  className="total-sec"
+                  style={{ borderTop: 0, marginTop: -10 }}
+                >
+                  <ul>
+                    <li>
+                      giảm giá{" "}
+                      <span>
+                        {billDetail?.price_sale}
                         {symbol}
                       </span>
                     </li>
@@ -88,7 +102,7 @@ const OrderSuccess = () => {
                   <h3>
                     tổng{" "}
                     <span>
-                      {billDetail?.orderTotal}
+                      {billDetail?.price_last}
                       {symbol}
                     </span>
                   </h3>
@@ -103,7 +117,7 @@ const OrderSuccess = () => {
                     <li>ID đơn hàng: {billDetail?.id}</li>
                     <li>Ngày đặt hàng: {billDetail?.create_at}</li>
                     <li>
-                      Tổng hóa đơn: {cartTotal}
+                      Tổng hóa đơn: {billDetail?.price_last}
                       {symbol}
                     </li>
                   </ul>
