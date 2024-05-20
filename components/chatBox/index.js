@@ -2,7 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import SVG from "../SVG";
 import Icons from "../../public/assets/svg/icon";
 import { useDispatch, useSelector } from "react-redux";
-import { child, onValue, push, ref, set } from "firebase/database";
+import {
+  child,
+  get,
+  limitToLast,
+  onValue,
+  push,
+  query,
+  ref,
+  set,
+} from "firebase/database";
 import { database, storage } from "../../firebase-config";
 import moment from "moment";
 import {
@@ -41,17 +50,37 @@ export default function ChatBox() {
   const getData = () => {
     // readMess(data, index);
     const dataRef = ref(database, `chats/chat_box/${user?.id}`);
-    onValue(dataRef, (snapshot) => {
-      const getData = snapshot?.val();
-      if (getData) {
-        const mixData = Object.keys(getData).map((r) => {
-          return { ...getData[r] };
-        });
-        if (mixData) {
-          setDataChatBox(mixData);
+    const limitedQuery = query(dataRef, limitToLast(20));
+    get(limitedQuery)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const getData = snapshot?.val();
+          if (getData) {
+            const mixData = Object.keys(getData).map((r) => {
+              return { ...getData[r] };
+            });
+            if (mixData) {
+              setDataChatBox(mixData);
+            }
+          }
+        } else {
+          console.log("No data available");
         }
-      }
-    });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    // onValue(dataRef, (snapshot) => {
+    //   const getData = snapshot?.val();
+    //   if (getData) {
+    //     const mixData = Object.keys(getData).map((r) => {
+    //       return { ...getData[r] };
+    //     });
+    //     if (mixData) {
+    //       setDataChatBox(mixData);
+    //     }
+    //   }
+    // });
   };
 
   useEffect(() => {
